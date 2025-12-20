@@ -1,0 +1,39 @@
+[project]
+name = "comfyui-meshsegmenter"
+description = "Surface mesh segmentation nodes for ComfyUI - SAM-based segmentation, region growing, and more"
+version = "0.1.0"
+license = { text = "GPL-3.0-or-later" }
+classifiers = [
+    "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+]
+dependencies = [
+    "trimesh>=3.15.0",
+    "numpy>=1.21.0",
+    "scipy>=1.7.0",
+    "Pillow>=9.0.0",
+    "requests>=2.25.0",
+    "tqdm>=4.60.0",
+    "torch>=2.0.0",
+    "torchvision>=0.15.0",
+    "omegaconf>=2.3.0",
+    "huggingface_hub>=0.20.0",
+    "pyrender>=0.1.45",
+    "opencv-python>=4.5.0",
+    "networkx>=2.6.0",
+    "python-igraph>=0.10.0",
+]
+
+[project.urls]
+Repository = "https://github.com/yourusername/ComfyUI-MeshSegmenter"
+Documentation = "https://github.com/yourusername/ComfyUI-MeshSegmenter/blob/main/README.md"
+
+[tool.comfy]
+PublisherId = "meshsegmenter"
+DisplayName = "ComfyUI-MeshSegmenter"
+Icon = ""
+
+[build-system]
+requires = ["setuptools>=45", "wheel"]
+build-backend = "setuptools.build_meta"

@@ -1,0 +1,30 @@
+# Installation dependencies
+requests>=2.25.0
+tqdm>=4.60.0
+
+# Core mesh processing
+trimesh>=3.15.0
+numpy>=1.21.0
+scipy>=1.7.0
+
+# Image processing
+Pillow>=9.0.0
+opencv-python>=4.5.0
+
+# Deep learning (SAM)
+torch>=2.0.0
+torchvision>=0.15.0
+huggingface_hub>=0.20.0
+
+# Configuration
+omegaconf>=2.3.0
+
+# Rendering
+pyrender>=0.1.45
+
+# Graph algorithms (for segmentation)
+networkx>=2.6.0
+python-igraph>=0.10.0
+
+# Optional: for advanced mesh processing
+# pymeshlab>=2022.2
