@@ -62,7 +62,7 @@ class SamMeshLoader:
             }
         }
 
-    RETURN_TYPES = ("MESH", "STRING",)
+    RETURN_TYPES = ("TRIMESH", "STRING",)
     RETURN_NAMES = ("mesh", "mesh_path",)
     FUNCTION = "load_mesh"
     CATEGORY = "meshsegmenter/sammesh"

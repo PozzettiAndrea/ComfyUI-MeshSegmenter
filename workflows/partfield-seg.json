@@ -1,0 +1,269 @@
+{
+  "id": "8d977ab6-bcd6-4dc8-b2e8-fbc8c0545536",
+  "revision": 0,
+  "last_node_id": 6,
+  "last_link_id": 8,
+  "nodes": [
+    {
+      "id": 3,
+      "type": "GeomPackLoadMesh",
+      "pos": [
+        1008.5724379045188,
+        131.0279411316195
+      ],
+      "size": [
+        270,
+        78
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "mesh",
+          "type": "TRIMESH",
+          "links": [
+            4
+          ]
+        },
+        {
+          "name": "texture",
+          "type": "IMAGE",
+          "links": null
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfyui-geometrypack",
+        "ver": "3a9f0d8bd0f057cb1fd7d7f022765c6d9c86aec6",
+        "Node name for S&R": "GeomPackLoadMesh"
+      },
+      "widgets_values": [
+        "3d/flower_in_pot.stl"
+      ]
+    },
+    {
+      "id": 1,
+      "type": "MeshSegPartFieldModelDownloader",
+      "pos": [
+        1044.416658547025,
+        343.09645236897904
+      ],
+      "size": [
+        287.355078125,
+        102
+      ],
+      "flags": {},
+      "order": 1,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "model",
+          "type": "PARTFIELD_MODEL",
+          "links": [
+            5
+          ]
+        },
+        {
+          "name": "checkpoint_path",
+          "type": "STRING",
+          "links": null
+        }
+      ],
+      "properties": {
+        "aux_id": "PozzettiAndrea/ComfyUI-MeshSegmenter",
+        "ver": "cf52505b229d1b3581350e05c3645302ed16af53",
+        "Node name for S&R": "MeshSegPartFieldModelDownloader"
+      },
+      "widgets_values": [
+        "PartField Objaverse",
+        "cuda"
+      ]
+    },
+    {
+      "id": 6,
+      "type": "MeshSegSegmentByFeatures",
+      "pos": [
+        1830.8496431200738,
+        268.8848109710944
+      ],
+      "size": [
+        221.54453125,
+        198
+      ],
+      "flags": {},
+      "order": 3,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "mesh",
+          "type": "TRIMESH",
+          "link": 7
+        }
+      ],
+      "outputs": [
+        {
+          "name": "segmented_mesh",
+          "type": "TRIMESH",
+          "links": [
+            8
+          ]
+        },
+        {
+          "name": "feature_pca_viz",
+          "type": "IMAGE",
+          "links": null
+        }
+      ],
+      "properties": {
+        "aux_id": "PozzettiAndrea/ComfyUI-MeshSegmenter",
+        "ver": "cf52505b229d1b3581350e05c3645302ed16af53",
+        "Node name for S&R": "MeshSegSegmentByFeatures"
+      },
+      "widgets_values": [
+        "kmeans",
+        20,
+        42,
+        "fixed",
+        "face_mst",
+        "average",
+        10,
+        300
+      ]
+    },
+    {
+      "id": 5,
+      "type": "MeshSegPartFieldFeatureExtractor",
+      "pos": [
+        1461.8595777276666,
+        288.6668074017163
+      ],
+      "size": [
+        305.21484375,
+        126
+      ],
+      "flags": {},
+      "order": 2,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "mesh",
+          "type": "TRIMESH",
+          "link": 4
+        },
+        {
+          "name": "partfield_model",
+          "type": "PARTFIELD_MODEL",
+          "link": 5
+        }
+      ],
+      "outputs": [
+        {
+          "name": "mesh_with_features",
+          "type": "TRIMESH",
+          "links": [
+            7
+          ]
+        }
+      ],
+      "properties": {
+        "aux_id": "PozzettiAndrea/ComfyUI-MeshSegmenter",
+        "ver": "cf52505b229d1b3581350e05c3645302ed16af53",
+        "Node name for S&R": "MeshSegPartFieldFeatureExtractor"
+      },
+      "widgets_values": [
+        100,
+        42,
+        "fixed"
+      ]
+    },
+    {
+      "id": 4,
+      "type": "GeomPackPreviewMeshVTK",
+      "pos": [
+        2105.1293382347853,
+        271.2238262631044
+      ],
+      "size": [
+        512,
+        722
+      ],
+      "flags": {},
+      "order": 4,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "trimesh",
+          "shape": 7,
+          "type": "TRIMESH",
+          "link": 8
+        },
+        {
+          "name": "voxelgrid",
+          "shape": 7,
+          "type": "VOXELGRID",
+          "link": null
+        }
+      ],
+      "outputs": [],
+      "properties": {
+        "cnr_id": "comfyui-geometrypack",
+        "ver": "3a9f0d8bd0f057cb1fd7d7f022765c6d9c86aec6",
+        "Node name for S&R": "GeomPackPreviewMeshVTK"
+      },
+      "widgets_values": [
+        "fields",
+        ""
+      ]
+    }
+  ],
+  "links": [
+    [
+      4,
+      3,
+      0,
+      5,
+      0,
+      "TRIMESH"
+    ],
+    [
+      5,
+      1,
+      0,
+      5,
+      1,
+      "PARTFIELD_MODEL"
+    ],
+    [
+      7,
+      5,
+      0,
+      6,
+      0,
+      "TRIMESH"
+    ],
+    [
+      8,
+      6,
+      0,
+      4,
+      0,
+      "TRIMESH"
+    ]
+  ],
+  "groups": [],
+  "config": {},
+  "extra": {
+    "ds": {
+      "scale": 0.9229599817706423,
+      "offset": [
+        -215.3949869608678,
+        104.91254407580435
+      ]
+    },
+    "workflowRendererVersion": "LG",
+    "frontendVersion": "1.34.9"
+  },
+  "version": 0.4
+}

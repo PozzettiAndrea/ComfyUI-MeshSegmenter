@@ -38,7 +38,7 @@ class SamMeshRenderer:
             }
         return {
             "required": {
-                "mesh": ("MESH",),
+                "mesh": ("TRIMESH",),
                 "render_resolution": ("INT", {
                     "default": 1024,
                     "min": 64,

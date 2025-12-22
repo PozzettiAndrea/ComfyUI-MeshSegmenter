@@ -1,5 +1,9 @@
 import sys
 import os
+
+# Set EGL for headless rendering BEFORE any OpenGL imports
+os.environ["PYOPENGL_PLATFORM"] = "egl"
+
 import json
 import argparse
 from pathlib import Path
@@ -12,16 +16,14 @@ import random
 script_dir = os.path.dirname(os.path.abspath(__file__))
 samesh_base_dir = os.path.join(script_dir, "samesh-main")
 samesh_src_dir = os.path.join(samesh_base_dir, "src")
-sam2_dir = os.path.join(samesh_base_dir, "third_party", "segment-anything-2")
 
 def add_to_path(p):
     if p not in sys.path:
         sys.path.insert(0, p)
 
-# Add samesh base, src and sam2 to path *before* importing them
-add_to_path(samesh_base_dir) # Add the base directory
+# Add samesh src to path (sam2 is installed via pip)
+add_to_path(samesh_base_dir)
 add_to_path(samesh_src_dir)
-add_to_path(sam2_dir)
 
 # Add ComfyUI base path if provided (for folder_paths resolution within samesh)
 # This might be needed for implicit dependencies or path lookups within samesh

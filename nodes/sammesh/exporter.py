@@ -32,7 +32,7 @@ class SamMeshExporter:
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "segmented_mesh": ("MESH",),
+                "segmented_mesh": ("TRIMESH",),
                 "face2label_path": ("STRING", {"forceInput": True}),
                 "output_filename": ("STRING", {
                     "default": "segmented_mesh.glb",
