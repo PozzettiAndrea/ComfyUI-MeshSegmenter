@@ -169,6 +169,10 @@ class SamMeshSegmenter:
                     "step": 1,
                     "tooltip": "Min pixel count for a face to be assigned a label. Lower = more faces labeled. Default was 16."
                 }),
+                "skip_graph_cut": ("BOOLEAN", {
+                    "default": True,
+                    "tooltip": "Skip slow graph-cut optimization (step 6b). Faster but rougher segment boundaries."
+                }),
             }
         }
 
@@ -192,7 +196,8 @@ class SamMeshSegmenter:
         segmentation_mode: str = "both",
         camera_radius: float = 3.0,
         connections_threshold: int = 8,
-        face2label_threshold: int = 4
+        face2label_threshold: int = 4,
+        skip_graph_cut: bool = True
     ):
         from pathlib import Path
         from omegaconf import OmegaConf
@@ -289,6 +294,7 @@ class SamMeshSegmenter:
                 "repartition_cost": 1,
                 "repartition_lambda": 6,
                 "repartition_iterations": 1,
+                "skip_graph_cut": skip_graph_cut,
             },
             "renderer": {
                 "target_dim": [render_dim, render_dim],

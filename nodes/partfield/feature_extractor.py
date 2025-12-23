@@ -161,11 +161,9 @@ class PartFieldFeatureExtractor:
         # Create output mesh with features
         output_mesh = mesh.copy()
 
-        # Store each feature dimension as a separate field
-        num_features = face_features.shape[1]
-        for i in range(num_features):
-            output_mesh.face_attributes[f'features_{i}'] = face_features[:, i].astype(np.float32)
+        # Store as single 2D array: shape (n_faces, 448)
+        output_mesh.face_attributes['features'] = face_features.astype(np.float32)
 
-        print(f"PartFieldFeatureExtractor: Done! Stored {num_features} feature channels")
+        print(f"PartFieldFeatureExtractor: Done! Stored features with shape {face_features.shape}")
 
         return (output_mesh,)

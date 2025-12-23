@@ -633,9 +633,15 @@ class SamModelMesh(nn.Module):
         print('[6/7] Splitting disconnected components...')
         face2label_consistent = self.split(face2label_consistent)
 
-        print('')
-        print('  [6b/7] Repartitioning faces (graph cut optimization)...')
-        face2label_consistent = self.smooth_repartition_faces(face2label_consistent, target_labels=target_labels)
+        # Check if graph-cut should be skipped
+        skip_graph_cut = self.config.sam_mesh.get('skip_graph_cut', False)
+        if not skip_graph_cut:
+            print('')
+            print('  [6b/7] Repartitioning faces (graph cut optimization)...')
+            face2label_consistent = self.smooth_repartition_faces(face2label_consistent, target_labels=target_labels)
+        else:
+            print('')
+            print('  [6b/7] Skipping graph-cut optimization (skip_graph_cut=True)')
 
         face2label_consistent = {int(k): int(v) for k, v in face2label_consistent.items()}
         assert self.renderer.tmesh.faces.shape[0] == len(face2label_consistent)

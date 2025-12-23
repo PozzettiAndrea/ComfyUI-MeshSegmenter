@@ -170,18 +170,26 @@ class SegmentMeshByFeatures:
         np.random.seed(capped_seed)
         random.seed(capped_seed)
 
-        # Check if mesh has features (stored as features_0, features_1, etc.)
-        feature_keys = [k for k in mesh.face_attributes.keys() if k.startswith('features_')]
-        feature_keys.sort(key=lambda x: int(x.split('_')[1]))  # Sort numerically
-        if not feature_keys:
-            raise ValueError("Mesh does not have 'features_*' in face_attributes. Run PartFieldFeatureExtractor first.")
-
-        # Reconstruct feature array from individual fields
-        num_features = len(feature_keys)
+        # Check if mesh has features - new format (single 2D array) or legacy (features_0, features_1, etc.)
         num_faces = len(mesh.faces)
-        face_features = np.zeros((num_faces, num_features), dtype=np.float32)
-        for i, key in enumerate(feature_keys):
-            face_features[:, i] = mesh.face_attributes[key]
+
+        if 'features' in mesh.face_attributes:
+            # New format: single 2D array
+            face_features = np.array(mesh.face_attributes['features'], dtype=np.float32)
+            if face_features.ndim == 1:
+                face_features = face_features.reshape(-1, 1)
+            num_features = face_features.shape[1]
+        else:
+            # Legacy format: features_0, features_1, etc.
+            feature_keys = [k for k in mesh.face_attributes.keys() if k.startswith('features_')]
+            feature_keys.sort(key=lambda x: int(x.split('_')[1]))  # Sort numerically
+            if not feature_keys:
+                raise ValueError("Mesh does not have 'features' in face_attributes. Run PartFieldFeatureExtractor first.")
+
+            num_features = len(feature_keys)
+            face_features = np.zeros((num_faces, num_features), dtype=np.float32)
+            for i, key in enumerate(feature_keys):
+                face_features[:, i] = mesh.face_attributes[key]
 
         print(f"SegmentMeshByFeatures: Processing mesh with {num_faces} faces, {num_features} feature dimensions")
 
