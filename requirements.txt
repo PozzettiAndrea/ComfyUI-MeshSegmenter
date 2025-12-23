@@ -16,8 +16,7 @@ torch>=2.0.0
 torchvision>=0.15.0
 huggingface_hub>=0.20.0
 
-# SAM2 - install from GitHub
-sam-2 @ git+https://github.com/facebookresearch/sam2.git
+# SAM2 - vendored as sam2/ submodule
 
 # Configuration
 omegaconf>=2.3.0
