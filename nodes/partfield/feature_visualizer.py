@@ -18,13 +18,6 @@ try:
 except ImportError:
     output_dir = os.path.join(os.getcwd(), "output")
 
-# Add partfield-src to path
-SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-NODE_DIR = os.path.dirname(os.path.dirname(SCRIPT_DIR))
-PARTFIELD_SRC_DIR = os.path.join(NODE_DIR, "partfield-src")
-
-if PARTFIELD_SRC_DIR not in sys.path:
-    sys.path.insert(0, PARTFIELD_SRC_DIR)
 
 
 def sample_points_on_faces(vertices, faces, n_point_per_face):
@@ -123,7 +116,7 @@ class PartFieldFeatureVisualizer:
             face_points = face_points.reshape(1, -1, 3)
 
             # Import triplane sampling function
-            from partfield.model.PVCNN.encoder_pc import sample_triplane_feat
+            from ...partfield.model.PVCNN.encoder_pc import sample_triplane_feat
 
             # Sample features in batches
             n_sample_each = 10000

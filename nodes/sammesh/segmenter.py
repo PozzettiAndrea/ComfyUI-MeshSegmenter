@@ -30,13 +30,6 @@ except ImportError:
 DEFAULT_OUTPUT_DIR = os.path.join(output_dir, "meshsegmenter")
 DEFAULT_CACHE_DIR = os.path.join(temp_dir, "meshsegmenter_cache")
 
-# Add samesh to path
-SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-NODE_DIR = os.path.dirname(os.path.dirname(SCRIPT_DIR))
-SAMESH_SRC_DIR = os.path.join(NODE_DIR, "samesh-main", "src")
-
-if SAMESH_SRC_DIR not in sys.path:
-    sys.path.insert(0, SAMESH_SRC_DIR)
 
 
 def pil_to_tensor(images: list) -> torch.Tensor:
@@ -189,8 +182,8 @@ class SamMeshSegmenter:
 
         # Import samesh
         print("SamMeshSegmenter: Importing SAMesh...")
-        from samesh.models.sam_mesh import segment_mesh as segment_mesh_samesh_func
-        from samesh.renderer.renderer import colormap_norms
+        from ...samesh.models.sam_mesh import segment_mesh as segment_mesh_samesh_func
+        from ...samesh.renderer.renderer import colormap_norms
         print("SamMeshSegmenter: SAMesh imported successfully")
 
         # Input validation

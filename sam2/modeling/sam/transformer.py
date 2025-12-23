@@ -12,8 +12,8 @@ import torch
 import torch.nn.functional as F
 from torch import nn, Tensor
 
-from sam2.modeling.position_encoding import apply_rotary_enc, compute_axial_cis
-from sam2.modeling.sam2_utils import MLP
+from ..position_encoding import apply_rotary_enc, compute_axial_cis
+from ..sam2_utils import MLP
 
 
 class TwoWayTransformer(nn.Module):

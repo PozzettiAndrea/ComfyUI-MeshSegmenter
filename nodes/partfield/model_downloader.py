@@ -18,13 +18,6 @@ except ImportError:
 
 os.makedirs(partfield_model_dir, exist_ok=True)
 
-# Add partfield-src to path
-SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-NODE_DIR = os.path.dirname(os.path.dirname(SCRIPT_DIR))
-PARTFIELD_SRC_DIR = os.path.join(NODE_DIR, "partfield-src")
-
-if PARTFIELD_SRC_DIR not in sys.path:
-    sys.path.insert(0, PARTFIELD_SRC_DIR)
 
 # PartField Model Definitions
 PARTFIELD_MODELS = {
@@ -164,7 +157,7 @@ class PartFieldModelDownloader:
             print(f"PartFieldModelDownloader ({model_name}): Using default config")
 
         # Import and instantiate model
-        from partfield.model_trainer_pvcnn_only_demo import Model
+        from ...partfield.model_trainer_pvcnn_only_demo import Model
 
         # Create model instance
         model = Model(cfg)

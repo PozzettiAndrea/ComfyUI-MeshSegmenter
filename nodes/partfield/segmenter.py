@@ -25,13 +25,6 @@ except ImportError:
 DEFAULT_OUTPUT_DIR = os.path.join(output_dir, "meshsegmenter")
 DEFAULT_CACHE_DIR = os.path.join(temp_dir, "meshsegmenter_cache")
 
-# Add partfield-src to path
-SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-NODE_DIR = os.path.dirname(os.path.dirname(SCRIPT_DIR))
-PARTFIELD_SRC_DIR = os.path.join(NODE_DIR, "partfield-src")
-
-if PARTFIELD_SRC_DIR not in sys.path:
-    sys.path.insert(0, PARTFIELD_SRC_DIR)
 
 
 def numpy_to_tensor(arrays: list, normalize=True) -> torch.Tensor:
@@ -229,7 +222,7 @@ class PartFieldSegmenter:
             face_points = face_points.reshape(1, -1, 3)
 
             # Import triplane sampling function
-            from partfield.model.PVCNN.encoder_pc import sample_triplane_feat
+            from ...partfield.model.PVCNN.encoder_pc import sample_triplane_feat
 
             # Sample features in batches to avoid OOM
             n_sample_each = 10000

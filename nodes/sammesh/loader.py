@@ -17,7 +17,7 @@ except ImportError:
 
 # Try to import samesh loader
 try:
-    from samesh.data.loaders import read_mesh
+    from ...samesh.data.loaders import read_mesh
     SAMESH_AVAILABLE = True
 except ImportError:
     SAMESH_AVAILABLE = False

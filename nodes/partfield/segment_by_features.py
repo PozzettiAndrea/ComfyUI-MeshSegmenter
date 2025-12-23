@@ -14,13 +14,6 @@ from PIL import Image
 from sklearn.cluster import AgglomerativeClustering, KMeans
 from sklearn.decomposition import PCA
 
-# Add partfield-src to path for clustering utilities
-SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-NODE_DIR = os.path.dirname(os.path.dirname(SCRIPT_DIR))
-PARTFIELD_SRC_DIR = os.path.join(NODE_DIR, "partfield-src")
-
-if PARTFIELD_SRC_DIR not in sys.path:
-    sys.path.insert(0, PARTFIELD_SRC_DIR)
 
 
 def numpy_to_tensor(arrays: list, normalize=True):
@@ -142,6 +135,11 @@ class SegmentMeshByFeatures:
                     "tooltip": "Maximum iterations for KMeans convergence.",
                     "backends": ["kmeans"],
                 }),
+                "keep_features": ("BOOLEAN", {
+                    "default": False,
+                    "tooltip": "Keep feature vectors on output mesh. Disable to reduce clutter in preview.",
+                    "backends": ["agglomerative", "kmeans"],
+                }),
             }
         }
 
@@ -162,6 +160,8 @@ class SegmentMeshByFeatures:
         # KMeans params
         n_init: int = 10,
         max_iter: int = 300,
+        # Output options
+        keep_features: bool = False,
     ):
         import random
 
@@ -251,6 +251,12 @@ class SegmentMeshByFeatures:
         segmented_mesh = mesh.copy()
         segmented_mesh.visual = trimesh.visual.ColorVisuals(mesh=segmented_mesh, face_colors=face_colors)
         segmented_mesh.face_attributes['seg'] = labels
+
+        # Remove features from output if not keeping them
+        if not keep_features:
+            keys_to_remove = [k for k in segmented_mesh.face_attributes.keys() if k.startswith('features_')]
+            for key in keys_to_remove:
+                del segmented_mesh.face_attributes[key]
 
         # Create PCA visualization
         pca_img = create_pca_visualization(face_features)

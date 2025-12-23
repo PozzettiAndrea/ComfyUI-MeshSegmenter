@@ -12,24 +12,8 @@ from hydra import compose
 from hydra.utils import instantiate
 from omegaconf import OmegaConf
 
-import sam2
-
-# Check if the user is running Python from the parent directory of the sam2 repo
-# (i.e. the directory where this repo is cloned into) -- this is not supported since
-# it could shadow the sam2 package and cause issues.
-if os.path.isdir(os.path.join(sam2.__path__[0], "sam2")):
-    # If the user has "sam2/sam2" in their path, they are likey importing the repo itself
-    # as "sam2" rather than importing the "sam2" python package (i.e. "sam2/sam2" directory).
-    # This typically happens because the user is running Python from the parent directory
-    # that contains the sam2 repo they cloned.
-    raise RuntimeError(
-        "You're likely running Python from the parent directory of the sam2 repository "
-        "(i.e. the directory where https://github.com/facebookresearch/sam2 is cloned into). "
-        "This is not supported since the `sam2` Python package could be shadowed by the "
-        "repository name (the repository is also named `sam2` and contains the Python package "
-        "in `sam2/sam2`). Please run Python from another directory (e.g. from the repo dir "
-        "rather than its parent dir, or from your home directory) after installing SAM 2."
-    )
+# Get the sam2 package directory using this file's location
+_SAM2_PACKAGE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 
 HF_MODEL_ID_TO_FILENAMES = {

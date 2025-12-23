@@ -5,13 +5,15 @@
         "num_clusters",
         "seed",
         "connectivity",
-        "linkage"
+        "linkage",
+        "keep_features"
       ],
       "kmeans": [
         "num_clusters",
         "seed",
         "n_init",
-        "max_iter"
+        "max_iter",
+        "keep_features"
       ]
     }
   },
