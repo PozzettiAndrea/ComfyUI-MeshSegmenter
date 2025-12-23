@@ -354,7 +354,12 @@ class SamModelMesh(nn.Module):
 
         counter_lens = [len(counter) for counter in connections_ratios.values()]
         counter_lens = sorted(counter_lens)
-        counter_lens_threshold = max(np.percentile(counter_lens, 95), self.config.sam_mesh.get('counter_lens_threshold_min', 16))
+        if len(counter_lens) == 0:
+            print(f'    Warning: No connections found between views, using minimum threshold')
+            print(f'    This may indicate stale cache data or mesh visibility issues')
+            counter_lens_threshold = self.config.sam_mesh.get('counter_lens_threshold_min', 16)
+        else:
+            counter_lens_threshold = max(np.percentile(counter_lens, 95), self.config.sam_mesh.get('counter_lens_threshold_min', 16))
         print(f'    Counter lens threshold: {counter_lens_threshold}')
         removed = []
         for label, counter in connections_ratios.items():
@@ -443,6 +448,11 @@ class SamModelMesh(nn.Module):
         """
         # remove holes
         components = self.label_components(face2label_consistent)
+
+        # Handle case where no labels were assigned
+        if not components:
+            print('    Warning: No components found to smooth, attempting to label all visible faces')
+            return face2label_consistent
 
         threshold_percentage_size = self.config.sam_mesh.smoothing_threshold_percentage_size
         threshold_percentage_area = self.config.sam_mesh.smoothing_threshold_percentage_area

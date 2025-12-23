@@ -266,6 +266,10 @@ class PartFieldSegmenter:
             labels = clustering.fit_predict(face_features_norm)
         else:
             # Agglomerative clustering with mesh connectivity
+            # Add partfield-src to path for clustering utilities
+            partfield_src = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "partfield-src")
+            if partfield_src not in sys.path:
+                sys.path.insert(0, partfield_src)
             from run_part_clustering import (
                 construct_face_adjacency_matrix_naive,
                 construct_face_adjacency_matrix_facemst,

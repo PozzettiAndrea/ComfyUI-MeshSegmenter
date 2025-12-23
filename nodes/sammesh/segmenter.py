@@ -10,6 +10,7 @@ Outputs intermediate renders for visualization.
 import os
 import sys
 import json
+import hashlib
 import trimesh
 import torch
 import numpy as np
@@ -154,6 +155,20 @@ class SamMeshSegmenter:
                     "step": 0.5,
                     "tooltip": "Camera distance from mesh center. Higher = mesh smaller in frame but fully visible. Lower = larger but may clip elongated meshes."
                 }),
+                "connections_threshold": ("INT", {
+                    "default": 8,
+                    "min": 1,
+                    "max": 64,
+                    "step": 1,
+                    "tooltip": "Min overlapping faces between views to form a connection. Lower = more connections (better for thin/flat meshes). Default was 32."
+                }),
+                "face2label_threshold": ("INT", {
+                    "default": 4,
+                    "min": 1,
+                    "max": 32,
+                    "step": 1,
+                    "tooltip": "Min pixel count for a face to be assigned a label. Lower = more faces labeled. Default was 16."
+                }),
             }
         }
 
@@ -175,7 +190,9 @@ class SamMeshSegmenter:
         points_per_side: int = 32,
         render_resolution: str = "1024",
         segmentation_mode: str = "both",
-        camera_radius: float = 3.0
+        camera_radius: float = 3.0,
+        connections_threshold: int = 8,
+        face2label_threshold: int = 4
     ):
         from pathlib import Path
         from omegaconf import OmegaConf
@@ -206,7 +223,9 @@ class SamMeshSegmenter:
         mesh_normalized.vertices /= (max_extent / 2) * 1.001  # Scale to [-1, 1] with small margin
 
         # Save normalized mesh to temp file for samesh processing
-        mesh_path = os.path.join(cache_directory, "input_mesh_temp.glb")
+        # Use content hash as cache key so each unique mesh gets its own cache
+        mesh_hash = hashlib.md5(mesh_normalized.vertices.tobytes() + mesh_normalized.faces.tobytes()).hexdigest()[:12]
+        mesh_path = os.path.join(cache_directory, f"mesh_{mesh_hash}.glb")
         mesh_normalized.export(mesh_path)
 
         if not os.path.exists(sam_checkpoint_path):
@@ -259,6 +278,9 @@ class SamMeshSegmenter:
             "sam_mesh": {
                 "use_modes": use_modes,
                 "min_area": 1024,
+                "connections_threshold": connections_threshold,
+                "face2label_threshold": face2label_threshold,
+                "counter_lens_threshold_min": min(face2label_threshold, 4),
                 "connections_bin_resolution": 100,
                 "connections_bin_threshold_percentage": 0.125,
                 "smoothing_threshold_percentage_size": 0.025,

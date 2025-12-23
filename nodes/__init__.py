@@ -9,6 +9,7 @@ Organized by functional category
 # Import all node modules
 from . import sammesh
 from . import partfield
+from . import decimate
 # Future categories:
 # from . import region_growing
 # from . import spectral
@@ -18,11 +19,13 @@ from . import partfield
 NODE_CLASS_MAPPINGS = {}
 NODE_CLASS_MAPPINGS.update(sammesh.NODE_CLASS_MAPPINGS)
 NODE_CLASS_MAPPINGS.update(partfield.NODE_CLASS_MAPPINGS)
+NODE_CLASS_MAPPINGS.update(decimate.NODE_CLASS_MAPPINGS)
 
 # Collect all display name mappings
 NODE_DISPLAY_NAME_MAPPINGS = {}
 NODE_DISPLAY_NAME_MAPPINGS.update(sammesh.NODE_DISPLAY_NAME_MAPPINGS)
 NODE_DISPLAY_NAME_MAPPINGS.update(partfield.NODE_DISPLAY_NAME_MAPPINGS)
+NODE_DISPLAY_NAME_MAPPINGS.update(decimate.NODE_DISPLAY_NAME_MAPPINGS)
 
 # Export for ComfyUI
 __all__ = ['NODE_CLASS_MAPPINGS', 'NODE_DISPLAY_NAME_MAPPINGS']
