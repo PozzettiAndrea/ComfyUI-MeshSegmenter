@@ -13,7 +13,7 @@ from ...samesh.models.smoothing import (
     smooth_labels,
     split_disconnected_components,
     fill_unlabeled_faces,
-    compute_label_stats
+    compute_label_stats,
 )
 
 

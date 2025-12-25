@@ -13,6 +13,9 @@ from typing import Dict, List, Set, Tuple
 
 import numpy as np
 import trimesh
+import networkx as nx
+import igraph
+from tqdm import tqdm
 
 
 def build_mesh_graph(mesh: trimesh.Trimesh) -> Dict[int, Set[int]]:
@@ -238,3 +241,270 @@ def compute_label_stats(face2label: Dict[int, int]) -> Dict[int, int]:
     """
     stats = Counter(face2label.values())
     return dict(stats)
+
+
+# ============================================================================
+# Alpha-Expansion Graph Cut Repartitioning
+# ============================================================================
+
+EPSILON = 1e-20
+
+
+def partition_cost(
+    mesh: trimesh.Trimesh,
+    partition: np.ndarray,
+    cost_data: np.ndarray,
+    cost_smoothness: np.ndarray
+) -> float:
+    """
+    Compute total cost of a partition (data term + smoothness term).
+
+    Args:
+        mesh: Trimesh object
+        partition: Array of label per face
+        cost_data: (num_faces, num_labels) data cost matrix
+        cost_smoothness: (num_edges,) smoothness cost per edge
+
+    Returns:
+        Total cost
+    """
+    cost = 0
+    for f in range(len(partition)):
+        cost += cost_data[f, partition[f]]
+    for i, edge in enumerate(mesh.face_adjacency):
+        f1, f2 = int(edge[0]), int(edge[1])
+        if partition[f1] != partition[f2]:
+            cost += cost_smoothness[i]
+    return cost
+
+
+def construct_expansion_graph(
+    label: int,
+    mesh: trimesh.Trimesh,
+    partition: np.ndarray,
+    cost_data: np.ndarray,
+    cost_smoothness: np.ndarray
+) -> Tuple[nx.Graph, Dict]:
+    """
+    Construct the expansion graph for alpha-expansion move.
+
+    Args:
+        label: The label to expand
+        mesh: Trimesh object
+        partition: Current partition
+        cost_data: Data cost matrix
+        cost_smoothness: Smoothness cost per edge
+
+    Returns:
+        (graph, node2index) tuple
+    """
+    G = nx.Graph()
+    A = 'alpha'
+    B = 'alpha_complement'
+
+    node2index = {}
+    G.add_node(A)
+    G.add_node(B)
+    node2index[A] = 0
+    node2index[B] = 1
+    for i in range(len(mesh.faces)):
+        G.add_node(i)
+        node2index[i] = 2 + i
+
+    aux_count = 0
+    for i, edge in enumerate(mesh.face_adjacency):
+        f1, f2 = int(edge[0]), int(edge[1])
+        if partition[f1] != partition[f2]:
+            a = (f1, f2)
+            if a in node2index:
+                continue
+            G.add_node(a)
+            node2index[a] = len(mesh.faces) + 2 + aux_count
+            aux_count += 1
+
+    for f in range(len(mesh.faces)):
+        G.add_edge(A, f, capacity=cost_data[f, label])
+        G.add_edge(B, f, capacity=float('inf') if partition[f] == label else cost_data[f, partition[f]])
+
+    for i, edge in enumerate(mesh.face_adjacency):
+        f1, f2 = int(edge[0]), int(edge[1])
+        a = (f1, f2)
+        if partition[f1] == partition[f2]:
+            if partition[f1] != label:
+                G.add_edge(f1, f2, capacity=cost_smoothness[i])
+        else:
+            G.add_edge(a, B, capacity=cost_smoothness[i])
+            if partition[f1] != label:
+                G.add_edge(f1, a, capacity=cost_smoothness[i])
+            if partition[f2] != label:
+                G.add_edge(a, f2, capacity=cost_smoothness[i])
+
+    return G, node2index
+
+
+def repartition(
+    mesh: trimesh.Trimesh,
+    partition: np.ndarray,
+    cost_data: np.ndarray,
+    cost_smoothness: np.ndarray,
+    smoothing_iterations: int,
+    _lambda: float = 1.0,
+) -> np.ndarray:
+    """
+    Refine partition using alpha-expansion graph cuts.
+
+    Uses min-cut/max-flow to iteratively expand each label,
+    optimizing the energy function (data cost + smoothness cost).
+
+    Args:
+        mesh: Trimesh object
+        partition: Initial partition (label per face)
+        cost_data: (num_faces, num_labels) data cost
+        cost_smoothness: (num_edges,) smoothness cost (based on dihedral angles)
+        smoothing_iterations: Number of expansion iterations
+        _lambda: Weight for smoothness term
+
+    Returns:
+        Refined partition
+    """
+    A = 'alpha'
+    B = 'alpha_complement'
+    labels = np.unique(partition)
+
+    cost_smoothness = cost_smoothness * _lambda
+    cost_min = partition_cost(mesh, partition, cost_data, cost_smoothness)
+
+    for iteration in range(smoothing_iterations):
+        for label in tqdm(labels, desc=f'    Repartition iter {iteration+1}', leave=False):
+            G, node2index = construct_expansion_graph(label, mesh, partition, cost_data, cost_smoothness)
+            index2node = {v: k for k, v in node2index.items()}
+
+            # Use igraph for min-cut (faster than networkx)
+            G_ig = igraph.Graph.from_networkx(G)
+            outputs = G_ig.st_mincut(source=node2index[A], target=node2index[B], capacity='capacity')
+            S = outputs.partition[0]
+            T = outputs.partition[1]
+
+            assert node2index[A] in S and node2index[B] in T
+            S = np.array([index2node[v] for v in S if isinstance(index2node[v], int)]).astype(int)
+            T = np.array([index2node[v] for v in T if isinstance(index2node[v], int)]).astype(int)
+
+            # T gets assigned the expanding label
+            if len(T) > 0:
+                partition[T] = label
+
+            cost = partition_cost(mesh, partition, cost_data, cost_smoothness)
+            if cost > cost_min + EPSILON:
+                print(f'    Warning: Cost increased ({cost_min:.2f} -> {cost:.2f})')
+            cost_min = min(cost, cost_min)
+
+    return partition
+
+
+def graph_cut_repartition(
+    face2label: Dict[int, int],
+    mesh: trimesh.Trimesh,
+    repartition_lambda: float = 1.0,
+    repartition_iterations: int = 2,
+    target_labels: int = None,
+    lambda_range: Tuple[float, float] = (0.1, 5.0),
+    tolerance: int = 1,
+) -> Dict[int, int]:
+    """
+    Refine face labels using alpha-expansion graph cuts.
+
+    This smooths segmentation boundaries by optimizing an energy function
+    that balances data fidelity (keeping original labels) with smoothness
+    (preferring cuts at sharp dihedral angles).
+
+    Args:
+        face2label: Dict mapping face_idx -> label
+        mesh: Trimesh object
+        repartition_lambda: Weight for smoothness term (higher = smoother boundaries)
+        repartition_iterations: Number of graph cut iterations
+        target_labels: If set, auto-tune lambda to achieve this many segments
+        lambda_range: (min, max) range for lambda search when using target_labels
+        tolerance: Acceptable deviation from target_labels
+
+    Returns:
+        Refined face2label dict
+    """
+    import multiprocessing as mp
+
+    num_faces = len(mesh.faces)
+
+    # Convert face2label to partition array
+    partition = np.zeros(num_faces, dtype=np.int32)
+    for face, label in face2label.items():
+        partition[int(face)] = label
+
+    max_label = int(partition.max())
+
+    # Build cost matrices
+    # Data cost: 0 if face keeps its label, 1 otherwise
+    cost_data = np.ones((num_faces, max_label + 1), dtype=np.float32)
+    for f in range(num_faces):
+        cost_data[f, partition[f]] = 0
+
+    # Smoothness cost: based on dihedral angles
+    # Sharp angles (small angle) = high cost to cut there
+    # Smooth angles (large angle) = low cost to cut there
+    angles = mesh.face_adjacency_angles  # radians, 0 = flat, pi = sharp
+    cost_smoothness = -np.log(angles / np.pi + EPSILON)
+
+    if target_labels is None:
+        # Standard mode: use fixed lambda
+        print(f'    Running graph cut repartition (lambda={repartition_lambda}, iters={repartition_iterations})...')
+        partition = repartition(
+            mesh, partition, cost_data, cost_smoothness,
+            smoothing_iterations=repartition_iterations,
+            _lambda=repartition_lambda
+        )
+    else:
+        # Target labels mode: search for lambda that gives target segment count
+        print(f'    Running graph cut with target_labels={target_labels} (tolerance={tolerance})...')
+
+        def count_labels(part, noise_threshold=10):
+            """Count labels, ignoring tiny segments."""
+            values, counts = np.unique(part, return_counts=True)
+            return len(values[counts > noise_threshold])
+
+        # Try multiple lambdas in parallel
+        num_samples = min(mp.cpu_count(), 8)
+        lambdas = np.linspace(lambda_range[0], lambda_range[1], num=num_samples)
+
+        print(f'    Searching lambda in range [{lambda_range[0]}, {lambda_range[1]}] with {num_samples} samples...')
+
+        # Run repartition for each lambda
+        results = []
+        for _lambda in lambdas:
+            part_copy = partition.copy()
+            refined = repartition(
+                mesh, part_copy, cost_data, cost_smoothness,
+                smoothing_iterations=repartition_iterations,
+                _lambda=_lambda
+            )
+            n_labels = count_labels(refined)
+            results.append((refined, n_labels, _lambda))
+            print(f'      lambda={_lambda:.2f} -> {n_labels} labels')
+
+        # Find best match
+        best_partition = None
+        best_diff = float('inf')
+        best_lambda = repartition_lambda
+
+        for refined, n_labels, _lambda in results:
+            diff = abs(n_labels - target_labels)
+            if diff < best_diff:
+                best_diff = diff
+                best_partition = refined
+                best_lambda = _lambda
+
+        partition = best_partition
+        print(f'    Selected lambda={best_lambda:.2f} with {count_labels(partition)} labels (target={target_labels})')
+
+        if best_diff > tolerance:
+            print(f'    Warning: Could not achieve target within tolerance (diff={best_diff})')
+
+    # Convert back to dict
+    return {int(f): int(partition[f]) for f in range(num_faces)}
