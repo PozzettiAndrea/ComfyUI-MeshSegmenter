@@ -19,6 +19,33 @@ from tqdm import tqdm
 
 from .types import MESH_RENDER_DATA
 
+# Import multiband type - use string constant directly for ComfyUI type system
+MULTIBAND_IMAGE = "MULTIBAND_IMAGE"
+
+
+def create_multiband(samples, channel_names=None, metadata=None):
+    """Create a MULTIBAND_IMAGE dict from a tensor."""
+    import torch
+    # Ensure 4D tensor
+    if samples.ndim == 3:
+        samples = samples.unsqueeze(0)
+    if samples.ndim != 4:
+        raise ValueError(f"Expected 3D or 4D tensor, got {samples.ndim}D")
+    # Ensure float32
+    if samples.dtype != torch.float32:
+        samples = samples.float()
+    B, C, H, W = samples.shape
+    # Generate default channel names if not provided
+    if channel_names is None:
+        channel_names = [f"channel_{i}" for i in range(C)]
+    elif len(channel_names) != C:
+        raise ValueError(f"channel_names length ({len(channel_names)}) != channels ({C})")
+    return {
+        'samples': samples,
+        'channel_names': list(channel_names),
+        'metadata': metadata or {},
+    }
+
 
 def pil_to_tensor(images: list) -> torch.Tensor:
     """Convert list of PIL Images to ComfyUI image tensor (B, H, W, C) float32 0-1."""
@@ -53,6 +80,20 @@ def numpy_to_tensor(arrays: list, normalize: bool = True) -> torch.Tensor:
     if not tensors:
         return torch.zeros((1, 64, 64, 3), dtype=torch.float32)
     return torch.from_numpy(np.stack(tensors, axis=0))
+
+
+def image_to_multiband(tensor: torch.Tensor, channel_names: list, metadata: dict = None) -> dict:
+    """Convert (B,H,W,C) IMAGE tensor to MULTIBAND_IMAGE dict."""
+    # Permute from (B,H,W,C) to (B,C,H,W)
+    samples = tensor.permute(0, 3, 1, 2)
+    return create_multiband(samples, channel_names, metadata)
+
+
+def mask_to_multiband(tensor: torch.Tensor, channel_name: str = "mask", metadata: dict = None) -> dict:
+    """Convert (B,H,W) MASK tensor to MULTIBAND_IMAGE dict."""
+    # Add channel dim: (B,H,W) -> (B,1,H,W)
+    samples = tensor.unsqueeze(1)
+    return create_multiband(samples, [channel_name], metadata)
 
 
 class MultiViewRenderer:
@@ -114,8 +155,8 @@ class MultiViewRenderer:
             }
         }
 
-    RETURN_TYPES = (MESH_RENDER_DATA, "IMAGE", "IMAGE", "IMAGE", "MASK")
-    RETURN_NAMES = ("render_data", "normals", "matte", "sdf", "face_mask")
+    RETURN_TYPES = ("MESH_RENDER_DATA", "MULTIBAND_IMAGE")
+    RETURN_NAMES = ("render_data", "renders")
     FUNCTION = "render_views"
     CATEGORY = "meshsegmenter/sammesh"
 
@@ -197,14 +238,13 @@ class MultiViewRenderer:
         # 2. Matte (already has black background)
         matte_tensor = pil_to_tensor(renders['matte'])
 
-        # 3. SDF (optional)
+        # 3. SDF (optional) - single channel, normalized 0-1
         if compute_sdf:
-            sdf_tensor = self._compute_sdf(
-                mesh, renders['poses'], render_dim, sdf_rays, sdf_cone_amplitude
-            )
+            sdf_per_face = self._compute_sdf_per_face(mesh, sdf_rays, sdf_cone_amplitude)
+            sdf_tensor = self._sdf_to_pixels(sdf_per_face, renders['faces'])  # (B, H, W)
         else:
-            # Empty black placeholder
-            sdf_tensor = torch.zeros_like(matte_tensor)
+            # Empty placeholder - single channel
+            sdf_tensor = torch.zeros((n_views, render_dim, render_dim), dtype=torch.float32)
 
         # 4. Face mask (single channel MASK: 1=mesh, 0=background)
         face_mask_list = []
@@ -213,28 +253,59 @@ class MultiViewRenderer:
             face_mask_list.append(mask)
         face_mask = torch.from_numpy(np.stack(face_mask_list, axis=0))
 
-        print(f"  Output shapes:")
-        print(f"    normals: {normals_tensor.shape}")
-        print(f"    matte: {matte_tensor.shape}")
-        print(f"    sdf: {sdf_tensor.shape}")
-        print(f"    face_mask: {face_mask.shape}")
+        # 5. Face ID (integer per pixel, -1 for background, stored as float)
+        face_id_list = []
+        for faces in renders['faces']:
+            face_id_list.append(faces.astype(np.float32))
+        face_id = torch.from_numpy(np.stack(face_id_list, axis=0))
 
-        return (render_data, normals_tensor, matte_tensor, sdf_tensor, face_mask)
+        # Combine all outputs into ONE MULTIBAND_IMAGE
+        # Channels: normal_x/y/z, matte_r/g/b, sdf, mask, face_id
 
-    def _compute_sdf(
+        # Convert tensors from (B,H,W,C) to (B,C,H,W)
+        normals_bchw = normals_tensor.permute(0, 3, 1, 2)  # (B,3,H,W)
+        matte_bchw = matte_tensor.permute(0, 3, 1, 2)      # (B,3,H,W)
+        sdf_bchw = sdf_tensor.unsqueeze(1)                  # (B,1,H,W) - single channel
+        mask_bchw = face_mask.unsqueeze(1)                  # (B,1,H,W)
+        face_id_bchw = face_id.unsqueeze(1)                 # (B,1,H,W)
+
+        # Concatenate along channel dimension
+        all_channels = torch.cat([normals_bchw, matte_bchw, sdf_bchw, mask_bchw, face_id_bchw], dim=1)
+
+        channel_names = [
+            "normal_x", "normal_y", "normal_z",
+            "matte_r", "matte_g", "matte_b",
+            "sdf",
+            "mask",
+            "face_id"
+        ]
+
+        renders_multiband = create_multiband(
+            all_channels,
+            channel_names=channel_names,
+            metadata={
+                "source": "multiview_renderer",
+                "sdf_computed": compute_sdf,
+                "n_views": n_views,
+                "resolution": render_dim,
+            }
+        )
+
+        print(f"  Output MULTIBAND_IMAGE shape: {renders_multiband['samples'].shape}")
+        print(f"  Channels: {channel_names}")
+
+        return (render_data, renders_multiband)
+
+    def _compute_sdf_per_face(
         self,
         mesh: trimesh.Trimesh,
-        poses: np.ndarray,
-        render_dim: int,
         sdf_rays: int,
         sdf_cone_amplitude: int
-    ) -> torch.Tensor:
-        """Compute SDF and render from same camera poses."""
-        from ...samesh.renderer.renderer import Renderer
+    ) -> np.ndarray:
+        """Compute SDF values per face. Returns array of shape (num_faces,)."""
         from ...samesh.models.shape_diameter_function import (
             prep_mesh_shape_diameter_function,
             shape_diameter_function,
-            colormap_shape_diameter_function
         )
 
         print(f"  Computing SDF (rays={sdf_rays}, cone={sdf_cone_amplitude})...")
@@ -242,7 +313,7 @@ class MultiViewRenderer:
         # Prepare mesh for SDF computation
         mesh_sdf = prep_mesh_shape_diameter_function(mesh)
 
-        # Compute SDF values
+        # Compute SDF values per face
         sdf_values = shape_diameter_function(
             mesh_sdf,
             rays=sdf_rays,
@@ -250,23 +321,39 @@ class MultiViewRenderer:
         )
         print(f"    SDF range: [{sdf_values.min():.3f}, {sdf_values.max():.3f}]")
 
-        # Colormap mesh with SDF values
-        mesh_colored = colormap_shape_diameter_function(mesh_sdf, sdf_values)
+        return sdf_values
 
-        # Create renderer config
-        config = OmegaConf.create({
-            "target_dim": [render_dim, render_dim],
-        })
+    def _sdf_to_pixels(
+        self,
+        sdf_per_face: np.ndarray,
+        face_ids: list,
+    ) -> torch.Tensor:
+        """
+        Convert per-face SDF values to per-pixel using face_id buffer.
 
-        # Initialize renderer with SDF-colored mesh
-        renderer = Renderer(config)
-        renderer.set_object(mesh_colored)
-        renderer.set_camera()
+        Args:
+            sdf_per_face: (num_faces,) SDF value per face
+            face_ids: List of (H,W) arrays with face indices (-1 = background)
 
-        # Render from same camera positions
+        Returns:
+            Tensor of shape (B, H, W) with normalized SDF values (0-1)
+        """
+        # Normalize SDF values to 0-1
+        sdf_min, sdf_max = sdf_per_face.min(), sdf_per_face.max()
+        if sdf_max > sdf_min:
+            sdf_normalized = (sdf_per_face - sdf_min) / (sdf_max - sdf_min)
+        else:
+            sdf_normalized = np.zeros_like(sdf_per_face)
+
         sdf_images = []
-        for pose in tqdm(poses, desc="    Rendering SDF views"):
-            outputs = renderer.render(pose, uv_map=True, interpolate_norms=True)
-            sdf_images.append(Image.fromarray(outputs['matte']))
+        for face_id in face_ids:
+            h, w = face_id.shape
+            sdf_img = np.zeros((h, w), dtype=np.float32)
 
-        return pil_to_tensor(sdf_images)
+            # Lookup SDF for each pixel using face_id
+            valid_mask = face_id >= 0
+            sdf_img[valid_mask] = sdf_normalized[face_id[valid_mask]]
+
+            sdf_images.append(sdf_img)
+
+        return torch.from_numpy(np.stack(sdf_images, axis=0))

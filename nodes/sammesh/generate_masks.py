@@ -20,7 +20,6 @@ from ...samesh.models.mask_utils import (
     visualize_points
 )
 
-
 def tensor_to_pil_list(tensor: torch.Tensor) -> list:
     """Convert ComfyUI image tensor (B, H, W, C) to list of PIL Images."""
     images = []
@@ -28,6 +27,35 @@ def tensor_to_pil_list(tensor: torch.Tensor) -> list:
     for i in range(arr.shape[0]):
         img_arr = (arr[i] * 255).astype(np.uint8)
         images.append(Image.fromarray(img_arr))
+    return images
+
+
+def parse_channel_config(config: str, available_channels: list) -> list:
+    """
+    Parse channel config and return list of [ch1, ch2, ch3] triplets.
+
+    Config format (YAML-like):
+        - normal_x, normal_y, normal_z
+        - matte_r, matte_g, matte_b
+        - sdf, sdf, sdf
+
+    Each line starting with '-' defines one RGB image from 3 channel names.
+    Raises error if channel not found.
+    """
+    images = []
+    for line in config.strip().split('\n'):
+        line = line.strip()
+        if not line or not line.startswith('-'):
+            continue
+        # Remove leading dash and split by comma
+        channels = [c.strip() for c in line[1:].strip().split(',')]
+        if len(channels) != 3:
+            raise ValueError(f"Each line must have exactly 3 channels, got: {channels}")
+        # Validate channels exist
+        for ch in channels:
+            if ch not in available_channels:
+                raise ValueError(f"Channel '{ch}' not found. Available: {available_channels}")
+        images.append(channels)
     return images
 
 
@@ -82,18 +110,19 @@ class GenerateMasks:
                 }),
             },
             "optional": {
-                # Image inputs - order matches MultiViewRenderer outputs
-                "normals": ("IMAGE", {
-                    "tooltip": "RGB normal maps from MultiViewRenderer"
+                # Single multiband input from MultiViewRenderer
+                "renders": ("MULTIBAND_IMAGE", {
+                    "tooltip": "Combined renders from MultiViewRenderer (normals, matte, sdf, mask channels)"
                 }),
-                "matte": ("IMAGE", {
-                    "tooltip": "RGB shaded renders from MultiViewRenderer"
+                # Channel config
+                "channel_config": ("STRING", {
+                    "default": "- normal_x, normal_y, normal_z\n- matte_r, matte_g, matte_b\n- sdf, sdf, sdf",
+                    "multiline": True,
+                    "tooltip": "YAML-like config: each line defines an RGB image from 3 channel names. Use same channel 3x for grayscale (e.g. sdf, sdf, sdf)"
                 }),
-                "sdf": ("IMAGE", {
-                    "tooltip": "RGB SDF renders from MultiViewRenderer"
-                }),
-                "face_mask": ("MASK", {
-                    "tooltip": "Foreground mask from MultiViewRenderer (1=mesh, 0=background)"
+                "mask_channel": ("STRING", {
+                    "default": "mask",
+                    "tooltip": "Channel name to use for point sampling mask"
                 }),
                 # SAM parameters
                 "points_per_side": ("INT", {
@@ -196,10 +225,9 @@ class GenerateMasks:
         self,
         sam_checkpoint_path: str,
         sam_model_config_path: str,
-        normals: torch.Tensor = None,
-        matte: torch.Tensor = None,
-        sdf: torch.Tensor = None,
-        face_mask: torch.Tensor = None,
+        renders: dict = None,
+        channel_config: str = "- normal_x, normal_y, normal_z\n- matte_r, matte_g, matte_b\n- sdf, sdf, sdf",
+        mask_channel: str = "mask",
         points_per_side: int = 32,
         pred_iou_thresh: float = 0.5,
         stability_score_thresh: float = 0.7,
@@ -208,23 +236,47 @@ class GenerateMasks:
     ):
         from ...samesh.models.sam import point_grid_from_mask
 
-        # Collect all provided image inputs
+        if renders is None:
+            raise ValueError("renders (MULTIBAND_IMAGE) input is required!")
+
+        # Extract channels from MULTIBAND_IMAGE
+        samples = renders['samples']  # (B, C, H, W)
+        channel_list = renders.get('channel_names', [])
+
+        print(f"GenerateMasks: Received MULTIBAND_IMAGE with {samples.shape[1]} channels: {channel_list}")
+
+        # Parse channel config to get image specs
+        image_specs = parse_channel_config(channel_config, channel_list)
+        if not image_specs:
+            raise ValueError("No valid image specs in channel_config!")
+
+        print(f"GenerateMasks: Building {len(image_specs)} images from config")
+
+        # Build images from config
         image_inputs = []
         image_names = []
-        if normals is not None:
-            image_inputs.append(('normals', normals))
-            image_names.append('normals')
-        if matte is not None:
-            image_inputs.append(('matte', matte))
-            image_names.append('matte')
-        if sdf is not None:
-            # Check if SDF is all black (compute_sdf was False)
-            if sdf.sum() > 0:
-                image_inputs.append(('sdf', sdf))
-                image_names.append('sdf')
+        for ch1, ch2, ch3 in image_specs:
+            idx1 = channel_list.index(ch1)
+            idx2 = channel_list.index(ch2)
+            idx3 = channel_list.index(ch3)
 
-        if not image_inputs:
-            raise ValueError("At least one image input (normals, matte, or sdf) is required!")
+            # Extract and stack channels: (B,3,H,W) -> (B,H,W,3)
+            img = torch.stack([
+                samples[:, idx1, :, :],
+                samples[:, idx2, :, :],
+                samples[:, idx3, :, :],
+            ], dim=-1)
+
+            image_name = f"{ch1}+{ch2}+{ch3}"
+            image_inputs.append((image_name, img))
+            image_names.append(image_name)
+            print(f"  Image '{image_name}' from channels [{idx1}, {idx2}, {idx3}]")
+
+        # Extract mask channel for point sampling
+        if mask_channel not in channel_list:
+            raise ValueError(f"Mask channel '{mask_channel}' not found. Available: {channel_list}")
+        mask_idx = channel_list.index(mask_channel)
+        face_mask_tensor = samples[:, mask_idx, :, :]  # (B,H,W)
 
         print(f"GenerateMasks: Processing {len(image_inputs)} image types: {image_names}")
         print(f"  Points per side: {points_per_side}")
@@ -245,8 +297,8 @@ class GenerateMasks:
         h, w = first_img.shape[1], first_img.shape[2]
 
         # Convert face_mask to numpy, or create full mask if not provided
-        if face_mask is not None:
-            face_mask_np = face_mask.numpy()
+        if face_mask_tensor is not None:
+            face_mask_np = face_mask_tensor.numpy()
             print(f"  Using provided face_mask for point sampling")
         else:
             # Auto-detect from image brightness (black = background)
