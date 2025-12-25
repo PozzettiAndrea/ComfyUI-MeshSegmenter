@@ -17,7 +17,7 @@ from PIL import Image
 from omegaconf import OmegaConf
 from tqdm import tqdm
 
-from .types import MESH_RENDER_DATA
+from .types import CAMERA_POSES
 
 # Import multiband type - use string constant directly for ComfyUI type system
 MULTIBAND_IMAGE = "MULTIBAND_IMAGE"
@@ -155,8 +155,8 @@ class MultiViewRenderer:
             }
         }
 
-    RETURN_TYPES = ("MESH_RENDER_DATA", "MULTIBAND_IMAGE")
-    RETURN_NAMES = ("render_data", "renders")
+    RETURN_TYPES = ("MULTIBAND_IMAGE", "CAMERA_POSES")
+    RETURN_NAMES = ("renders", "poses")
     FUNCTION = "render_views"
     CATEGORY = "meshsegmenter/sammesh"
 
@@ -216,16 +216,6 @@ class MultiViewRenderer:
         n_views = len(renders['faces'])
         print(f"  Generated {n_views} views")
 
-        # Build render_data dict for downstream nodes
-        render_data = {
-            'norms': renders['norms'],
-            'faces': renders['faces'],
-            'depth': [r for r in renders['depth']],
-            'matte': renders['matte'],
-            'poses': np.array(renders['poses']),
-            'mesh': mesh,
-        }
-
         # 1. Normals RGB with BLACK background
         norms_images = []
         for norms, faces in zip(renders['norms'], renders['faces']):
@@ -260,11 +250,11 @@ class MultiViewRenderer:
         face_id = torch.from_numpy(np.stack(face_id_list, axis=0))
 
         # Combine all outputs into ONE MULTIBAND_IMAGE
-        # Channels: normal_x/y/z, matte_r/g/b, sdf, mask, face_id
+        # Channels: normal_x/y/z, matte, sdf, mask, face_id (7 total)
 
         # Convert tensors from (B,H,W,C) to (B,C,H,W)
         normals_bchw = normals_tensor.permute(0, 3, 1, 2)  # (B,3,H,W)
-        matte_bchw = matte_tensor.permute(0, 3, 1, 2)      # (B,3,H,W)
+        matte_bchw = matte_tensor[:, :, :, 0:1].permute(0, 3, 1, 2)  # (B,1,H,W) - single channel (grayscale)
         sdf_bchw = sdf_tensor.unsqueeze(1)                  # (B,1,H,W) - single channel
         mask_bchw = face_mask.unsqueeze(1)                  # (B,1,H,W)
         face_id_bchw = face_id.unsqueeze(1)                 # (B,1,H,W)
@@ -274,7 +264,7 @@ class MultiViewRenderer:
 
         channel_names = [
             "normal_x", "normal_y", "normal_z",
-            "matte_r", "matte_g", "matte_b",
+            "matte",
             "sdf",
             "mask",
             "face_id"
@@ -294,7 +284,10 @@ class MultiViewRenderer:
         print(f"  Output MULTIBAND_IMAGE shape: {renders_multiband['samples'].shape}")
         print(f"  Channels: {channel_names}")
 
-        return (render_data, renders_multiband)
+        # Poses output: (n_views, 4, 4) camera transformation matrices
+        poses_array = np.array(renders['poses'])
+
+        return (renders_multiband, poses_array)
 
     def _compute_sdf_per_face(
         self,

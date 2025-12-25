@@ -2,13 +2,16 @@
 # Copyright (C) 2025 ComfyUI-MeshSegmenter Contributors
 
 """
-SAM Model Downloader Node - Downloads SAM2 model checkpoints.
+SAM Model Loader Node - Downloads and loads SAM2 model.
 """
 
 import os
 import requests
 from tqdm import tqdm
 from huggingface_hub import hf_hub_download
+from omegaconf import OmegaConf
+
+from .types import SAM_MODEL
 
 try:
     import folder_paths
@@ -48,11 +51,14 @@ SAM_MODELS = {
 
 SAM_MODEL_NAMES = list(SAM_MODELS.keys())
 
+# Cache for loaded models
+_sam_model_cache = {}
 
-class SamModelDownloader:
+
+class SamModelLoader:
     """
-    Downloads a selected SAM2 Hiera model checkpoint and config required by SAMesh.
-    Places them in the standard ComfyUI SAM model directory.
+    Downloads and loads a SAM2 Hiera model.
+    Returns the loaded model ready for use in Generate Masks node.
     """
 
     @classmethod
@@ -61,14 +67,14 @@ class SamModelDownloader:
             "required": {
                 "model_name": (SAM_MODEL_NAMES, {
                     "default": SAM_MODEL_NAMES[0],
-                    "tooltip": "Select the SAM2 Hiera model to download."
+                    "tooltip": "Select the SAM2 Hiera model to download and load."
                 }),
             }
         }
 
-    RETURN_TYPES = ("STRING", "STRING",)
-    RETURN_NAMES = ("sam_checkpoint_path", "sam_model_config_path",)
-    FUNCTION = "download_model"
+    RETURN_TYPES = (SAM_MODEL,)
+    RETURN_NAMES = ("sam_model",)
+    FUNCTION = "load_model"
     CATEGORY = "meshsegmenter/sammesh"
 
     def download_file(self, url, save_path, model_name):
@@ -99,10 +105,15 @@ class SamModelDownloader:
                 os.remove(save_path)
             raise
 
-    def download_model(self, model_name: str):
-        """Download the specified SAM2 model."""
+    def load_model(self, model_name: str):
+        """Download (if needed) and load the specified SAM2 model."""
         if model_name not in SAM_MODELS:
             raise ValueError(f"Selected model '{model_name}' is not defined.")
+
+        # Check cache first
+        if model_name in _sam_model_cache:
+            print(f"SamModelLoader: Using cached model '{model_name}'")
+            return (_sam_model_cache[model_name],)
 
         model_info = SAM_MODELS[model_name]
         checkpoint_filename = model_info["checkpoint_filename"]
@@ -115,7 +126,7 @@ class SamModelDownloader:
 
         # Download Checkpoint if missing
         if not os.path.exists(checkpoint_path):
-            print(f"SamModelDownloader ({model_name}): Checkpoint not found. Downloading...")
+            print(f"SamModelLoader ({model_name}): Checkpoint not found. Downloading...")
             try:
                 hf_hub_download(
                     repo_id=repo_id,
@@ -124,19 +135,19 @@ class SamModelDownloader:
                     local_dir_use_symlinks=False,
                     resume_download=True
                 )
-                print(f"SamModelDownloader ({model_name}): Checkpoint downloaded to {checkpoint_path}")
+                print(f"SamModelLoader ({model_name}): Checkpoint downloaded to {checkpoint_path}")
             except Exception as e:
                 print(f"\033[31mError downloading checkpoint for {model_name}: {e}\033[0m")
                 raise
         else:
-            print(f"SamModelDownloader ({model_name}): Checkpoint found: {checkpoint_path}")
+            print(f"SamModelLoader ({model_name}): Checkpoint found: {checkpoint_path}")
 
         # Download Config YAML if missing
         if not os.path.exists(config_path):
-            print(f"SamModelDownloader ({model_name}): Config not found. Downloading...")
+            print(f"SamModelLoader ({model_name}): Config not found. Downloading...")
             self.download_file(config_url, config_path, model_name)
         else:
-            print(f"SamModelDownloader ({model_name}): Config found: {config_path}")
+            print(f"SamModelLoader ({model_name}): Config found: {config_path}")
 
         # Verify files exist
         if not os.path.exists(checkpoint_path):
@@ -144,4 +155,33 @@ class SamModelDownloader:
         if not os.path.exists(config_path):
             raise FileNotFoundError(f"Failed to locate config: {config_path}")
 
-        return (checkpoint_path, config_path,)
+        # Load the model
+        print(f"SamModelLoader ({model_name}): Loading model...")
+
+        # Default engine config - can be adjusted in GenerateMasks node
+        engine_config = {
+            "points_per_side": 32,
+            "crop_n_layers": 0,
+            "pred_iou_thresh": 0.5,
+            "stability_score_thresh": 0.7,
+            "stability_score_offset": 1.0,
+        }
+
+        config = OmegaConf.create({
+            "sam": {
+                "checkpoint": checkpoint_path,
+                "model_config": os.path.basename(config_path),
+                "auto": True,
+                "ground": False,
+                "engine_config": engine_config,
+            }
+        })
+
+        from ...samesh.models.sam import Sam2Model
+        model = Sam2Model(config, device='cuda')
+
+        # Cache the loaded model
+        _sam_model_cache[model_name] = model
+        print(f"SamModelLoader ({model_name}): Model loaded and cached!")
+
+        return (model,)

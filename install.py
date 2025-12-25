@@ -27,33 +27,59 @@ def install_system_dependencies():
         print("  Skipping (not Linux)")
         return True
 
-    # Check if EGL is available
+    # Check if main EGL library is available (not just NVIDIA drivers)
+    egl_found = False
     try:
-        result = subprocess.run(["ldconfig", "-p"], capture_output=True, text=True)
-        if "libEGL" in result.stdout:
-            print("  EGL libraries found")
-            return True
+        result = subprocess.run(["/sbin/ldconfig", "-p"], capture_output=True, text=True)
+        # Look specifically for libEGL.so (the main library, not nvidia-specific ones)
+        for line in result.stdout.split('\n'):
+            if 'libEGL.so' in line and 'nvidia' not in line.lower():
+                egl_found = True
+                break
     except:
         pass
 
+    if egl_found:
+        print("  EGL libraries found")
+        return True
+
     print("  Installing EGL/OpenGL libraries for headless rendering...")
     try:
+        # Clean apt cache first to avoid stale package errors
         subprocess.run(
-            ["sudo", "apt-get", "update"],
+            ["sudo", "apt-get", "clean"],
             capture_output=True,
             timeout=60
         )
         subprocess.run(
-            ["sudo", "apt-get", "install", "-y",
-             "libegl1-mesa-dev", "libgl1-mesa-glx", "libosmesa6-dev"],
+            ["sudo", "rm", "-rf", "/var/lib/apt/lists/*"],
+            capture_output=True,
+            timeout=60
+        )
+        result = subprocess.run(
+            ["sudo", "apt-get", "update"],
             capture_output=True,
             timeout=120
         )
+        if result.returncode != 0:
+            print(f"  Warning: apt-get update failed: {result.stderr}")
+
+        # Install EGL packages - libegl1 provides libEGL.so
+        result = subprocess.run(
+            ["sudo", "apt-get", "install", "-y",
+             "libegl1", "libegl-dev", "libgl1-mesa-glx", "libosmesa6-dev"],
+            capture_output=True,
+            timeout=180
+        )
+        if result.returncode != 0:
+            print(f"  Warning: apt-get install failed: {result.stderr}")
+            raise Exception(result.stderr)
+
         print("  System dependencies installed")
         return True
     except Exception as e:
         print(f"  Warning: Could not install system deps: {e}")
-        print("  You may need to run: sudo apt-get install libegl1-mesa-dev libgl1-mesa-glx libosmesa6-dev")
+        print("  You may need to run: sudo apt-get clean && sudo rm -rf /var/lib/apt/lists/* && sudo apt-get update && sudo apt-get install -y libegl1 libegl-dev libgl1-mesa-glx libosmesa6-dev")
         return False
 
 

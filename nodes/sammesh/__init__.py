@@ -8,39 +8,36 @@ This module provides modular mesh segmentation using SAM2 (Segment Anything Mode
 The pipeline is decomposed into separate nodes for maximum visibility and customization:
 
 Pipeline:
-1. MultiViewRenderer - Render mesh from multiple angles (normals, matte, SDF, face_mask)
-2. GenerateMasks - Load SAM and run it on rendered images
-3. CombineViewMasks - Merge masks from different sources
-4. Lift2DTo3DLabels - Convert 2D masks to 3D face labels
-5. SmoothLabels - Clean up labels
-6. ApplyLabelsToMesh - Color mesh by segments
+1. MultiViewRenderer - Render mesh from multiple angles (normals, matte, SDF, mask, face_id)
+2. GenerateMasks - Run SAM on rendered images to generate segmentations
+3. Lift2DTo3DLabels - Convert 2D masks to 3D face labels
+4. SmoothLabels - Clean up labels
+5. ApplyLabelsToMesh - Color mesh by segments
 """
 
 # Core nodes - always available
-from .model_downloader import SamModelDownloader
+from .model_downloader import SamModelLoader
 from .loader import SamMeshLoader
 from .exporter import SamMeshExporter
 from .renderer import SamMeshRenderer
 
-# New modular pipeline nodes
+# Modular pipeline nodes
 from .multiview_renderer import MultiViewRenderer
 from .generate_masks import GenerateMasks
-from .combine_masks import CombineViewMasks
 from .lift_labels import Lift2DTo3DLabels
 from .smooth_labels import SmoothLabels
 from .apply_labels import ApplyLabelsToMesh
 
 NODE_CLASS_MAPPINGS = {
     # Utility nodes
-    "MeshSegSamModelDownloader": SamModelDownloader,
+    "MeshSegSamModelLoader": SamModelLoader,
     "MeshSegSamMeshLoader": SamMeshLoader,
     "MeshSegSamMeshExporter": SamMeshExporter,
     "MeshSegSamMeshRenderer": SamMeshRenderer,
 
-    # New modular pipeline nodes
+    # Modular pipeline nodes
     "MeshSegMultiViewRenderer": MultiViewRenderer,
     "MeshSegGenerateMasks": GenerateMasks,
-    "MeshSegCombineViewMasks": CombineViewMasks,
     "MeshSegLift2DTo3DLabels": Lift2DTo3DLabels,
     "MeshSegSmoothLabels": SmoothLabels,
     "MeshSegApplyLabelsToMesh": ApplyLabelsToMesh,
@@ -48,15 +45,14 @@ NODE_CLASS_MAPPINGS = {
 
 NODE_DISPLAY_NAME_MAPPINGS = {
     # Utility nodes
-    "MeshSegSamModelDownloader": "SAM Model Downloader",
+    "MeshSegSamModelLoader": "SAM Model Loader",
     "MeshSegSamMeshLoader": "Load Mesh (SAMesh)",
     "MeshSegSamMeshExporter": "Export Segments (SAMesh)",
     "MeshSegSamMeshRenderer": "Render Mesh Views (SAMesh)",
 
-    # New modular pipeline nodes
+    # Modular pipeline nodes
     "MeshSegMultiViewRenderer": "Multi-View Renderer",
     "MeshSegGenerateMasks": "Generate Masks (SAM)",
-    "MeshSegCombineViewMasks": "Combine View Masks",
     "MeshSegLift2DTo3DLabels": "Lift 2D to 3D Labels",
     "MeshSegSmoothLabels": "Smooth Labels",
     "MeshSegApplyLabelsToMesh": "Apply Labels to Mesh",
@@ -66,14 +62,13 @@ __all__ = [
     'NODE_CLASS_MAPPINGS',
     'NODE_DISPLAY_NAME_MAPPINGS',
     # Utility nodes
-    'SamModelDownloader',
+    'SamModelLoader',
     'SamMeshLoader',
     'SamMeshExporter',
     'SamMeshRenderer',
-    # New modular pipeline nodes
+    # Modular pipeline nodes
     'MultiViewRenderer',
     'GenerateMasks',
-    'CombineViewMasks',
     'Lift2DTo3DLabels',
     'SmoothLabels',
     'ApplyLabelsToMesh',

@@ -12,12 +12,10 @@ from PIL import Image
 from tqdm import tqdm
 from omegaconf import OmegaConf
 
-from .types import VIEW_MASKS
+from .types import SAM_MODEL
 from ...samesh.models.mask_utils import (
     combine_bmasks,
     remove_artifacts,
-    colormap_mask,
-    visualize_points
 )
 
 def tensor_to_pil_list(tensor: torch.Tensor) -> list:
@@ -78,35 +76,19 @@ def numpy_to_tensor(arrays: list, normalize: bool = True) -> torch.Tensor:
     return torch.from_numpy(np.stack(tensors, axis=0))
 
 
-# Cache for loaded SAM model to avoid reloading
-_sam_model_cache = {}
-
-
 class GenerateMasks:
     """
-    Loads SAM2 and runs it on rendered images to generate masks.
+    Runs SAM2 on rendered images to generate masks.
 
-    Input order matches MultiViewRenderer output order for clean wiring:
-    - sam_checkpoint_path, sam_model_config_path: SAM2 model files
-    - normals: RGB normal maps (optional)
-    - matte: RGB shaded renders (optional)
-    - sdf: RGB SDF renders (optional)
-    - face_mask: Single channel MASK for point sampling (optional)
-
-    At least one of normals/matte/sdf is required.
+    Takes a pre-loaded SAM model from SamModelLoader node.
     """
 
     @classmethod
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "sam_checkpoint_path": ("STRING", {
-                    "forceInput": True,
-                    "tooltip": "Path to SAM2 model checkpoint (.pt file)"
-                }),
-                "sam_model_config_path": ("STRING", {
-                    "forceInput": True,
-                    "tooltip": "Path to SAM2 model config (.yaml file)"
+                "sam_model": (SAM_MODEL, {
+                    "tooltip": "Loaded SAM2 model from SamModelLoader node"
                 }),
             },
             "optional": {
@@ -116,7 +98,7 @@ class GenerateMasks:
                 }),
                 # Channel config
                 "channel_config": ("STRING", {
-                    "default": "- normal_x, normal_y, normal_z\n- matte_r, matte_g, matte_b\n- sdf, sdf, sdf",
+                    "default": "- normal_x, normal_y, normal_z\n- matte, matte, matte\n- sdf, sdf, sdf",
                     "multiline": True,
                     "tooltip": "YAML-like config: each line defines an RGB image from 3 channel names. Use same channel 3x for grayscale (e.g. sdf, sdf, sdf)"
                 }),
@@ -153,86 +135,24 @@ class GenerateMasks:
                     "step": 64,
                     "tooltip": "Minimum mask area to keep."
                 }),
-                "show_points": ("BOOLEAN", {
-                    "default": True,
-                    "tooltip": "Show point visualization (green=valid, red=invalid)."
-                }),
             }
         }
 
-    RETURN_TYPES = (VIEW_MASKS, "IMAGE", "IMAGE")
-    RETURN_NAMES = ("masks", "colored_masks", "point_viz")
+    RETURN_TYPES = ("MULTIBAND_IMAGE",)
+    RETURN_NAMES = ("segmentations",)
     FUNCTION = "generate_masks"
     CATEGORY = "meshsegmenter/sammesh"
 
-    def _load_sam_model(
-        self,
-        checkpoint_path: str,
-        config_path: str,
-        points_per_side: int,
-        pred_iou_thresh: float,
-        stability_score_thresh: float
-    ):
-        """Load SAM model, using cache if available."""
-        cache_key = (checkpoint_path, config_path)
-
-        if cache_key in _sam_model_cache:
-            model = _sam_model_cache[cache_key]
-            # Update engine config
-            model.engine.points_per_side = points_per_side
-            model.engine.pred_iou_thresh = pred_iou_thresh
-            model.engine.stability_score_thresh = stability_score_thresh
-            print(f"GenerateMasks: Using cached SAM model")
-            return model
-
-        # Validate paths
-        if not os.path.exists(checkpoint_path):
-            raise FileNotFoundError(f"SAM checkpoint not found: {checkpoint_path}")
-        if not os.path.exists(config_path):
-            raise FileNotFoundError(f"SAM config not found: {config_path}")
-
-        print(f"GenerateMasks: Loading SAM2 model...")
-        print(f"  Checkpoint: {checkpoint_path}")
-        print(f"  Config: {config_path}")
-
-        engine_config = {
-            "points_per_side": points_per_side,
-            "crop_n_layers": 0,
-            "pred_iou_thresh": pred_iou_thresh,
-            "stability_score_thresh": stability_score_thresh,
-            "stability_score_offset": 1.0,
-        }
-
-        config = OmegaConf.create({
-            "sam": {
-                "checkpoint": checkpoint_path,
-                "model_config": os.path.basename(config_path),
-                "auto": True,
-                "ground": False,
-                "engine_config": engine_config,
-            }
-        })
-
-        from ...samesh.models.sam import Sam2Model
-        model = Sam2Model(config, device='cuda')
-
-        _sam_model_cache[cache_key] = model
-        print(f"  Model loaded and cached!")
-
-        return model
-
     def generate_masks(
         self,
-        sam_checkpoint_path: str,
-        sam_model_config_path: str,
+        sam_model,
         renders: dict = None,
-        channel_config: str = "- normal_x, normal_y, normal_z\n- matte_r, matte_g, matte_b\n- sdf, sdf, sdf",
+        channel_config: str = "- normal_x, normal_y, normal_z\n- matte, matte, matte\n- sdf, sdf, sdf",
         mask_channel: str = "mask",
         points_per_side: int = 32,
         pred_iou_thresh: float = 0.5,
         stability_score_thresh: float = 0.7,
         min_area: int = 1024,
-        show_points: bool = True
     ):
         from ...samesh.models.sam import point_grid_from_mask
 
@@ -282,14 +202,11 @@ class GenerateMasks:
         print(f"  Points per side: {points_per_side}")
         print(f"  Min area: {min_area}")
 
-        # Load SAM model
-        model = self._load_sam_model(
-            sam_checkpoint_path,
-            sam_model_config_path,
-            points_per_side,
-            pred_iou_thresh,
-            stability_score_thresh
-        )
+        # Update model engine config with current parameters
+        sam_model.engine.points_per_side = points_per_side
+        sam_model.engine.pred_iou_thresh = pred_iou_thresh
+        sam_model.engine.stability_score_thresh = stability_score_thresh
+        model = sam_model
 
         # Get dimensions from first image input
         first_img = image_inputs[0][1]
@@ -308,15 +225,10 @@ class GenerateMasks:
 
         # Process each image type
         all_bmasks = []
-        all_point_status = []
 
         # Initialize per-view storage
         for _ in range(n_views):
             all_bmasks.append([])
-            all_point_status.append({'valid': [], 'invalid': []})
-
-        # For visualization, use the first available image type
-        viz_images = tensor_to_pil_list(image_inputs[0][1])
 
         for img_name, img_tensor in image_inputs:
             print(f"  Processing {img_name}...")
@@ -343,31 +255,13 @@ class GenerateMasks:
                     print(f"      Warning: SAM failed on view {view_idx}: {e}")
                     bmasks = np.zeros((1, h, w), dtype=bool)
 
-                # Track valid/invalid points (only for first image type)
-                if img_name == image_names[0] and len(point_grid) > 0 and show_points:
-                    for px, py in point_grid:
-                        pixel_x = int(px * (w - 1))
-                        pixel_y = int(py * (h - 1))
-                        point_produced_mask = False
-                        for mask in bmasks:
-                            if mask[pixel_y, pixel_x] and mask.sum() >= min_area:
-                                point_produced_mask = True
-                                break
-                        if point_produced_mask:
-                            all_point_status[view_idx]['valid'].append((pixel_x, pixel_y))
-                        else:
-                            all_point_status[view_idx]['invalid'].append((pixel_x, pixel_y))
-
                 # Filter by area and add to view's mask list
                 filtered = [m for m in bmasks if m.sum() >= min_area]
                 if filtered:
                     all_bmasks[view_idx].extend(filtered)
 
         # Combine masks per view
-        combined_bmasks = []
         combined_cmasks = []
-        colored_masks_list = []
-        point_viz_list = []
 
         for view_idx in range(n_views):
             h, w = face_mask_np[view_idx].shape
@@ -378,42 +272,35 @@ class GenerateMasks:
                 cmask = remove_artifacts(cmask, mode='islands', min_area=min_area // 4)
                 cmask = remove_artifacts(cmask, mode='holes', min_area=min_area // 4)
             else:
-                view_bmasks = np.zeros((1, h, w), dtype=bool)
                 cmask = np.zeros((h, w), dtype=int)
 
-            combined_bmasks.append(view_bmasks)
             combined_cmasks.append(cmask)
 
-            # Colored mask visualization
-            colored = colormap_mask(cmask, seed=42)
-            colored_masks_list.append(np.array(colored))
+        # Build MULTIBAND_IMAGE with one segmentation channel per config line
+        # cmask contains integer labels per pixel
+        cmask_np = np.stack(combined_cmasks, axis=0).astype(np.float32)  # (n_views, H, W)
 
-            # Point visualization
-            if show_points:
-                viz_arr = np.array(viz_images[view_idx])
-                point_viz = visualize_points(
-                    viz_arr.copy(),
-                    all_point_status[view_idx]['valid'],
-                    all_point_status[view_idx]['invalid'],
-                    radius=4,
-                    valid_color=(0, 255, 0),
-                    invalid_color=(255, 0, 0)
-                )
-                point_viz_list.append(point_viz)
-            else:
-                point_viz_list.append(np.array(viz_images[view_idx]))
+        # One channel per config, each containing the same cmask
+        n_configs = len(image_specs)
+        seg_channels = [torch.from_numpy(cmask_np) for _ in range(n_configs)]
+        seg_tensor = torch.stack(seg_channels, dim=1)  # (n_views, n_configs, H, W)
 
-        # Build outputs
-        masks_data = {
-            'bmasks': combined_bmasks,
-            'cmasks': combined_cmasks,
-            'point_status': all_point_status,
+        # Channel names: seg_00, seg_01, etc.
+        seg_channel_names = [f"seg_{i:02d}" for i in range(n_configs)]
+
+        # Create MULTIBAND_IMAGE
+        segmentations_multiband = {
+            'samples': seg_tensor,
+            'channel_names': seg_channel_names,
+            'metadata': {
+                'source': 'generate_masks',
+                'n_views': n_views,
+                'n_configs': n_configs,
+            }
         }
 
-        colored_masks_tensor = numpy_to_tensor(colored_masks_list, normalize=True)
-        point_viz_tensor = numpy_to_tensor(point_viz_list, normalize=True)
-
-        total_masks = sum(len(bm) for bm in combined_bmasks)
+        total_masks = sum(len(bm) for bm in all_bmasks)
         print(f"  Generated {total_masks} masks across {n_views} views")
+        print(f"  Segmentation MULTIBAND: {n_configs} channels ({seg_channel_names})")
 
-        return (masks_data, colored_masks_tensor, point_viz_tensor)
+        return (segmentations_multiband,)
