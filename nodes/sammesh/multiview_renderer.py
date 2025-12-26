@@ -454,11 +454,20 @@ class MultiViewRenderer:
             # Fallback: use face normals variance as proxy for curvature
             vertex_curvature = np.zeros(len(mesh.vertices))
 
+        # Handle NaN values
+        nan_count = np.isnan(vertex_curvature).sum()
+        if nan_count > 0:
+            print(f"    Warning: {nan_count} NaN values in vertex curvature, replacing with 0")
+            vertex_curvature = np.nan_to_num(vertex_curvature, nan=0.0)
+
         # Convert vertex curvature to face curvature (average of face vertices)
         face_curvature = np.mean(vertex_curvature[mesh.faces], axis=1)
 
         # Take absolute value (we care about magnitude, not sign)
         face_curvature = np.abs(face_curvature)
+
+        # Final NaN check
+        face_curvature = np.nan_to_num(face_curvature, nan=0.0, posinf=0.0, neginf=0.0)
 
         print(f"    Curvature range: [{face_curvature.min():.6f}, {face_curvature.max():.6f}]")
 
