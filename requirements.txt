@@ -6,6 +6,7 @@ tqdm>=4.60.0
 trimesh>=3.15.0
 numpy>=1.21.0
 scipy>=1.7.0
+libigl>=2.4.0
 
 # Image processing
 Pillow>=9.0.0

@@ -263,12 +263,12 @@ class MultiViewRenderer:
         else:
             curvature_tensor = torch.zeros((n_views, render_dim, render_dim), dtype=torch.float32)
 
-        # 5. Feature edges (optional) - single channel, 1=edge, 0=no edge
+        # 5. Feature edges (optional) - matte with feature edges overlaid (grayscale)
         if compute_feature_edges:
             feature_edge_tensor = self._render_feature_edges(
-                mesh, renders['faces'], renders['poses'],
+                mesh, renders['matte'], renders['faces'], renders['poses'],
                 feature_edge_angle, render_dim, camera_radius
-            )
+            )  # Returns (B, H, W) grayscale
         else:
             feature_edge_tensor = torch.zeros((n_views, render_dim, render_dim), dtype=torch.float32)
 
@@ -437,21 +437,43 @@ class MultiViewRenderer:
         mesh: trimesh.Trimesh,
     ) -> np.ndarray:
         """
-        Compute mean curvature per face.
+        Compute mean curvature per face using cotangent Laplacian.
 
+        Uses libigl for fast sparse matrix computation.
         Returns array of shape (num_faces,) with absolute mean curvature.
         """
         print(f"  Computing curvature...")
 
-        # Get vertex curvatures using trimesh's discrete_mean_curvature_measure
-        # This gives curvature at vertices
         try:
-            vertex_curvature = trimesh.curvature.discrete_mean_curvature_measure(
-                mesh, mesh.vertices, radius=mesh.scale / 20
-            )
+            import igl
+
+            verts = mesh.vertices.astype(np.float64)
+            faces = mesh.faces.astype(np.int32)
+
+            # Build cotangent Laplacian (sparse matrix)
+            L = igl.cotmatrix(verts, faces)
+
+            # Mass matrix for normalization
+            M = igl.massmatrix(verts, faces, igl.MASSMATRIX_TYPE_VORONOI)
+            M_inv = 1.0 / (M.diagonal() + 1e-10)
+
+            # Mean curvature normal: H_n = M^-1 @ L @ V
+            Hn = (M_inv[:, None] * (L @ verts))
+
+            # Mean curvature magnitude (factor of 0.5 from definition)
+            vertex_curvature = 0.5 * np.linalg.norm(Hn, axis=1)
+
+        except ImportError:
+            print(f"    libigl not available, falling back to trimesh")
+            try:
+                vertex_curvature = trimesh.curvature.discrete_mean_curvature_measure(
+                    mesh, mesh.vertices, radius=mesh.scale / 20
+                )
+            except Exception as e:
+                print(f"    Curvature computation failed: {e}, using zeros")
+                vertex_curvature = np.zeros(len(mesh.vertices))
         except Exception as e:
-            print(f"    Curvature computation failed: {e}, using fallback")
-            # Fallback: use face normals variance as proxy for curvature
+            print(f"    igl curvature failed: {e}, using zeros")
             vertex_curvature = np.zeros(len(mesh.vertices))
 
         # Handle NaN values
@@ -476,6 +498,7 @@ class MultiViewRenderer:
     def _render_feature_edges(
         self,
         mesh: trimesh.Trimesh,
+        matte_images: list,
         face_ids: list,
         poses: list,
         angle_threshold: float,
@@ -483,115 +506,78 @@ class MultiViewRenderer:
         camera_radius: float
     ) -> torch.Tensor:
         """
-        Render feature edges (sharp edges above angle threshold) for each view.
+        Render mesh with feature edges using PyVista.
 
         Args:
             mesh: The mesh to render
-            face_ids: List of (H,W) face ID buffers
+            matte_images: List of PIL matte images (not used, we render fresh)
+            face_ids: List of (H,W) face ID buffers (not used)
             poses: List of camera pose matrices
             angle_threshold: Angle in degrees above which edges are "sharp"
             render_dim: Resolution of output images
             camera_radius: Distance from camera to mesh center
 
         Returns:
-            Tensor of shape (B, H, W) with 1=edge pixel, 0=no edge
+            Tensor of shape (B, H, W) grayscale with feature edges as black lines
         """
-        print(f"  Computing feature edges (threshold={angle_threshold}°)...")
+        import pyvista as pv
 
-        # Find feature edges based on dihedral angle
-        angle_threshold_rad = np.radians(angle_threshold)
+        print(f"  Rendering feature edges with PyVista (threshold={angle_threshold}°)...")
 
-        # Get face adjacency and compute dihedral angles
-        face_adjacency = mesh.face_adjacency  # (n_edges, 2) pairs of adjacent faces
-        face_adjacency_edges = mesh.face_adjacency_edges  # (n_edges, 2) vertex indices
+        # Convert trimesh to pyvista
+        faces_pv = np.hstack([
+            np.full((len(mesh.faces), 1), 3, dtype=np.int64),
+            mesh.faces
+        ]).ravel()
+        pv_mesh = pv.PolyData(mesh.vertices, faces_pv)
 
-        # Compute dihedral angles between adjacent faces
-        face_normals = mesh.face_normals
-        n1 = face_normals[face_adjacency[:, 0]]
-        n2 = face_normals[face_adjacency[:, 1]]
+        # Extract feature edges (sharp edges above angle threshold)
+        feature_edges = pv_mesh.extract_feature_edges(
+            feature_angle=angle_threshold,
+            boundary_edges=False,
+            manifold_edges=False,
+            feature_edges=True
+        )
+        print(f"    Extracted {feature_edges.n_cells} feature edges")
 
-        # Angle between normals (0 = coplanar, pi = opposite)
-        dot_products = np.clip(np.sum(n1 * n2, axis=1), -1, 1)
-        dihedral_angles = np.arccos(dot_products)
-
-        # Feature edges are where angle exceeds threshold
-        is_feature_edge = dihedral_angles > angle_threshold_rad
-        feature_edge_indices = np.where(is_feature_edge)[0]
-
-        print(f"    Found {len(feature_edge_indices)} feature edges out of {len(face_adjacency)}")
-
-        # Get the vertex pairs for feature edges
-        feature_edges = face_adjacency_edges[feature_edge_indices]  # (n_feature, 2)
-
-        # Render feature edges for each view
+        # Render for each camera pose
         edge_images = []
-        for view_idx, (face_id, pose) in enumerate(zip(face_ids, poses)):
-            h, w = face_id.shape
-            edge_img = np.zeros((h, w), dtype=np.float32)
+        for view_idx, pose in enumerate(poses):
+            # Create offscreen plotter
+            pl = pv.Plotter(off_screen=True, window_size=[render_dim, render_dim])
+            pl.set_background('white')
 
-            if len(feature_edges) == 0:
-                edge_images.append(edge_img)
-                continue
+            # Add mesh surface (white)
+            pl.add_mesh(pv_mesh, color='white', lighting=True)
 
-            # Project edges to 2D using camera pose
-            # pose is camera-to-world, we need world-to-camera
-            pose_inv = np.linalg.inv(pose)
+            # Add feature edges on top (black lines)
+            if feature_edges.n_cells > 0:
+                pl.add_mesh(feature_edges, color='black', line_width=2)
 
-            # Get vertices of feature edges
-            v1 = mesh.vertices[feature_edges[:, 0]]  # (n_feature, 3)
-            v2 = mesh.vertices[feature_edges[:, 1]]  # (n_feature, 3)
+            # Extract camera position and orientation from pose matrix
+            # pose is camera-to-world transform
+            cam_pos = pose[:3, 3]  # Camera position in world
+            cam_forward = -pose[:3, 2]  # Camera looks along -Z in its local frame
+            cam_up = pose[:3, 1]  # Camera up is +Y in its local frame
 
-            # Transform to camera space
-            def transform_points(points, matrix):
-                ones = np.ones((points.shape[0], 1))
-                points_h = np.hstack([points, ones])
-                transformed = (matrix @ points_h.T).T
-                return transformed[:, :3]
+            # Set camera
+            focal_point = cam_pos + cam_forward * camera_radius
+            pl.camera.position = cam_pos
+            pl.camera.focal_point = focal_point
+            pl.camera.up = cam_up
+            pl.camera.view_angle = 60  # Match pyrender FOV
 
-            v1_cam = transform_points(v1, pose_inv)
-            v2_cam = transform_points(v2, pose_inv)
+            # Render
+            img = pl.screenshot(return_img=True)
+            pl.close()
 
-            # Project to 2D (simple orthographic-like for now, assuming normalized mesh)
-            # The renderer uses perspective, but for edge drawing we use a simpler projection
-            fov = 45  # approximate FOV
-            focal = render_dim / (2 * np.tan(np.radians(fov / 2)))
+            # Convert to grayscale (0-1)
+            if img.ndim == 3:
+                gray = np.mean(img.astype(np.float32), axis=2) / 255.0
+            else:
+                gray = img.astype(np.float32) / 255.0
 
-            def project_to_2d(pts_cam):
-                # Perspective projection
-                z = pts_cam[:, 2]
-                # Avoid division by zero
-                z = np.where(np.abs(z) < 0.001, 0.001, z)
-                x_2d = pts_cam[:, 0] / (-z) * focal + render_dim / 2
-                y_2d = pts_cam[:, 1] / (-z) * focal + render_dim / 2
-                return x_2d, y_2d, z
-
-            x1, y1, z1 = project_to_2d(v1_cam)
-            x2, y2, z2 = project_to_2d(v2_cam)
-
-            # Draw lines on the edge image (only for edges in front of camera)
-            for i in range(len(feature_edges)):
-                if z1[i] > 0 or z2[i] > 0:  # Behind camera
-                    continue
-
-                # Bresenham-like line drawing
-                px1, py1 = int(round(x1[i])), int(round(y1[i]))
-                px2, py2 = int(round(x2[i])), int(round(y2[i]))
-
-                # Clip to image bounds
-                if not (0 <= px1 < w or 0 <= px2 < w) or not (0 <= py1 < h or 0 <= py2 < h):
-                    continue
-
-                # Draw line using numpy
-                length = max(abs(px2 - px1), abs(py2 - py1), 1)
-                t = np.linspace(0, 1, length + 1)
-                xs = (px1 + t * (px2 - px1)).astype(int)
-                ys = (py1 + t * (py2 - py1)).astype(int)
-
-                # Filter valid coordinates
-                valid = (xs >= 0) & (xs < w) & (ys >= 0) & (ys < h)
-                edge_img[ys[valid], xs[valid]] = 1.0
-
-            edge_images.append(edge_img)
+            edge_images.append(gray)
 
         print(f"    Feature edge rendering complete")
         return torch.from_numpy(np.stack(edge_images, axis=0))

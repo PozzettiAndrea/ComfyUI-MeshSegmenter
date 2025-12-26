@@ -25,6 +25,7 @@ from .renderer import SamMeshRenderer
 # Modular pipeline nodes
 from .multiview_renderer import MultiViewRenderer
 from .generate_masks import GenerateMasks
+from .combine_bmasks import CombineBMasks
 from .lift_labels import Lift2DTo3DLabels
 from .smooth_labels import SmoothLabels
 from .graph_cut import GraphCutRepartition
@@ -40,6 +41,7 @@ NODE_CLASS_MAPPINGS = {
     # Modular pipeline nodes
     "MeshSegMultiViewRenderer": MultiViewRenderer,
     "MeshSegGenerateMasks": GenerateMasks,
+    "MeshSegCombineBMasks": CombineBMasks,
     "MeshSegLift2DTo3DLabels": Lift2DTo3DLabels,
     "MeshSegSmoothLabels": SmoothLabels,
     "MeshSegGraphCutRepartition": GraphCutRepartition,
@@ -56,6 +58,7 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     # Modular pipeline nodes
     "MeshSegMultiViewRenderer": "Multi-View Renderer",
     "MeshSegGenerateMasks": "Generate Masks (SAM)",
+    "MeshSegCombineBMasks": "Combine Binary Masks",
     "MeshSegLift2DTo3DLabels": "Lift 2D to 3D Labels",
     "MeshSegSmoothLabels": "Smooth Labels",
     "MeshSegGraphCutRepartition": "Graph Cut Repartition",
@@ -73,6 +76,7 @@ __all__ = [
     # Modular pipeline nodes
     'MultiViewRenderer',
     'GenerateMasks',
+    'CombineBMasks',
     'Lift2DTo3DLabels',
     'SmoothLabels',
     'GraphCutRepartition',
