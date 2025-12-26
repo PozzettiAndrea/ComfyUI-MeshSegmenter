@@ -3,6 +3,7 @@
 
 """
 MeshSegmenter PreStartup Script
+- Checks and installs EGL dependencies for headless rendering
 - Generates backend_mappings.json for dynamic widget visibility
 - Copies example 3D assets to ComfyUI input folder on startup
 """
@@ -10,6 +11,54 @@ import os
 import re
 import json
 import shutil
+import sys
+import subprocess
+
+
+def check_and_install_egl():
+    """Check for EGL library and attempt to install if missing (Linux only)."""
+    if sys.platform != "linux":
+        return True
+
+    # Check if libEGL.so is available (not just NVIDIA-specific ones)
+    try:
+        result = subprocess.run(["/sbin/ldconfig", "-p"], capture_output=True, text=True)
+        for line in result.stdout.split('\n'):
+            if 'libEGL.so' in line and 'nvidia' not in line.lower():
+                return True  # EGL found
+    except Exception:
+        pass
+
+    # EGL not found - print warning and attempt install
+    print("\033[33m[MeshSegmenter] WARNING: EGL library not found\033[0m")
+    print("[MeshSegmenter] Attempting to install EGL dependencies...")
+
+    try:
+        # Try to install (works if user has passwordless sudo)
+        result = subprocess.run(
+            ["sudo", "-n", "apt-get", "update"],
+            capture_output=True,
+            timeout=60
+        )
+        result = subprocess.run(
+            ["sudo", "-n", "apt-get", "install", "-y", "libegl1", "libegl-dev", "libgl1-mesa-glx"],
+            capture_output=True,
+            timeout=120
+        )
+        if result.returncode == 0:
+            print("\033[32m[MeshSegmenter] EGL libraries installed successfully\033[0m")
+            # Update ldconfig cache
+            subprocess.run(["sudo", "-n", "ldconfig"], capture_output=True, timeout=30)
+            return True
+    except Exception:
+        pass
+
+    # Installation failed - print manual instructions
+    print("\033[31m[MeshSegmenter] ERROR: Could not install EGL libraries automatically\033[0m")
+    print("[MeshSegmenter] Please run manually:")
+    print("  sudo apt-get update && sudo apt-get install -y libegl1 libegl-dev libgl1-mesa-glx")
+    print("[MeshSegmenter] Then restart ComfyUI")
+    return False
 
 
 def generate_backend_mappings():
@@ -125,5 +174,6 @@ def copy_example_assets():
 
 
 # Run on import
+check_and_install_egl()
 generate_backend_mappings()
 copy_example_assets()

@@ -26,7 +26,7 @@ class CombineBMasks:
         return {
             "required": {
                 "masks": ("MULTIBAND_IMAGE", {
-                    "tooltip": "Multiband image with binary mask channels to combine"
+                    "tooltip": "Multiband image with binary mask channels to combine. If 'foreground_mask' channel exists, it will be used for background removal."
                 }),
             },
             "optional": {
@@ -77,31 +77,59 @@ class CombineBMasks:
 
         B, C, H, W = samples.shape
 
-        print(f"CombineBMasks: Combining {C} mask channels across {B} views")
-        print(f"  Channel names: {channel_names}")
+        # Check if foreground_mask channel exists in input
+        fg_mask_np = None
+        fg_channel_idx = None
+        if 'foreground_mask' in channel_names:
+            fg_channel_idx = channel_names.index('foreground_mask')
+            fg_mask_np = samples[:, fg_channel_idx].numpy()  # (B, H, W)
+            print(f"CombineBMasks: Found 'foreground_mask' channel, using for background removal")
+
+        # Count actual mask channels (excluding foreground_mask)
+        mask_channel_count = C - 1 if fg_channel_idx is not None else C
+        print(f"CombineBMasks: Combining {mask_channel_count} segmentation channels across {B} views")
         print(f"  Sort by area: {sort_by_area}")
-        print(f"  Threshold: {threshold}")
 
         combined_masks = []
 
         for batch_idx in range(B):
-            # Extract all binary masks for this view
+            # Extract and decompose all segmentation channels for this view
             bmasks = []
             for ch_idx in range(C):
-                mask = samples[batch_idx, ch_idx].numpy()
+                if ch_idx == fg_channel_idx:
+                    continue  # Skip foreground mask channel
 
-                # Convert to binary using threshold
-                binary_mask = mask > threshold
+                seg_mask = samples[batch_idx, ch_idx].numpy()
 
-                # Skip empty masks
-                if binary_mask.sum() > 0:
-                    bmasks.append(binary_mask)
+                # Check if this is a segmentation (has multiple labels) or binary mask
+                unique_vals = np.unique(seg_mask)
+                unique_vals = unique_vals[unique_vals > 0]  # Exclude background
+
+                if len(unique_vals) > 1 or (len(unique_vals) == 1 and unique_vals[0] > 1):
+                    # This is a segmentation - decompose into binary masks
+                    for label in unique_vals:
+                        binary_mask = seg_mask == label
+                        if binary_mask.sum() > 0:
+                            bmasks.append(binary_mask)
+                else:
+                    # This is already a binary mask
+                    binary_mask = seg_mask > threshold
+                    if binary_mask.sum() > 0:
+                        bmasks.append(binary_mask)
 
             if bmasks:
                 bmasks_arr = np.array(bmasks)
 
                 # Combine into single labeled mask
                 cmask = combine_bmasks(bmasks_arr, sort=sort_by_area)
+
+                # Shift labels so background is 0
+                cmask = cmask + 1
+
+                # Apply foreground mask if available
+                if fg_mask_np is not None:
+                    background = fg_mask_np[batch_idx] < 0.5
+                    cmask[background] = 0
 
                 # Remove artifacts if requested
                 if remove_islands and min_area > 0:

@@ -5,7 +5,7 @@ os.environ['EGL_DEVICE_ID'] = '-1' # NOTE: necessary to not create GPU contentio
 ### START VOODOO ###
 # Dark encantation for disabling anti-aliasing in pyrender (if needed)
 import OpenGL.GL
-antialias_active = False
+antialias_active = True  # Enable anti-aliasing for smoother edges
 old_gl_enable = OpenGL.GL.glEnable
 def new_gl_enable(value):
     if not antialias_active and value == OpenGL.GL.GL_MULTISAMPLE:
@@ -98,9 +98,10 @@ class Renderer:
         self.tmesh_faceid = duplicate_verts(self.tmesh)
 
         # Use white background (255,255,255) so background pixels decode to -1 correctly
+        # NOTE: faceid mesh uses per-face colors, so smooth=False is required
         self.scene_faceid = pyrender.Scene(ambient_light=[1.0, 1.0, 1.0], bg_color=[1.0, 1.0, 1.0, 1.0])
         self.scene_faceid.add(
-            pyrender.Mesh.from_trimesh(self.tmesh_faceid, smooth=smooth)
+            pyrender.Mesh.from_trimesh(self.tmesh_faceid, smooth=False)
         )
 
     def set_camera(self, camera_params: dict = None):
@@ -209,7 +210,7 @@ class Renderer:
         bcent = render_bcent(raw_bcent)
         matte = raw_color if uv_map else render_matte(norms, raw_depth, faces, bcent) # use original depth for matte
 
-        return {'norms': norms, 'depth': depth, 'matte': matte, 'faces': faces}
+        return {'norms': norms, 'depth': depth, 'matte': matte, 'faces': faces, 'bcent': bcent}
 
 
 def render_multiview(

@@ -139,7 +139,7 @@ class GenerateMasks:
         }
 
     RETURN_TYPES = ("MULTIBAND_IMAGE",)
-    RETURN_NAMES = ("segmentations",)
+    RETURN_NAMES = ("binary_masks",)
     FUNCTION = "generate_masks"
     CATEGORY = "meshsegmenter/sammesh"
 
@@ -223,14 +223,12 @@ class GenerateMasks:
             face_mask_np = (first_arr.mean(axis=-1) > 0.01).astype(np.float32)
             print(f"  Auto-detecting foreground from image brightness")
 
-        # Process each image type
-        all_bmasks = []
+        # Process each input type separately, combine masks per type
+        # all_bmasks_per_type[type_idx][view_idx] = list of binary masks
+        n_types = len(image_inputs)
+        all_bmasks_per_type = [[[] for _ in range(n_views)] for _ in range(n_types)]
 
-        # Initialize per-view storage
-        for _ in range(n_views):
-            all_bmasks.append([])
-
-        for img_name, img_tensor in image_inputs:
+        for type_idx, (img_name, img_tensor) in enumerate(image_inputs):
             print(f"  Processing {img_name}...")
             pil_images = tensor_to_pil_list(img_tensor)
 
@@ -255,52 +253,62 @@ class GenerateMasks:
                     print(f"      Warning: SAM failed on view {view_idx}: {e}")
                     bmasks = np.zeros((1, h, w), dtype=bool)
 
-                # Filter by area and add to view's mask list
+                # Filter by area and add to this type's view mask list
                 filtered = [m for m in bmasks if m.sum() >= min_area]
                 if filtered:
-                    all_bmasks[view_idx].extend(filtered)
+                    all_bmasks_per_type[type_idx][view_idx].extend(filtered)
 
-        # Combine masks per view
-        combined_cmasks = []
+        # Combine masks per type into segmentations
+        seg_channels = []
+        for type_idx in range(n_types):
+            type_cmasks = []
+            for view_idx in range(n_views):
+                h, w = face_mask_np[view_idx].shape
+                view_bmasks = all_bmasks_per_type[type_idx][view_idx]
 
-        for view_idx in range(n_views):
-            h, w = face_mask_np[view_idx].shape
+                if view_bmasks:
+                    bmasks_arr = np.array(view_bmasks)
+                    cmask = combine_bmasks(bmasks_arr, sort=True)
 
-            if all_bmasks[view_idx]:
-                view_bmasks = np.array(all_bmasks[view_idx])
-                cmask = combine_bmasks(view_bmasks, sort=True)
-                cmask = remove_artifacts(cmask, mode='islands', min_area=min_area // 4)
-                cmask = remove_artifacts(cmask, mode='holes', min_area=min_area // 4)
-            else:
-                cmask = np.zeros((h, w), dtype=int)
+                    # Shift labels, mask background
+                    cmask = cmask + 1
+                    background = face_mask_np[view_idx] < 0.5
+                    cmask[background] = 0
 
-            combined_cmasks.append(cmask)
+                    cmask = remove_artifacts(cmask, mode='islands', min_area=min_area // 4)
+                    cmask = remove_artifacts(cmask, mode='holes', min_area=min_area // 4)
+                else:
+                    cmask = np.zeros((h, w), dtype=np.int32)
 
-        # Build MULTIBAND_IMAGE with one segmentation channel per config line
-        # cmask contains integer labels per pixel
-        cmask_np = np.stack(combined_cmasks, axis=0).astype(np.float32)  # (n_views, H, W)
+                type_cmasks.append(cmask)
 
-        # One channel per config, each containing the same cmask
-        n_configs = len(image_specs)
-        seg_channels = [torch.from_numpy(cmask_np) for _ in range(n_configs)]
-        seg_tensor = torch.stack(seg_channels, dim=1)  # (n_views, n_configs, H, W)
+            # Stack views for this type: (n_views, H, W)
+            seg_channels.append(torch.from_numpy(np.stack(type_cmasks, axis=0).astype(np.float32)))
 
-        # Channel names: seg_00, seg_01, etc.
-        seg_channel_names = [f"seg_{i:02d}" for i in range(n_configs)]
+        # Stack types: (n_views, n_types, H, W)
+        seg_tensor = torch.stack(seg_channels, dim=1)
+
+        # Add foreground mask as last channel
+        fg_mask_tensor = face_mask_tensor.unsqueeze(1)  # (n_views, 1, H, W)
+        combined_tensor = torch.cat([seg_tensor, fg_mask_tensor], dim=1)  # (n_views, n_types+1, H, W)
+
+        # Create channel names: seg_00, seg_01, ..., foreground_mask
+        channel_names = [f"seg_{i:02d}" for i in range(n_types)] + ["foreground_mask"]
 
         # Create MULTIBAND_IMAGE
-        segmentations_multiband = {
-            'samples': seg_tensor,
-            'channel_names': seg_channel_names,
+        output_multiband = {
+            'samples': combined_tensor,
+            'channel_names': channel_names,
             'metadata': {
                 'source': 'generate_masks',
                 'n_views': n_views,
-                'n_configs': n_configs,
+                'n_types': n_types,
+                'input_types': image_names,
             }
         }
 
-        total_masks = sum(len(bm) for bm in all_bmasks)
-        print(f"  Generated {total_masks} masks across {n_views} views")
-        print(f"  Segmentation MULTIBAND: {n_configs} channels ({seg_channel_names})")
+        total_masks = sum(len(bm) for type_bmasks in all_bmasks_per_type for bm in type_bmasks)
+        print(f"  Generated {total_masks} masks across {n_views} views from {n_types} input types")
+        print(f"  Output: {n_types} segmentation channels + foreground_mask")
 
-        return (segmentations_multiband,)
+        return (output_multiband,)

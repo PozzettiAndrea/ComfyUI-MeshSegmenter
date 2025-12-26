@@ -154,7 +154,7 @@ class MultiViewRenderer:
                 }),
                 "compute_curvature": ("BOOLEAN", {
                     "default": False,
-                    "tooltip": "Compute mean curvature per vertex (useful for segmentation)."
+                    "tooltip": "Compute dihedral curvature (max edge angle per face). Sharp edges = high value."
                 }),
                 "compute_feature_edges": ("BOOLEAN", {
                     "default": False,
@@ -201,9 +201,14 @@ class MultiViewRenderer:
 
         render_dim = int(render_resolution)
 
+        # Copy mesh to avoid modifying original
+        mesh = mesh.copy()
+
+        # Fix normals to ensure consistent orientation
+        mesh.fix_normals()
+
         # Normalize mesh if requested
         if normalize_mesh:
-            mesh = mesh.copy()
             centroid = mesh.bounding_box.centroid
             mesh.vertices -= centroid
             max_extent = max(mesh.bounding_box.extents)
@@ -216,11 +221,12 @@ class MultiViewRenderer:
 
         # Initialize renderer
         renderer = Renderer(config)
-        renderer.set_object(mesh)
+        renderer.set_object(mesh, smooth=True)
         renderer.set_camera()
 
         # Render multiview
-        renderer_args = {"interpolate_norms": True}
+        # Use pyrender's smooth-rendered normals (not trimesh vertex normal interpolation)
+        renderer_args = {"interpolate_norms": False}
         sampling_args = {"radius": camera_radius}
         lighting_args = {}
 
@@ -248,18 +254,21 @@ class MultiViewRenderer:
         # 2. Matte (already has black background)
         matte_tensor = pil_to_tensor(renders['matte'])
 
-        # 3. SDF (optional) - single channel, normalized 0-1
+        # 3. SDF (optional) - single channel, normalized 0-1, smoothly interpolated
         if compute_sdf:
             sdf_per_face = self._compute_sdf_per_face(mesh, sdf_rays, sdf_cone_amplitude)
-            sdf_tensor = self._sdf_to_pixels(sdf_per_face, renders['faces'])  # (B, H, W)
+            sdf_tensor = self._sdf_to_pixels_smooth(mesh, sdf_per_face, renders['faces'], renders['bcent'])
         else:
             # Empty placeholder - single channel
             sdf_tensor = torch.zeros((n_views, render_dim, render_dim), dtype=torch.float32)
 
-        # 4. Curvature (optional) - single channel, normalized 0-1
+        # 4. Curvature (optional) - dihedral angle based, single channel, smoothly interpolated
         if compute_curvature:
-            curvature_per_face = self._compute_curvature_per_face(mesh)
-            curvature_tensor = self._values_to_pixels(curvature_per_face, renders['faces'])
+            curvature_per_face = self._compute_dihedral_curvature_per_face(mesh)
+            # normalize=False because curvature is already normalized to [0,1] based on π
+            curvature_tensor = self._values_to_pixels_smooth(
+                mesh, curvature_per_face, renders['faces'], renders['bcent'], normalize=False
+            )
         else:
             curvature_tensor = torch.zeros((n_views, render_dim, render_dim), dtype=torch.float32)
 
@@ -292,7 +301,7 @@ class MultiViewRenderer:
         normals_bchw = normals_tensor.permute(0, 3, 1, 2)  # (B,3,H,W)
         matte_bchw = matte_tensor[:, :, :, 0:1].permute(0, 3, 1, 2)  # (B,1,H,W) - single channel (grayscale)
         sdf_bchw = sdf_tensor.unsqueeze(1)                  # (B,1,H,W) - single channel
-        curvature_bchw = curvature_tensor.unsqueeze(1)      # (B,1,H,W) - single channel
+        curvature_bchw = curvature_tensor.unsqueeze(1)      # (B,1,H,W) - dihedral curvature
         feature_edges_bchw = feature_edge_tensor.unsqueeze(1)  # (B,1,H,W) - single channel
         mask_bchw = face_mask.unsqueeze(1)                  # (B,1,H,W)
         face_id_bchw = face_id.unsqueeze(1)                 # (B,1,H,W)
@@ -362,136 +371,197 @@ class MultiViewRenderer:
 
         return sdf_values
 
-    def _sdf_to_pixels(
+    def _sdf_to_pixels_smooth(
         self,
+        mesh: trimesh.Trimesh,
         sdf_per_face: np.ndarray,
         face_ids: list,
+        barycentrics: list,
     ) -> torch.Tensor:
         """
-        Convert per-face SDF values to per-pixel using face_id buffer.
+        Convert per-face SDF values to per-pixel with barycentric interpolation.
 
         Args:
+            mesh: The trimesh object
             sdf_per_face: (num_faces,) SDF value per face
             face_ids: List of (H,W) arrays with face indices (-1 = background)
+            barycentrics: List of (H,W,3) barycentric coordinate arrays
 
         Returns:
-            Tensor of shape (B, H, W) with normalized SDF values (0-1)
+            Tensor of shape (B, H, W) with smooth interpolated SDF values (0-1)
         """
-        # Normalize SDF values to 0-1
-        sdf_min, sdf_max = sdf_per_face.min(), sdf_per_face.max()
+        # Convert face SDF to vertex SDF (average of adjacent faces)
+        num_verts = len(mesh.vertices)
+        vertex_sdf = np.zeros(num_verts, dtype=np.float64)
+        vertex_count = np.zeros(num_verts, dtype=np.int32)
+
+        for face_idx, face in enumerate(mesh.faces):
+            for vert_idx in face:
+                vertex_sdf[vert_idx] += sdf_per_face[face_idx]
+                vertex_count[vert_idx] += 1
+
+        # Avoid division by zero
+        vertex_count = np.maximum(vertex_count, 1)
+        vertex_sdf = vertex_sdf / vertex_count
+
+        # Normalize to 0-1
+        sdf_min, sdf_max = vertex_sdf.min(), vertex_sdf.max()
         if sdf_max > sdf_min:
-            sdf_normalized = (sdf_per_face - sdf_min) / (sdf_max - sdf_min)
+            vertex_sdf = (vertex_sdf - sdf_min) / (sdf_max - sdf_min)
         else:
-            sdf_normalized = np.zeros_like(sdf_per_face)
+            vertex_sdf = np.zeros_like(vertex_sdf)
 
         sdf_images = []
-        for face_id in face_ids:
+        num_faces = len(mesh.faces)
+
+        for face_id, bcent in zip(face_ids, barycentrics):
             h, w = face_id.shape
             sdf_img = np.zeros((h, w), dtype=np.float32)
 
-            # Lookup SDF for each pixel using face_id
-            valid_mask = face_id >= 0
-            sdf_img[valid_mask] = sdf_normalized[face_id[valid_mask]]
+            # Flatten for vectorized operations
+            face_id_flat = face_id.reshape(-1)
+            bcent_flat = bcent.reshape(-1, 3)
+
+            # Valid pixels (not background)
+            valid_mask = (face_id_flat >= 0) & (face_id_flat < num_faces)
+
+            if valid_mask.any():
+                valid_faces = face_id_flat[valid_mask]
+                valid_bcent = bcent_flat[valid_mask]
+
+                # Get vertex indices for each face
+                vert_indices = mesh.faces[valid_faces]  # (n_valid, 3)
+
+                # Get vertex SDF values
+                vert_sdf = vertex_sdf[vert_indices]  # (n_valid, 3)
+
+                # Interpolate using barycentric coordinates
+                interpolated = np.sum(vert_sdf * valid_bcent, axis=1)
+
+                # Write back to image
+                sdf_img_flat = sdf_img.reshape(-1)
+                sdf_img_flat[valid_mask] = interpolated
+                sdf_img = sdf_img_flat.reshape(h, w)
 
             sdf_images.append(sdf_img)
 
         return torch.from_numpy(np.stack(sdf_images, axis=0))
 
-    def _values_to_pixels(
+    def _values_to_pixels_smooth(
         self,
+        mesh: trimesh.Trimesh,
         values_per_face: np.ndarray,
         face_ids: list,
+        barycentrics: list,
+        normalize: bool = True,
     ) -> torch.Tensor:
         """
-        Convert per-face values to per-pixel using face_id buffer.
+        Convert per-face values to per-pixel with barycentric interpolation.
 
         Args:
+            mesh: The trimesh object
             values_per_face: (num_faces,) value per face
             face_ids: List of (H,W) arrays with face indices (-1 = background)
+            barycentrics: List of (H,W,3) barycentric coordinate arrays
+            normalize: If True, normalize output to 0-1 based on min/max
 
         Returns:
-            Tensor of shape (B, H, W) with normalized values (0-1)
+            Tensor of shape (B, H, W) with smooth interpolated values
         """
-        # Normalize values to 0-1
-        v_min, v_max = values_per_face.min(), values_per_face.max()
-        if v_max > v_min:
-            values_normalized = (values_per_face - v_min) / (v_max - v_min)
-        else:
-            values_normalized = np.zeros_like(values_per_face)
+        # Convert face values to vertex values (average of adjacent faces)
+        num_verts = len(mesh.vertices)
+        vertex_vals = np.zeros(num_verts, dtype=np.float64)
+        vertex_count = np.zeros(num_verts, dtype=np.int32)
+
+        for face_idx, face in enumerate(mesh.faces):
+            for vert_idx in face:
+                vertex_vals[vert_idx] += values_per_face[face_idx]
+                vertex_count[vert_idx] += 1
+
+        # Avoid division by zero
+        vertex_count = np.maximum(vertex_count, 1)
+        vertex_vals = vertex_vals / vertex_count
+
+        # Optionally normalize to 0-1
+        if normalize:
+            v_min, v_max = vertex_vals.min(), vertex_vals.max()
+            if v_max > v_min:
+                vertex_vals = (vertex_vals - v_min) / (v_max - v_min)
+            else:
+                vertex_vals = np.zeros_like(vertex_vals)
 
         images = []
-        for face_id in face_ids:
+        num_faces = len(mesh.faces)
+
+        for face_id, bcent in zip(face_ids, barycentrics):
             h, w = face_id.shape
             img = np.zeros((h, w), dtype=np.float32)
 
-            # Lookup value for each pixel using face_id
-            valid_mask = face_id >= 0
-            img[valid_mask] = values_normalized[face_id[valid_mask]]
+            # Flatten for vectorized operations
+            face_id_flat = face_id.reshape(-1)
+            bcent_flat = bcent.reshape(-1, 3)
+
+            # Valid pixels (not background)
+            valid_mask = (face_id_flat >= 0) & (face_id_flat < num_faces)
+
+            if valid_mask.any():
+                valid_faces = face_id_flat[valid_mask]
+                valid_bcent = bcent_flat[valid_mask]
+
+                # Get vertex indices for each face
+                vert_indices = mesh.faces[valid_faces]  # (n_valid, 3)
+
+                # Get vertex values
+                vert_vals = vertex_vals[vert_indices]  # (n_valid, 3)
+
+                # Interpolate using barycentric coordinates
+                interpolated = np.sum(vert_vals * valid_bcent, axis=1)
+
+                # Write back to image
+                img_flat = img.reshape(-1)
+                img_flat[valid_mask] = interpolated
+                img = img_flat.reshape(h, w)
 
             images.append(img)
 
         return torch.from_numpy(np.stack(images, axis=0))
 
-    def _compute_curvature_per_face(
+    def _compute_dihedral_curvature_per_face(
         self,
         mesh: trimesh.Trimesh,
     ) -> np.ndarray:
         """
-        Compute mean curvature per face using cotangent Laplacian.
+        Compute dihedral angle based curvature per face.
 
-        Uses libigl for fast sparse matrix computation.
-        Returns array of shape (num_faces,) with absolute mean curvature.
+        For each face, takes the max dihedral angle of its edges.
+        Sharp edges = high curvature, smooth regions = low curvature.
+
+        Returns array of shape (num_faces,) with values in [0, 1].
         """
-        print(f"  Computing curvature...")
+        print(f"  Computing dihedral curvature...")
 
-        try:
-            import igl
+        num_faces = len(mesh.faces)
+        face_max_dihedral = np.zeros(num_faces, dtype=np.float32)
 
-            verts = mesh.vertices.astype(np.float64)
-            faces = mesh.faces.astype(np.int32)
+        # face_adjacency: (n_edges, 2) - pairs of adjacent face indices
+        # face_adjacency_angles: (n_edges,) - dihedral angle at each edge (radians)
+        adjacency = mesh.face_adjacency
+        angles = mesh.face_adjacency_angles
 
-            # Build cotangent Laplacian (sparse matrix)
-            L = igl.cotmatrix(verts, faces)
+        # For each edge, update both adjacent faces with max angle
+        for i, (f1, f2) in enumerate(adjacency):
+            angle = angles[i]
+            face_max_dihedral[f1] = max(face_max_dihedral[f1], angle)
+            face_max_dihedral[f2] = max(face_max_dihedral[f2], angle)
 
-            # Mass matrix for normalization
-            M = igl.massmatrix(verts, faces, igl.MASSMATRIX_TYPE_VORONOI)
-            M_inv = 1.0 / (M.diagonal() + 1e-10)
+        # Normalize: 0 = flat (0 rad), 1 = sharp (pi rad)
+        face_curvature = face_max_dihedral / np.pi
 
-            # Mean curvature normal: H_n = M^-1 @ L @ V
-            Hn = (M_inv[:, None] * (L @ verts))
+        # Cleanup
+        face_curvature = np.nan_to_num(face_curvature, nan=0.0, posinf=1.0, neginf=0.0)
+        face_curvature = np.clip(face_curvature, 0.0, 1.0)
 
-            # Mean curvature magnitude (factor of 0.5 from definition)
-            vertex_curvature = 0.5 * np.linalg.norm(Hn, axis=1)
-
-        except ImportError:
-            print(f"    libigl not available, falling back to trimesh")
-            try:
-                vertex_curvature = trimesh.curvature.discrete_mean_curvature_measure(
-                    mesh, mesh.vertices, radius=mesh.scale / 20
-                )
-            except Exception as e:
-                print(f"    Curvature computation failed: {e}, using zeros")
-                vertex_curvature = np.zeros(len(mesh.vertices))
-        except Exception as e:
-            print(f"    igl curvature failed: {e}, using zeros")
-            vertex_curvature = np.zeros(len(mesh.vertices))
-
-        # Handle NaN values
-        nan_count = np.isnan(vertex_curvature).sum()
-        if nan_count > 0:
-            print(f"    Warning: {nan_count} NaN values in vertex curvature, replacing with 0")
-            vertex_curvature = np.nan_to_num(vertex_curvature, nan=0.0)
-
-        # Convert vertex curvature to face curvature (average of face vertices)
-        face_curvature = np.mean(vertex_curvature[mesh.faces], axis=1)
-
-        # Take absolute value (we care about magnitude, not sign)
-        face_curvature = np.abs(face_curvature)
-
-        # Final NaN check
-        face_curvature = np.nan_to_num(face_curvature, nan=0.0, posinf=0.0, neginf=0.0)
-
-        print(f"    Curvature range: [{face_curvature.min():.6f}, {face_curvature.max():.6f}]")
+        print(f"    Dihedral curvature range: [{face_curvature.min():.4f}, {face_curvature.max():.4f}]")
 
         return face_curvature
 
