@@ -81,18 +81,22 @@ def smooth_labels(
     mesh_graph: Dict[int, Set[int]] = None,
     threshold_percentage_size: float = 0.025,
     threshold_percentage_area: float = 0.025,
-    smoothing_iterations: int = 64
+    smoothing_iterations: int = 64,
+    area_faces: np.ndarray = None,
+    num_faces: int = None,
 ) -> Dict[int, int]:
     """
     Smooth labels by removing small components and filling holes.
 
     Args:
         face2label: Dict mapping face_idx -> label
-        mesh: Trimesh for area calculations
+        mesh: Trimesh for area calculations (ignored if area_faces provided)
         mesh_graph: Face adjacency graph (computed if not provided)
         threshold_percentage_size: Remove components smaller than this % of largest
         threshold_percentage_area: Remove components with less than this % of largest area
         smoothing_iterations: Number of hole-filling iterations
+        area_faces: Optional per-face area array (for quad mesh support)
+        num_faces: Optional override for number of faces (for quad mesh support)
 
     Returns:
         Smoothed face2label dict
@@ -100,7 +104,11 @@ def smooth_labels(
     if mesh_graph is None:
         mesh_graph = build_mesh_graph(mesh)
 
-    num_faces = len(mesh.faces)
+    if num_faces is None:
+        num_faces = len(mesh.faces)
+    if area_faces is None:
+        area_faces = mesh.area_faces
+
     face2label = dict(face2label)  # copy to avoid mutation
 
     # Find connected components
@@ -113,7 +121,7 @@ def smooth_labels(
     # Calculate component sizes and areas
     components = sorted(components, key=lambda x: len(x), reverse=True)
     components_area = [
-        sum([float(mesh.area_faces[face]) for face in comp]) for comp in components
+        sum([float(area_faces[face]) for face in comp if face < len(area_faces)]) for comp in components
     ]
     max_size = max([len(comp) for comp in components])
     max_area = max(components_area)
@@ -322,9 +330,13 @@ def construct_expansion_graph(
             node2index[a] = len(mesh.faces) + 2 + aux_count
             aux_count += 1
 
+    # Note: Use small epsilon instead of 0 to avoid igraph treating 0 as unweighted (default 1)
+    CAPACITY_EPS = 1e-6
     for f in range(len(mesh.faces)):
-        G.add_edge(A, f, capacity=cost_data[f, label])
-        G.add_edge(B, f, capacity=float('inf') if partition[f] == label else cost_data[f, partition[f]])
+        cap_A = max(cost_data[f, label], CAPACITY_EPS)
+        cap_B = float('inf') if partition[f] == label else max(cost_data[f, partition[f]], CAPACITY_EPS)
+        G.add_edge(A, f, capacity=cap_A)
+        G.add_edge(B, f, capacity=cap_B)
 
     for i, edge in enumerate(mesh.face_adjacency):
         f1, f2 = int(edge[0]), int(edge[1])
@@ -389,7 +401,7 @@ def repartition(
             S = np.array([index2node[v] for v in S if isinstance(index2node[v], int)]).astype(int)
             T = np.array([index2node[v] for v in T if isinstance(index2node[v], int)]).astype(int)
 
-            # T gets assigned the expanding label
+            # T consists of those assigned 'alpha' and S 'alpha_complement' (see paper)
             if len(T) > 0:
                 partition[T] = label
 
@@ -404,11 +416,12 @@ def repartition(
 def graph_cut_repartition(
     face2label: Dict[int, int],
     mesh: trimesh.Trimesh,
-    repartition_lambda: float = 1.0,
-    repartition_iterations: int = 2,
+    repartition_lambda: float = 6.0,
+    repartition_iterations: int = 1,
     target_labels: int = None,
-    lambda_range: Tuple[float, float] = (0.1, 5.0),
+    lambda_range: Tuple[float, float] = (1.0, 15.0),
     tolerance: int = 1,
+    noise_threshold: int = 10,
 ) -> Dict[int, int]:
     """
     Refine face labels using alpha-expansion graph cuts.
@@ -425,6 +438,7 @@ def graph_cut_repartition(
         target_labels: If set, auto-tune lambda to achieve this many segments
         lambda_range: (min, max) range for lambda search when using target_labels
         tolerance: Acceptable deviation from target_labels
+        noise_threshold: Minimum faces for a segment to be counted in target mode
 
     Returns:
         Refined face2label dict
@@ -439,12 +453,14 @@ def graph_cut_repartition(
         partition[int(face)] = label
 
     max_label = int(partition.max())
+    unique_labels = np.unique(partition)
 
-    # Build cost matrices
-    # Data cost: 0 if face keeps its label, 1 otherwise
-    cost_data = np.ones((num_faces, max_label + 1), dtype=np.float32)
+    # Build cost matrices (matching original SAMesh exactly)
+    # Data cost: 0 if face keeps its label, 1 otherwise (only for existing labels)
+    cost_data = np.zeros((num_faces, max_label + 1), dtype=np.float32)
     for f in range(num_faces):
-        cost_data[f, partition[f]] = 0
+        for l in unique_labels:
+            cost_data[f, l] = 0.0 if partition[f] == l else 1.0
 
     # Smoothness cost: based on dihedral angles
     # Sharp angles (small angle) = high cost to cut there
@@ -464,7 +480,7 @@ def graph_cut_repartition(
         # Target labels mode: search for lambda that gives target segment count
         print(f'    Running graph cut with target_labels={target_labels} (tolerance={tolerance})...')
 
-        def count_labels(part, noise_threshold=10):
+        def count_labels(part):
             """Count labels, ignoring tiny segments."""
             values, counts = np.unique(part, return_counts=True)
             return len(values[counts > noise_threshold])

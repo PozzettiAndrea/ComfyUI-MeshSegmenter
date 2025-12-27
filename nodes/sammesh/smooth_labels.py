@@ -7,7 +7,7 @@ Smooth Labels Node - Smooths face labels by removing small components and fillin
 
 import trimesh
 
-from .types import FACE_LABELS
+from .types import FACE_LABELS, QUAD_MESH_INFO
 from ...samesh.models.smoothing import (
     build_mesh_graph,
     smooth_labels,
@@ -23,6 +23,9 @@ class SmoothLabels:
     1. Removing small disconnected components
     2. Filling holes by propagating neighbor labels
     3. Optionally splitting disconnected regions with the same label
+
+    Supports quad meshes via optional quad_info input - when provided,
+    uses quad-aware adjacency (4 edges per quad instead of 3 per triangle).
     """
 
     @classmethod
@@ -33,30 +36,34 @@ class SmoothLabels:
                 "face_labels": (FACE_LABELS,),
             },
             "optional": {
+                "quad_info": (QUAD_MESH_INFO, {
+                    "tooltip": "Optional quad mesh info for quad-aware smoothing. "
+                               "If provided, uses original mesh topology for adjacency."
+                }),
                 "smoothing_iterations": ("INT", {
                     "default": 64,
                     "min": 1,
                     "max": 256,
                     "step": 8,
-                    "tooltip": "Number of iterations for hole filling."
+                    "tooltip": "HOLE FILLING ITERATIONS: Number of passes to propagate labels from neighboring faces into unlabeled regions. Each iteration, unlabeled faces adopt the most common label among their already-labeled neighbors. More iterations allow labels to propagate further into large holes. 64 iterations is usually sufficient; increase only if holes remain unfilled."
                 }),
                 "size_threshold_pct": ("FLOAT", {
                     "default": 0.025,
                     "min": 0.001,
-                    "max": 0.1,
+                    "max": 0.5,
                     "step": 0.005,
-                    "tooltip": "Remove components smaller than this % of largest component."
+                    "tooltip": "SIZE THRESHOLD: Remove connected components with fewer faces than this percentage of the largest component. For example, 0.025 (2.5%) removes components that have less than 2.5% as many faces as the largest segment. This cleans up small noise regions. Components must be below BOTH size AND area thresholds to be removed."
                 }),
                 "area_threshold_pct": ("FLOAT", {
                     "default": 0.025,
                     "min": 0.001,
-                    "max": 0.1,
+                    "max": 0.5,
                     "step": 0.005,
-                    "tooltip": "Remove components with less than this % of largest area."
+                    "tooltip": "AREA THRESHOLD: Remove connected components with less surface area than this percentage of the largest component's area. For example, 0.025 (2.5%) removes components with less than 2.5% of the largest segment's area. This accounts for the fact that some segments may have many tiny faces. Components must be below BOTH size AND area thresholds to be removed."
                 }),
                 "split_disconnected": ("BOOLEAN", {
                     "default": True,
-                    "tooltip": "Split disconnected regions with same label into separate labels."
+                    "tooltip": "SPLIT DISCONNECTED REGIONS: When enabled, if two regions have the same label but are not connected on the mesh surface, they will be assigned different labels. This ensures each output segment is a single connected component. Disable to keep disconnected regions unified under the same label (useful if you want to preserve semantic groupings across the mesh)."
                 }),
             }
         }
@@ -70,6 +77,7 @@ class SmoothLabels:
         self,
         mesh: trimesh.Trimesh,
         face_labels: dict,
+        quad_info=None,
         smoothing_iterations: int = 64,
         size_threshold_pct: float = 0.025,
         area_threshold_pct: float = 0.025,
@@ -80,8 +88,18 @@ class SmoothLabels:
         face2label = dict(face_labels['face2label'])
         num_faces = face_labels['num_faces']
 
-        # Build mesh adjacency graph
-        mesh_graph = build_mesh_graph(mesh)
+        # Build mesh adjacency graph - use quad-aware if quad_info provided
+        area_faces = None
+        if quad_info is not None:
+            from ...samesh.utils.quad_mesh import build_quad_mesh_graph, compute_face_areas
+            print("  Using quad-aware adjacency graph")
+            mesh_graph = build_quad_mesh_graph(quad_info)
+            # Override num_faces with original face count
+            num_faces = quad_info.num_original_faces
+            # Compute face areas for original (quad) mesh
+            area_faces = compute_face_areas(quad_info)
+        else:
+            mesh_graph = build_mesh_graph(mesh)
 
         # Smooth labels
         print("  Step 1: Removing small components and filling holes...")
@@ -91,7 +109,9 @@ class SmoothLabels:
             mesh_graph,
             threshold_percentage_size=size_threshold_pct,
             threshold_percentage_area=area_threshold_pct,
-            smoothing_iterations=smoothing_iterations
+            smoothing_iterations=smoothing_iterations,
+            area_faces=area_faces,
+            num_faces=num_faces,
         )
 
         # Fill any remaining unlabeled faces

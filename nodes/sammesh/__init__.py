@@ -31,6 +31,11 @@ from .smooth_labels import SmoothLabels
 from .graph_cut import GraphCutRepartition
 from .apply_labels import ApplyLabelsToMesh
 
+# Quad mesh support nodes
+from .pyvista_loader import PyVistaLoader, RemapFaceIds
+from .apply_labels_quad import ApplyLabelsToQuadMesh, SplitQuadMeshByLabels
+from .exporter_quad import QuadMeshExporter, ExportQuadMeshParts
+
 NODE_CLASS_MAPPINGS = {
     # Utility nodes
     "MeshSegSamModelLoader": SamModelLoader,
@@ -46,6 +51,14 @@ NODE_CLASS_MAPPINGS = {
     "MeshSegSmoothLabels": SmoothLabels,
     "MeshSegGraphCutRepartition": GraphCutRepartition,
     "MeshSegApplyLabelsToMesh": ApplyLabelsToMesh,
+
+    # Quad mesh support nodes
+    "MeshSegPyVistaLoader": PyVistaLoader,
+    "MeshSegRemapFaceIds": RemapFaceIds,
+    "MeshSegApplyLabelsToQuadMesh": ApplyLabelsToQuadMesh,
+    "MeshSegSplitQuadMeshByLabels": SplitQuadMeshByLabels,
+    "MeshSegQuadMeshExporter": QuadMeshExporter,
+    "MeshSegExportQuadMeshParts": ExportQuadMeshParts,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
@@ -63,6 +76,14 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "MeshSegSmoothLabels": "Smooth Labels",
     "MeshSegGraphCutRepartition": "Graph Cut Repartition",
     "MeshSegApplyLabelsToMesh": "Apply Labels to Mesh",
+
+    # Quad mesh support nodes
+    "MeshSegPyVistaLoader": "PyVista Loader (Quad Support)",
+    "MeshSegRemapFaceIds": "Remap Face IDs (Tri→Quad)",
+    "MeshSegApplyLabelsToQuadMesh": "Apply Labels to Quad Mesh",
+    "MeshSegSplitQuadMeshByLabels": "Split Quad Mesh by Labels",
+    "MeshSegQuadMeshExporter": "Export Quad Mesh (OBJ)",
+    "MeshSegExportQuadMeshParts": "Export Quad Mesh Parts",
 }
 
 __all__ = [
@@ -81,4 +102,11 @@ __all__ = [
     'SmoothLabels',
     'GraphCutRepartition',
     'ApplyLabelsToMesh',
+    # Quad mesh support nodes
+    'PyVistaLoader',
+    'RemapFaceIds',
+    'ApplyLabelsToQuadMesh',
+    'SplitQuadMeshByLabels',
+    'QuadMeshExporter',
+    'ExportQuadMeshParts',
 ]

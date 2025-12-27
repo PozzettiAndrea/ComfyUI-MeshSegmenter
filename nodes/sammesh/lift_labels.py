@@ -28,33 +28,54 @@ class Lift2DTo3DLabels:
             "required": {
                 "mesh": ("TRIMESH",),
                 "renders": ("MULTIBAND_IMAGE", {
-                    "tooltip": "Renders from MultiViewRenderer (contains face_id, normals)"
+                    "tooltip": "Renders from MultiViewRenderer containing face_id (which mesh face each pixel belongs to) and normal channels (for determining if faces point toward camera)."
                 }),
                 "segmentations": ("MULTIBAND_IMAGE", {
-                    "tooltip": "Segmentations from GenerateMasks (contains seg_00, seg_01, etc.)"
+                    "tooltip": "Segmentations from GenerateMasks containing SAM-generated segment masks (seg_00, seg_01, etc.). Each view has its own local segment IDs that will be unified across views."
                 }),
                 "poses": (CAMERA_POSES, {
-                    "tooltip": "Camera poses from MultiViewRenderer"
+                    "tooltip": "Camera poses from MultiViewRenderer. Used to determine which direction each camera is looking for normal-based visibility filtering."
                 }),
             },
             "optional": {
                 "seg_channel": ("STRING", {
                     "default": "seg_00",
-                    "tooltip": "Which segmentation channel to use for lifting (e.g. seg_00, seg_01)"
+                    "tooltip": "Which segmentation channel to use for lifting (e.g., seg_00, seg_01). Different channels may contain different SAM segmentation results from the GenerateMasks node."
                 }),
-                "connections_threshold": ("INT", {
-                    "default": 8,
+                "face2label_threshold": ("INT", {
+                    "default": 16,
                     "min": 1,
                     "max": 64,
                     "step": 1,
-                    "tooltip": "Minimum overlapping faces to form a connection between views."
+                    "tooltip": "STEP 1 - Face-to-Label Assignment: Minimum number of pixels a mesh face must occupy within a 2D segment mask to be assigned that label. For each view, we count how many pixels belong to each (face, label) pair. Pairs with fewer pixels than this threshold are discarded as noise. Higher values require stronger evidence before assigning labels, reducing noise but potentially missing small faces. Lower values capture more detail but may introduce false assignments."
                 }),
-                "face2label_threshold": ("INT", {
-                    "default": 4,
+                "connections_threshold": ("INT", {
+                    "default": 32,
                     "min": 1,
-                    "max": 32,
+                    "max": 128,
                     "step": 1,
-                    "tooltip": "Minimum pixel count for a face to be assigned a label."
+                    "tooltip": "STEP 2 - Cross-View Connection Building: Minimum number of shared mesh faces required to establish a connection between two segment labels from different views. When building the match graph, we connect label A from view 1 to label B from view 2 if they both 'see' the same mesh faces. This threshold filters out weak connections. Higher values require more overlap evidence, creating fewer but more reliable connections. Lower values allow more connections but may link unrelated segments."
+                }),
+                "connections_bin_resolution": ("INT", {
+                    "default": 100,
+                    "min": 10,
+                    "max": 500,
+                    "step": 10,
+                    "tooltip": "STEP 3 - Connection Ratio Filtering: Number of histogram bins used to analyze connection strength distribution. After computing connection ratios (what fraction of a label's connections go to each other label), we build a histogram to find a dynamic threshold. More bins give finer granularity for threshold selection. This is an advanced parameter; the default of 100 works well for most cases."
+                }),
+                "connections_bin_threshold_pct": ("FLOAT", {
+                    "default": 0.125,
+                    "min": 0.01,
+                    "max": 0.5,
+                    "step": 0.01,
+                    "tooltip": "STEP 3 - Connection Ratio Filtering: Percentile cutoff for determining the connection ratio threshold. We sort all connection ratios and find the value below which this percentage of connections fall. Connections weaker than this threshold are discarded. Value of 0.125 means we keep the top 87.5% strongest connections. Higher values are more permissive (keep more connections); lower values are stricter (keep only strongest connections)."
+                }),
+                "counter_lens_threshold_min": ("INT", {
+                    "default": 16,
+                    "min": 1,
+                    "max": 64,
+                    "step": 1,
+                    "tooltip": "STEP 3 - Noisy Label Filtering: Minimum threshold for filtering out 'promiscuous' labels that connect to too many other labels. Labels that connect to more segments than max(95th percentile, this value) are considered noise and removed. These are typically background regions or boundary artifacts that falsely match many segments. Higher values are more aggressive at removing potentially noisy labels."
                 }),
             }
         }
@@ -71,8 +92,11 @@ class Lift2DTo3DLabels:
         segmentations: dict,
         poses: np.ndarray,
         seg_channel: str = "seg_00",
-        connections_threshold: int = 8,
-        face2label_threshold: int = 4
+        face2label_threshold: int = 16,
+        connections_threshold: int = 32,
+        connections_bin_resolution: int = 100,
+        connections_bin_threshold_pct: float = 0.125,
+        counter_lens_threshold_min: int = 16,
     ):
         print("Lift2DTo3DLabels: Lifting 2D masks to 3D face labels...")
 
@@ -140,6 +164,9 @@ class Lift2DTo3DLabels:
             poses_list=poses_list,
             face2label_threshold=face2label_threshold,
             connections_threshold=connections_threshold,
+            connections_bin_resolution=connections_bin_resolution,
+            connections_bin_threshold_percentage=connections_bin_threshold_pct,
+            counter_lens_threshold_min=counter_lens_threshold_min,
         )
 
         # Build FACE_LABELS output
