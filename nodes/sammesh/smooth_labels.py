@@ -107,7 +107,7 @@ class SmoothLabels:
             face2label,
             mesh,
             mesh_graph,
-            threshold_percentage_size=size_threshold_pct,
+            threshold_percentage_nfaces=size_threshold_pct,
             threshold_percentage_area=area_threshold_pct,
             smoothing_iterations=smoothing_iterations,
             area_faces=area_faces,

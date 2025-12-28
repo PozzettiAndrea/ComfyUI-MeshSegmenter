@@ -1,42 +1,9 @@
 {
   "id": "e302e967-ab8f-4ead-bcd7-b83441af9ae8",
   "revision": 0,
-  "last_node_id": 71,
-  "last_link_id": 142,
+  "last_node_id": 76,
+  "last_link_id": 157,
   "nodes": [
-    {
-      "id": 48,
-      "type": "MeshSegSamModelLoader",
-      "pos": [
-        -149.6318786254244,
-        -298.70921170527447
-      ],
-      "size": [
-        270,
-        58
-      ],
-      "flags": {},
-      "order": 0,
-      "mode": 0,
-      "inputs": [],
-      "outputs": [
-        {
-          "name": "sam_model",
-          "type": "SAM_MODEL",
-          "links": [
-            101
-          ]
-        }
-      ],
-      "properties": {
-        "aux_id": "PozzettiAndrea/ComfyUI-MeshSegmenter",
-        "ver": "204963bed96ab9d461e179f17656d4d72484f3ec",
-        "Node name for S&R": "MeshSegSamModelLoader"
-      },
-      "widgets_values": [
-        "SAM2.1 Hiera Large"
-      ]
-    },
     {
       "id": 43,
       "type": "MeshSegMultiViewRenderer",
@@ -49,7 +16,7 @@
         294
       ],
       "flags": {},
-      "order": 5,
+      "order": 6,
       "mode": 0,
       "inputs": [
         {
@@ -95,114 +62,6 @@
       ]
     },
     {
-      "id": 46,
-      "type": "MeshSegSmoothLabels",
-      "pos": [
-        625.3801216314453,
-        16.190921775067636
-      ],
-      "size": [
-        281.908203125,
-        170
-      ],
-      "flags": {},
-      "order": 13,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "mesh",
-          "type": "TRIMESH",
-          "link": 100
-        },
-        {
-          "name": "face_labels",
-          "type": "FACE_LABELS",
-          "link": 96
-        },
-        {
-          "name": "quad_info",
-          "shape": 7,
-          "type": "QUAD_MESH_INFO",
-          "link": null
-        }
-      ],
-      "outputs": [
-        {
-          "name": "smoothed_labels",
-          "type": "FACE_LABELS",
-          "links": [
-            105,
-            131
-          ]
-        },
-        {
-          "name": "stats",
-          "type": "STRING",
-          "links": null
-        }
-      ],
-      "properties": {
-        "aux_id": "PozzettiAndrea/ComfyUI-MeshSegmenter",
-        "ver": "ea5164988031fc3fa254afc384f06dad2dd0f0dc",
-        "Node name for S&R": "MeshSegSmoothLabels"
-      },
-      "widgets_values": [
-        64,
-        0.025,
-        0.025,
-        true
-      ]
-    },
-    {
-      "id": 47,
-      "type": "MeshSegApplyLabelsToMesh",
-      "pos": [
-        938.3790489634229,
-        206.6339118415531
-      ],
-      "size": [
-        270,
-        78
-      ],
-      "flags": {},
-      "order": 17,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "mesh",
-          "type": "TRIMESH",
-          "link": 133
-        },
-        {
-          "name": "face_labels",
-          "type": "FACE_LABELS",
-          "link": 132
-        }
-      ],
-      "outputs": [
-        {
-          "name": "segmented_mesh",
-          "type": "TRIMESH",
-          "links": [
-            138
-          ]
-        },
-        {
-          "name": "preview_render",
-          "type": "IMAGE",
-          "links": null
-        }
-      ],
-      "properties": {
-        "aux_id": "PozzettiAndrea/ComfyUI-MeshSegmenter",
-        "ver": "ea5164988031fc3fa254afc384f06dad2dd0f0dc",
-        "Node name for S&R": "MeshSegApplyLabelsToMesh"
-      },
-      "widgets_values": [
-        42
-      ]
-    },
-    {
       "id": 28,
       "type": "GeomPackMeshFix",
       "pos": [
@@ -214,7 +73,7 @@
         246
       ],
       "flags": {},
-      "order": 2,
+      "order": 3,
       "mode": 0,
       "inputs": [
         {
@@ -267,7 +126,7 @@
         150
       ],
       "flags": {},
-      "order": 3,
+      "order": 4,
       "mode": 0,
       "inputs": [
         {
@@ -324,7 +183,7 @@
         78
       ],
       "flags": {},
-      "order": 1,
+      "order": 0,
       "mode": 0,
       "inputs": [],
       "outputs": [
@@ -352,66 +211,6 @@
       ]
     },
     {
-      "id": 39,
-      "type": "DecimateMesh",
-      "pos": [
-        -454.21404448929235,
-        296.17718035221696
-      ],
-      "size": [
-        282.330078125,
-        294
-      ],
-      "flags": {},
-      "order": 4,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "mesh",
-          "type": "TRIMESH",
-          "link": 119
-        }
-      ],
-      "outputs": [
-        {
-          "name": "mesh",
-          "type": "TRIMESH",
-          "links": [
-            99,
-            100,
-            106,
-            127,
-            133,
-            134,
-            135,
-            141
-          ]
-        },
-        {
-          "name": "stats",
-          "type": "STRING",
-          "links": null
-        }
-      ],
-      "properties": {
-        "aux_id": "PozzettiAndrea/ComfyUI-MeshSegmenter",
-        "ver": "35653b096a7a3c3f1b94445b9bdbb6482372453e",
-        "Node name for S&R": "DecimateMesh"
-      },
-      "widgets_values": [
-        "pyvista_quadric",
-        0.08,
-        -1,
-        true,
-        false,
-        0.3,
-        true,
-        0.001,
-        45,
-        false
-      ]
-    },
-    {
       "id": 69,
       "type": "GeomPackPreviewMeshMulti",
       "pos": [
@@ -423,7 +222,7 @@
         717.8568964510229
       ],
       "flags": {},
-      "order": 6,
+      "order": 7,
       "mode": 0,
       "inputs": [
         {
@@ -462,11 +261,44 @@
       ]
     },
     {
+      "id": 48,
+      "type": "MeshSegSamModelLoader",
+      "pos": [
+        -149.6318786254244,
+        -298.70921170527447
+      ],
+      "size": [
+        270,
+        58
+      ],
+      "flags": {},
+      "order": 1,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "sam_model",
+          "type": "SAM_MODEL",
+          "links": [
+            101
+          ]
+        }
+      ],
+      "properties": {
+        "aux_id": "PozzettiAndrea/ComfyUI-MeshSegmenter",
+        "ver": "204963bed96ab9d461e179f17656d4d72484f3ec",
+        "Node name for S&R": "MeshSegSamModelLoader"
+      },
+      "widgets_values": [
+        "SAM2.1 Hiera Large"
+      ]
+    },
+    {
       "id": 66,
       "type": "MeshSegApplyLabelsToMesh",
       "pos": [
-        940.3983132888447,
-        -180.40051600793495
+        946.0241860187787,
+        -165.0966521246069
       ],
       "size": [
         270,
@@ -511,6 +343,129 @@
       ]
     },
     {
+      "id": 65,
+      "type": "MeshSegApplyLabelsToMesh",
+      "pos": [
+        944.4654841430988,
+        24.174798040644323
+      ],
+      "size": [
+        270,
+        78
+      ],
+      "flags": {},
+      "order": 15,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "mesh",
+          "type": "TRIMESH",
+          "link": 134
+        },
+        {
+          "name": "face_labels",
+          "type": "FACE_LABELS",
+          "link": 154
+        }
+      ],
+      "outputs": [
+        {
+          "name": "segmented_mesh",
+          "type": "TRIMESH",
+          "links": [
+            137
+          ]
+        },
+        {
+          "name": "preview_render",
+          "type": "IMAGE",
+          "links": null
+        }
+      ],
+      "properties": {
+        "aux_id": "PozzettiAndrea/ComfyUI-MeshSegmenter",
+        "ver": "ea5164988031fc3fa254afc384f06dad2dd0f0dc",
+        "Node name for S&R": "MeshSegApplyLabelsToMesh"
+      },
+      "widgets_values": [
+        42
+      ]
+    },
+    {
+      "id": 62,
+      "type": "MultibandPreview",
+      "pos": [
+        589.7829901122801,
+        -874.9950301864851
+      ],
+      "size": [
+        329.6150685574755,
+        361.56062171299766
+      ],
+      "flags": {},
+      "order": 13,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "multiband",
+          "type": "MULTIBAND_IMAGE",
+          "link": 123
+        }
+      ],
+      "outputs": [
+        {
+          "name": "preview",
+          "type": "IMAGE",
+          "links": null
+        }
+      ],
+      "properties": {
+        "aux_id": "PozzettiAndrea/ComfyUI-Multiband",
+        "ver": "a41c7db681f298c8b32f6720dad8b3e20012d372",
+        "Node name for S&R": "MultibandPreview"
+      },
+      "widgets_values": [
+        0
+      ]
+    },
+    {
+      "id": 52,
+      "type": "MultibandPreview",
+      "pos": [
+        245.31631622395759,
+        173.5616112515653
+      ],
+      "size": [
+        270,
+        270
+      ],
+      "flags": {},
+      "order": 10,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "multiband",
+          "type": "MULTIBAND_IMAGE",
+          "link": 110
+        }
+      ],
+      "outputs": [
+        {
+          "name": "preview",
+          "type": "IMAGE",
+          "links": null
+        }
+      ],
+      "properties": {
+        "aux_id": "PozzettiAndrea/ComfyUI-Multiband",
+        "ver": "a41c7db681f298c8b32f6720dad8b3e20012d372",
+        "Node name for S&R": "MultibandPreview"
+      },
+      "widgets_values": [
+        0
+      ]
+    },
+    {
       "id": 64,
       "type": "MultibandPreview",
       "pos": [
@@ -522,7 +477,7 @@
         270
       ],
       "flags": {},
-      "order": 8,
+      "order": 9,
       "mode": 0,
       "inputs": [
         {
@@ -544,22 +499,22 @@
         "Node name for S&R": "MultibandPreview"
       },
       "widgets_values": [
-        6
+        0
       ]
     },
     {
       "id": 44,
       "type": "MeshSegGenerateMasks",
       "pos": [
-        205.65297672157925,
-        -186.66540792666254
+        197.04771798715382,
+        -180.1906258800705
       ],
       "size": [
         400,
         228
       ],
       "flags": {},
-      "order": 7,
+      "order": 8,
       "mode": 0,
       "inputs": [
         {
@@ -595,61 +550,73 @@
         "Node name for S&R": "MeshSegGenerateMasks"
       },
       "widgets_values": [
-        "- feature_edges, feature_edges, feature_edges",
+        "- normal_x, normal_y, normal_z",
         "mask",
         32,
-        0.5,
         0.7,
+        0.85,
         1024
       ]
     },
     {
-      "id": 62,
-      "type": "MultibandPreview",
+      "id": 61,
+      "type": "MeshSegCombineBMasks",
       "pos": [
-        589.7829901122801,
-        -874.9950301864851
+        625.8692894205767,
+        -470.55824475668754
       ],
       "size": [
-        329.6150685574755,
-        361.56062171299766
+        270,
+        174
       ],
       "flags": {},
-      "order": 12,
+      "order": 11,
       "mode": 0,
       "inputs": [
         {
-          "name": "multiband",
+          "name": "masks",
           "type": "MULTIBAND_IMAGE",
-          "link": 123
+          "link": 121
+        },
+        {
+          "name": "foreground_mask",
+          "shape": 7,
+          "type": "MULTIBAND_IMAGE",
+          "link": null
         }
       ],
       "outputs": [
         {
-          "name": "preview",
-          "type": "IMAGE",
-          "links": null
+          "name": "combined_mask",
+          "type": "MULTIBAND_IMAGE",
+          "links": [
+            122,
+            123
+          ]
         }
       ],
       "properties": {
-        "aux_id": "PozzettiAndrea/ComfyUI-Multiband",
-        "ver": "a41c7db681f298c8b32f6720dad8b3e20012d372",
-        "Node name for S&R": "MultibandPreview"
+        "aux_id": "PozzettiAndrea/ComfyUI-MeshSegmenter",
+        "ver": "a8efccacc4f2ad287e52c87d3d377a9e701a6966",
+        "Node name for S&R": "MeshSegCombineBMasks"
       },
       "widgets_values": [
-        0
+        true,
+        false,
+        false,
+        16
       ]
     },
     {
-      "id": 65,
-      "type": "MeshSegApplyLabelsToMesh",
+      "id": 76,
+      "type": "MeshSegSmoothLabels",
       "pos": [
-        944.4654841430988,
-        24.174798040644323
+        618.6031909561747,
+        62.279258909491716
       ],
       "size": [
-        270,
-        78
+        281.908203125,
+        170
       ],
       "flags": {},
       "order": 16,
@@ -658,12 +625,214 @@
         {
           "name": "mesh",
           "type": "TRIMESH",
-          "link": 134
+          "link": 157
         },
         {
           "name": "face_labels",
           "type": "FACE_LABELS",
-          "link": 131
+          "link": 155
+        },
+        {
+          "name": "quad_info",
+          "shape": 7,
+          "type": "QUAD_MESH_INFO",
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "name": "smoothed_labels",
+          "type": "FACE_LABELS",
+          "links": [
+            156
+          ]
+        },
+        {
+          "name": "stats",
+          "type": "STRING",
+          "links": null
+        }
+      ],
+      "properties": {
+        "aux_id": "PozzettiAndrea/ComfyUI-MeshSegmenter",
+        "ver": "e4da0b91393682c8d028ed0f635d4fab48bf3299",
+        "Node name for S&R": "MeshSegSmoothLabels"
+      },
+      "widgets_values": [
+        64,
+        0.026,
+        0.024,
+        true
+      ]
+    },
+    {
+      "id": 73,
+      "type": "MarkdownNote",
+      "pos": [
+        974.9338127964335,
+        -662.59184935724
+      ],
+      "size": [
+        533.4802080429802,
+        428.0835248004471
+      ],
+      "flags": {},
+      "order": 2,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [],
+      "properties": {},
+      "widgets_values": [
+        "  ---\n  Lift 2D to 3D Labels\n\n  This node converts 2D per-view segmentation masks into consistent 3D mesh face labels. It solves the problem of unifying segment IDs across multiple camera views.\n\n  How It Works\n\n  Step 1: Face-to-Label Assignment\n  For each view, count how many pixels belong to each (mesh face, 2D segment) pair. Assign faces to labels if they have enough supporting pixels (face2label_threshold).\n\n  Step 2: Cross-View Connection Building\n  Build a graph connecting segment labels across different views. Two labels are connected if they \"see\" the same mesh faces. Weak connections (fewer than connections_threshold shared faces) are discarded.\n\n  Step 3: Connection Filtering\n  Remove noisy connections using histogram-based ratio filtering. Labels that connect to too many other labels (promiscuous labels) are filtered out as they're typically background or boundary artifacts.\n\n  Step 4: Community Detection\n  Use graph community detection to group labels that refer to the same 3D region. Each community becomes a single unified label in the output.\n\n  Inputs\n\n  - renders: MultiViewRenderer output (needs face_id and normal_x/y/z channels)\n  - segmentations: GenerateMasks output (SAM segment masks like seg_00)\n  - poses: Camera poses from MultiViewRenderer\n\n  Key Parameters\n\n  | Parameter             | Default | Description                                     |\n  |-----------------------|---------|-------------------------------------------------|\n  | face2label_threshold  | 16      | Min pixels to assign a face to a label          |\n  | connections_threshold | 32      | Min shared faces to connect labels across views |\n"
+      ],
+      "color": "#432",
+      "bgcolor": "#653"
+    },
+    {
+      "id": 39,
+      "type": "DecimateMesh",
+      "pos": [
+        -454.21404448929235,
+        296.17718035221696
+      ],
+      "size": [
+        282.330078125,
+        294
+      ],
+      "flags": {},
+      "order": 5,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "mesh",
+          "type": "TRIMESH",
+          "link": 119
+        }
+      ],
+      "outputs": [
+        {
+          "name": "mesh",
+          "type": "TRIMESH",
+          "links": [
+            99,
+            127,
+            133,
+            134,
+            135,
+            141,
+            150,
+            157
+          ]
+        },
+        {
+          "name": "stats",
+          "type": "STRING",
+          "links": null
+        }
+      ],
+      "properties": {
+        "aux_id": "PozzettiAndrea/ComfyUI-MeshSegmenter",
+        "ver": "35653b096a7a3c3f1b94445b9bdbb6482372453e",
+        "Node name for S&R": "DecimateMesh"
+      },
+      "widgets_values": [
+        "pyvista_quadric",
+        0.8,
+        -1,
+        true,
+        false,
+        0.3,
+        true,
+        0.001,
+        45,
+        false
+      ]
+    },
+    {
+      "id": 45,
+      "type": "MeshSegLift2DTo3DLabels",
+      "pos": [
+        621.0698136507572,
+        -250.92393832978377
+      ],
+      "size": [
+        292.220703125,
+        238
+      ],
+      "flags": {},
+      "order": 12,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "mesh",
+          "type": "TRIMESH",
+          "link": 99
+        },
+        {
+          "name": "renders",
+          "type": "MULTIBAND_IMAGE",
+          "link": 93
+        },
+        {
+          "name": "segmentations",
+          "type": "MULTIBAND_IMAGE",
+          "link": 122
+        },
+        {
+          "name": "poses",
+          "type": "CAMERA_POSES",
+          "link": 95
+        }
+      ],
+      "outputs": [
+        {
+          "name": "face_labels",
+          "type": "FACE_LABELS",
+          "links": [
+            130,
+            154,
+            155
+          ]
+        }
+      ],
+      "properties": {
+        "aux_id": "PozzettiAndrea/ComfyUI-MeshSegmenter",
+        "ver": "ea5164988031fc3fa254afc384f06dad2dd0f0dc",
+        "Node name for S&R": "MeshSegLift2DTo3DLabels"
+      },
+      "widgets_values": [
+        "combined_mask",
+        8,
+        8,
+        100,
+        0.125,
+        16
+      ]
+    },
+    {
+      "id": 47,
+      "type": "MeshSegApplyLabelsToMesh",
+      "pos": [
+        938.3790489634229,
+        206.6339118415531
+      ],
+      "size": [
+        270,
+        78
+      ],
+      "flags": {},
+      "order": 18,
+      "mode": 4,
+      "inputs": [
+        {
+          "name": "mesh",
+          "type": "TRIMESH",
+          "link": 133
+        },
+        {
+          "name": "face_labels",
+          "type": "FACE_LABELS",
+          "link": 151
         }
       ],
       "outputs": [
@@ -671,7 +840,7 @@
           "name": "segmented_mesh",
           "type": "TRIMESH",
           "links": [
-            137
+            138
           ]
         },
         {
@@ -690,18 +859,69 @@
       ]
     },
     {
+      "id": 75,
+      "type": "MeshSegGraphCutRepartition",
+      "pos": [
+        618.665638728051,
+        289.6570161340555
+      ],
+      "size": [
+        270,
+        246
+      ],
+      "flags": {},
+      "order": 17,
+      "mode": 4,
+      "inputs": [
+        {
+          "name": "mesh",
+          "type": "TRIMESH",
+          "link": 150
+        },
+        {
+          "name": "face_labels",
+          "type": "FACE_LABELS",
+          "link": 156
+        }
+      ],
+      "outputs": [
+        {
+          "name": "refined_labels",
+          "type": "FACE_LABELS",
+          "links": [
+            151
+          ]
+        }
+      ],
+      "properties": {
+        "aux_id": "PozzettiAndrea/ComfyUI-MeshSegmenter",
+        "ver": "e4da0b91393682c8d028ed0f635d4fab48bf3299",
+        "Node name for S&R": "MeshSegGraphCutRepartition"
+      },
+      "widgets_values": [
+        "pymaxflow",
+        2,
+        1,
+        0,
+        1,
+        15,
+        10,
+        1
+      ]
+    },
+    {
       "id": 68,
       "type": "GeomPackPreviewMeshMulti",
       "pos": [
-        1359.0129500656128,
-        -68.74379210815167
+        1263.5866180953224,
+        17.621135696785505
       ],
       "size": [
         768,
         702
       ],
       "flags": {},
-      "order": 18,
+      "order": 19,
       "mode": 0,
       "inputs": [
         {
@@ -737,203 +957,6 @@
       "widgets_values": [
         "fields",
         ""
-      ]
-    },
-    {
-      "id": 52,
-      "type": "MultibandPreview",
-      "pos": [
-        257.9584809578242,
-        167.11651561101283
-      ],
-      "size": [
-        270,
-        270
-      ],
-      "flags": {},
-      "order": 9,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "multiband",
-          "type": "MULTIBAND_IMAGE",
-          "link": 110
-        }
-      ],
-      "outputs": [
-        {
-          "name": "preview",
-          "type": "IMAGE",
-          "links": null
-        }
-      ],
-      "properties": {
-        "aux_id": "PozzettiAndrea/ComfyUI-Multiband",
-        "ver": "a41c7db681f298c8b32f6720dad8b3e20012d372",
-        "Node name for S&R": "MultibandPreview"
-      },
-      "widgets_values": [
-        2
-      ]
-    },
-    {
-      "id": 45,
-      "type": "MeshSegLift2DTo3DLabels",
-      "pos": [
-        619.6419943260729,
-        -256.7450478842663
-      ],
-      "size": [
-        292.220703125,
-        238
-      ],
-      "flags": {},
-      "order": 11,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "mesh",
-          "type": "TRIMESH",
-          "link": 99
-        },
-        {
-          "name": "renders",
-          "type": "MULTIBAND_IMAGE",
-          "link": 93
-        },
-        {
-          "name": "segmentations",
-          "type": "MULTIBAND_IMAGE",
-          "link": 122
-        },
-        {
-          "name": "poses",
-          "type": "CAMERA_POSES",
-          "link": 95
-        }
-      ],
-      "outputs": [
-        {
-          "name": "face_labels",
-          "type": "FACE_LABELS",
-          "links": [
-            96,
-            130
-          ]
-        }
-      ],
-      "properties": {
-        "aux_id": "PozzettiAndrea/ComfyUI-MeshSegmenter",
-        "ver": "ea5164988031fc3fa254afc384f06dad2dd0f0dc",
-        "Node name for S&R": "MeshSegLift2DTo3DLabels"
-      },
-      "widgets_values": [
-        "combined_mask",
-        32,
-        16,
-        100,
-        0.125,
-        16
-      ]
-    },
-    {
-      "id": 49,
-      "type": "MeshSegGraphCutRepartition",
-      "pos": [
-        627.2314225680761,
-        240.55356398009906
-      ],
-      "size": [
-        270,
-        222
-      ],
-      "flags": {},
-      "order": 15,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "mesh",
-          "type": "TRIMESH",
-          "link": 106
-        },
-        {
-          "name": "face_labels",
-          "type": "FACE_LABELS",
-          "link": 105
-        }
-      ],
-      "outputs": [
-        {
-          "name": "refined_labels",
-          "type": "FACE_LABELS",
-          "links": [
-            132
-          ]
-        }
-      ],
-      "properties": {
-        "aux_id": "PozzettiAndrea/ComfyUI-MeshSegmenter",
-        "ver": "204963bed96ab9d461e179f17656d4d72484f3ec",
-        "Node name for S&R": "MeshSegGraphCutRepartition"
-      },
-      "widgets_values": [
-        1,
-        1,
-        0,
-        0.1,
-        5,
-        10,
-        1
-      ]
-    },
-    {
-      "id": 61,
-      "type": "MeshSegCombineBMasks",
-      "pos": [
-        625.8692894205767,
-        -470.55824475668754
-      ],
-      "size": [
-        270,
-        174
-      ],
-      "flags": {},
-      "order": 10,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "masks",
-          "type": "MULTIBAND_IMAGE",
-          "link": 121
-        },
-        {
-          "name": "foreground_mask",
-          "shape": 7,
-          "type": "MULTIBAND_IMAGE",
-          "link": null
-        }
-      ],
-      "outputs": [
-        {
-          "name": "combined_mask",
-          "type": "MULTIBAND_IMAGE",
-          "links": [
-            122,
-            123
-          ]
-        }
-      ],
-      "properties": {
-        "aux_id": "PozzettiAndrea/ComfyUI-MeshSegmenter",
-        "ver": "a8efccacc4f2ad287e52c87d3d377a9e701a6966",
-        "Node name for S&R": "MeshSegCombineBMasks"
-      },
-      "widgets_values": [
-        true,
-        true,
-        true,
-        256,
-        0.5
       ]
     }
   ],
@@ -979,26 +1002,10 @@
       "CAMERA_POSES"
     ],
     [
-      96,
-      45,
-      0,
-      46,
-      1,
-      "FACE_LABELS"
-    ],
-    [
       99,
       39,
       0,
       45,
-      0,
-      "TRIMESH"
-    ],
-    [
-      100,
-      39,
-      0,
-      46,
       0,
       "TRIMESH"
     ],
@@ -1009,22 +1016,6 @@
       44,
       0,
       "SAM_MODEL"
-    ],
-    [
-      105,
-      46,
-      0,
-      49,
-      1,
-      "FACE_LABELS"
-    ],
-    [
-      106,
-      39,
-      0,
-      49,
-      0,
-      "TRIMESH"
     ],
     [
       110,
@@ -1087,22 +1078,6 @@
       45,
       0,
       66,
-      1,
-      "FACE_LABELS"
-    ],
-    [
-      131,
-      46,
-      0,
-      65,
-      1,
-      "FACE_LABELS"
-    ],
-    [
-      132,
-      49,
-      0,
-      47,
       1,
       "FACE_LABELS"
     ],
@@ -1177,16 +1152,64 @@
       69,
       2,
       "TRIMESH"
+    ],
+    [
+      150,
+      39,
+      0,
+      75,
+      0,
+      "TRIMESH"
+    ],
+    [
+      151,
+      75,
+      0,
+      47,
+      1,
+      "FACE_LABELS"
+    ],
+    [
+      154,
+      45,
+      0,
+      65,
+      1,
+      "FACE_LABELS"
+    ],
+    [
+      155,
+      45,
+      0,
+      76,
+      1,
+      "FACE_LABELS"
+    ],
+    [
+      156,
+      76,
+      0,
+      75,
+      1,
+      "FACE_LABELS"
+    ],
+    [
+      157,
+      39,
+      0,
+      76,
+      0,
+      "TRIMESH"
     ]
   ],
   "groups": [],
   "config": {},
   "extra": {
     "ds": {
-      "scale": 0.4609658254952193,
+      "scale": 0.7095976993301881,
       "offset": [
-        865.6881394829177,
-        737.4411896818697
+        -191.69296984983276,
+        356.07780538610865
       ]
     },
     "frontendVersion": "1.35.9",

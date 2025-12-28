@@ -48,13 +48,6 @@ class CombineBMasks:
                     "max": 10000,
                     "tooltip": "Minimum area for island/hole removal"
                 }),
-                "threshold": ("FLOAT", {
-                    "default": 0.5,
-                    "min": 0.0,
-                    "max": 1.0,
-                    "step": 0.1,
-                    "tooltip": "Threshold for converting float masks to binary"
-                }),
             }
         }
 
@@ -70,7 +63,6 @@ class CombineBMasks:
         remove_islands: bool = True,
         remove_holes: bool = True,
         min_area: int = 256,
-        threshold: float = 0.5,
     ):
         samples = masks['samples']  # (B, C, H, W)
         channel_names = masks.get('channel_names', [])
@@ -112,8 +104,11 @@ class CombineBMasks:
                         if binary_mask.sum() > 0:
                             bmasks.append(binary_mask)
                 else:
-                    # This is already a binary mask
-                    binary_mask = seg_mask > threshold
+                    # This should be a binary mask (0/1 integers)
+                    if seg_mask.dtype in (np.float32, np.float64) and seg_mask.max() <= 1.0:
+                        ch_name = channel_names[ch_idx] if ch_idx < len(channel_names) else f"channel_{ch_idx}"
+                        raise ValueError(f"Channel '{ch_name}' contains float values (0.0-1.0). CombineBMasks expects integer labels, not float masks. Convert to integers first.")
+                    binary_mask = seg_mask > 0
                     if binary_mask.sum() > 0:
                         bmasks.append(binary_mask)
 

@@ -79,8 +79,8 @@ def smooth_labels(
     face2label: Dict[int, int],
     mesh: trimesh.Trimesh,
     mesh_graph: Dict[int, Set[int]] = None,
-    threshold_percentage_size: float = 0.025,
-    threshold_percentage_area: float = 0.025,
+    threshold_percentage_nfaces: float = 0.005,
+    threshold_percentage_area: float = 0.005,
     smoothing_iterations: int = 64,
     area_faces: np.ndarray = None,
     num_faces: int = None,
@@ -92,8 +92,8 @@ def smooth_labels(
         face2label: Dict mapping face_idx -> label
         mesh: Trimesh for area calculations (ignored if area_faces provided)
         mesh_graph: Face adjacency graph (computed if not provided)
-        threshold_percentage_size: Remove components smaller than this % of largest
-        threshold_percentage_area: Remove components with less than this % of largest area
+        threshold_percentage_nfaces: Remove components with fewer faces than this % of largest component (default 0.5%)
+        threshold_percentage_area: Remove components with less area than this % of largest component (default 0.5%)
         smoothing_iterations: Number of hole-filling iterations
         area_faces: Optional per-face area array (for quad mesh support)
         num_faces: Optional override for number of faces (for quad mesh support)
@@ -130,7 +130,7 @@ def smooth_labels(
     remove_comp_size = set()
     remove_comp_area = set()
     for i, comp in enumerate(components):
-        if len(comp) < max_size * threshold_percentage_size:
+        if len(comp) < max_size * threshold_percentage_nfaces:
             remove_comp_size.add(i)
         if components_area[i] < max_area * threshold_percentage_area:
             remove_comp_area.add(i)
@@ -354,6 +354,125 @@ def construct_expansion_graph(
     return G, node2index
 
 
+def mincut_igraph(G: nx.Graph, source_idx: int, sink_idx: int) -> Tuple[Set[int], Set[int]]:
+    """Compute min-cut using igraph backend."""
+    G_ig = igraph.Graph.from_networkx(G)
+    outputs = G_ig.st_mincut(source=source_idx, target=sink_idx, capacity='capacity')
+    return set(outputs.partition[0]), set(outputs.partition[1])
+
+
+def mincut_pymaxflow(G: nx.Graph, source_idx: int, sink_idx: int, node2index: Dict) -> Tuple[Set[int], Set[int]]:
+    """Compute min-cut using PyMaxflow backend (Kolmogorov's algorithm)."""
+    try:
+        import maxflow
+    except ImportError:
+        raise ImportError("PyMaxflow not installed. Run: pip install PyMaxflow")
+
+    # In PyMaxflow, source and sink are implicit terminals, not nodes.
+    # Build list of regular nodes (excluding source and sink)
+    regular_indices = [idx for idx in range(len(node2index)) if idx != source_idx and idx != sink_idx]
+    idx_to_pmf = {idx: i for i, idx in enumerate(regular_indices)}  # original idx -> pymaxflow node id
+
+    num_regular = len(regular_indices)
+    g = maxflow.Graph[float](num_regular, len(G.edges()))
+    nodes = g.add_nodes(num_regular)
+
+    # Add edges
+    for u, v, data in G.edges(data=True):
+        cap = data.get('capacity', 1.0)
+        if cap == float('inf'):
+            cap = 1e12  # Large but finite for pymaxflow
+        u_idx = node2index[u]
+        v_idx = node2index[v]
+
+        u_is_terminal = (u_idx == source_idx or u_idx == sink_idx)
+        v_is_terminal = (v_idx == source_idx or v_idx == sink_idx)
+
+        if u_is_terminal and v_is_terminal:
+            continue  # Skip source-sink direct edge (shouldn't exist)
+        elif u_idx == source_idx:
+            # Edge from source to v
+            g.add_tedge(nodes[idx_to_pmf[v_idx]], cap, 0)
+        elif v_idx == source_idx:
+            # Edge from source to u
+            g.add_tedge(nodes[idx_to_pmf[u_idx]], cap, 0)
+        elif u_idx == sink_idx:
+            # Edge from v to sink
+            g.add_tedge(nodes[idx_to_pmf[v_idx]], 0, cap)
+        elif v_idx == sink_idx:
+            # Edge from u to sink
+            g.add_tedge(nodes[idx_to_pmf[u_idx]], 0, cap)
+        else:
+            # Regular edge between non-terminal nodes
+            g.add_edge(nodes[idx_to_pmf[u_idx]], nodes[idx_to_pmf[v_idx]], cap, cap)
+
+    # Compute max-flow
+    g.maxflow()
+
+    # Get partition - segment 0 = source side, segment 1 = sink side
+    S = {source_idx}  # Source is always in S
+    T = {sink_idx}    # Sink is always in T
+
+    for orig_idx in regular_indices:
+        pmf_node = nodes[idx_to_pmf[orig_idx]]
+        if g.get_segment(pmf_node) == 0:
+            S.add(orig_idx)
+        else:
+            T.add(orig_idx)
+
+    return S, T
+
+
+def mincut_scipy(G: nx.Graph, source_idx: int, sink_idx: int, node2index: Dict) -> Tuple[Set[int], Set[int]]:
+    """Compute min-cut using scipy backend (Dinic's algorithm)."""
+    from scipy.sparse import csr_matrix
+    from scipy.sparse.csgraph import maximum_flow
+
+    num_nodes = len(node2index)
+
+    # Build adjacency matrix (need directed graph for scipy)
+    # scipy requires integer capacities, so we scale up
+    SCALE = 1000000
+    row, col, data = [], [], []
+
+    for u, v, d in G.edges(data=True):
+        cap = d.get('capacity', 1.0)
+        if cap == float('inf'):
+            cap = 1e9  # Large but finite
+        cap_int = int(cap * SCALE)
+
+        u_idx = node2index[u]
+        v_idx = node2index[v]
+
+        # Add both directions (undirected graph)
+        row.extend([u_idx, v_idx])
+        col.extend([v_idx, u_idx])
+        data.extend([cap_int, cap_int])
+
+    graph_matrix = csr_matrix((data, (row, col)), shape=(num_nodes, num_nodes))
+
+    # Compute max-flow
+    result = maximum_flow(graph_matrix, source_idx, sink_idx, method='dinic')
+
+    # Find min-cut from residual graph
+    # Nodes reachable from source in residual graph are in S
+    residual = graph_matrix - result.residual
+
+    # BFS from source to find reachable nodes
+    S = {source_idx}
+    queue = [source_idx]
+    while queue:
+        node = queue.pop(0)
+        for neighbor in range(num_nodes):
+            if neighbor not in S and residual[node, neighbor] > 0:
+                S.add(neighbor)
+                queue.append(neighbor)
+
+    T = set(range(num_nodes)) - S
+
+    return S, T
+
+
 def repartition(
     mesh: trimesh.Trimesh,
     partition: np.ndarray,
@@ -361,6 +480,7 @@ def repartition(
     cost_smoothness: np.ndarray,
     smoothing_iterations: int,
     _lambda: float = 1.0,
+    backend: str = "igraph",
 ) -> np.ndarray:
     """
     Refine partition using alpha-expansion graph cuts.
@@ -375,6 +495,7 @@ def repartition(
         cost_smoothness: (num_edges,) smoothness cost (based on dihedral angles)
         smoothing_iterations: Number of expansion iterations
         _lambda: Weight for smoothness term
+        backend: Min-cut backend ("igraph", "pymaxflow", or "scipy")
 
     Returns:
         Refined partition
@@ -385,30 +506,44 @@ def repartition(
 
     cost_smoothness = cost_smoothness * _lambda
     cost_min = partition_cost(mesh, partition, cost_data, cost_smoothness)
+    cost_initial = cost_min
+    print(f'    Initial partition cost: {cost_initial:.2f}')
 
     for iteration in range(smoothing_iterations):
         for label in tqdm(labels, desc=f'    Repartition iter {iteration+1}', leave=False):
             G, node2index = construct_expansion_graph(label, mesh, partition, cost_data, cost_smoothness)
             index2node = {v: k for k, v in node2index.items()}
 
-            # Use igraph for min-cut (faster than networkx)
-            G_ig = igraph.Graph.from_networkx(G)
-            outputs = G_ig.st_mincut(source=node2index[A], target=node2index[B], capacity='capacity')
-            S = outputs.partition[0]
-            T = outputs.partition[1]
+            # Compute min-cut using selected backend
+            source_idx = node2index[A]
+            sink_idx = node2index[B]
 
-            assert node2index[A] in S and node2index[B] in T
-            S = np.array([index2node[v] for v in S if isinstance(index2node[v], int)]).astype(int)
-            T = np.array([index2node[v] for v in T if isinstance(index2node[v], int)]).astype(int)
+            if backend == "igraph":
+                S, T = mincut_igraph(G, source_idx, sink_idx)
+            elif backend == "pymaxflow":
+                S, T = mincut_pymaxflow(G, source_idx, sink_idx, node2index)
+            elif backend == "scipy":
+                S, T = mincut_scipy(G, source_idx, sink_idx, node2index)
+            else:
+                raise ValueError(f"Unknown backend: {backend}")
+
+            assert source_idx in S and sink_idx in T, f"Invalid partition: source in S={source_idx in S}, sink in T={sink_idx in T}"
+
+            S_faces = np.array([index2node[v] for v in S if isinstance(index2node.get(v), int)]).astype(int)
+            T_faces = np.array([index2node[v] for v in T if isinstance(index2node.get(v), int)]).astype(int)
 
             # T consists of those assigned 'alpha' and S 'alpha_complement' (see paper)
-            if len(T) > 0:
-                partition[T] = label
+            if len(T_faces) > 0:
+                partition[T_faces] = label
 
             cost = partition_cost(mesh, partition, cost_data, cost_smoothness)
             if cost > cost_min + EPSILON:
                 print(f'    Warning: Cost increased ({cost_min:.2f} -> {cost:.2f})')
             cost_min = min(cost, cost_min)
+
+    cost_final = partition_cost(mesh, partition, cost_data, cost_smoothness)
+    cost_reduction = ((cost_initial - cost_final) / cost_initial * 100) if cost_initial > 0 else 0
+    print(f'    Final partition cost: {cost_final:.2f} (reduced by {cost_reduction:.1f}%)')
 
     return partition
 
@@ -422,6 +557,7 @@ def graph_cut_repartition(
     lambda_range: Tuple[float, float] = (1.0, 15.0),
     tolerance: int = 1,
     noise_threshold: int = 10,
+    backend: str = "igraph",
 ) -> Dict[int, int]:
     """
     Refine face labels using alpha-expansion graph cuts.
@@ -439,6 +575,7 @@ def graph_cut_repartition(
         lambda_range: (min, max) range for lambda search when using target_labels
         tolerance: Acceptable deviation from target_labels
         noise_threshold: Minimum faces for a segment to be counted in target mode
+        backend: Min-cut backend ("igraph", "pymaxflow", or "scipy")
 
     Returns:
         Refined face2label dict
@@ -470,11 +607,12 @@ def graph_cut_repartition(
 
     if target_labels is None:
         # Standard mode: use fixed lambda
-        print(f'    Running graph cut repartition (lambda={repartition_lambda}, iters={repartition_iterations})...')
+        print(f'    Running graph cut repartition (lambda={repartition_lambda}, iters={repartition_iterations}, backend={backend})...')
         partition = repartition(
             mesh, partition, cost_data, cost_smoothness,
             smoothing_iterations=repartition_iterations,
-            _lambda=repartition_lambda
+            _lambda=repartition_lambda,
+            backend=backend,
         )
     else:
         # Target labels mode: search for lambda that gives target segment count
@@ -498,7 +636,8 @@ def graph_cut_repartition(
             refined = repartition(
                 mesh, part_copy, cost_data, cost_smoothness,
                 smoothing_iterations=repartition_iterations,
-                _lambda=_lambda
+                _lambda=_lambda,
+                backend=backend,
             )
             n_labels = count_labels(refined)
             results.append((refined, n_labels, _lambda))

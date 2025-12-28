@@ -229,14 +229,22 @@ class SAM3AutomaticMaskGenerator:
         all_scores = []
         all_stability = []
 
+        # Debug counters
+        _error_count = 0
+        _first_error = None
+        _score_filtered = 0
+        _area_filtered = 0
+        _sample_scores = []
+
         # Process each point
-        for point in tqdm(points_pixel, desc="SAM3 generating masks", leave=False):
+        for point in points_pixel:
             try:
                 # Call predict_inst with single point
+                # Shape must be (N, 2) for coords and (N,) for labels - SAM adds batch dim
                 masks_np, scores_np, low_res_masks = self.model.predict_inst(
                     state,
-                    point_coords=np.array([[point]]),
-                    point_labels=np.array([1]),  # foreground
+                    point_coords=np.array([point]),  # Shape: (1, 2)
+                    point_labels=np.array([1]),      # Shape: (1,)
                     multimask_output=True,
                     normalize_coords=True,
                 )
@@ -245,24 +253,40 @@ class SAM3AutomaticMaskGenerator:
                 for i in range(len(masks_np)):
                     mask = masks_np[i]
                     score = scores_np[i]
+                    area = mask.sum()
+
+                    # Collect sample scores for debugging
+                    if len(_sample_scores) < 5:
+                        _sample_scores.append((score, area))
 
                     # Filter by score
                     if score < self.pred_iou_thresh:
+                        _score_filtered += 1
                         continue
 
                     # Filter by area
-                    area = mask.sum()
                     if area < self.min_mask_region_area:
+                        _area_filtered += 1
                         continue
 
                     all_masks.append(mask)
                     all_scores.append(score)
 
             except Exception as e:
-                # Skip failed points
+                _error_count += 1
+                if _first_error is None:
+                    _first_error = str(e)
                 continue
 
+        # Debug output
         if len(all_masks) == 0:
+            print(f"    SAM3 Debug: {len(points_pixel)} points processed")
+            if _error_count > 0:
+                print(f"    SAM3 Debug: {_error_count} errors, first: {_first_error}")
+            if _sample_scores:
+                print(f"    SAM3 Debug: Sample scores (score, area): {_sample_scores}")
+            print(f"    SAM3 Debug: Filtered by score (<{self.pred_iou_thresh}): {_score_filtered}")
+            print(f"    SAM3 Debug: Filtered by area (<{self.min_mask_region_area}): {_area_filtered}")
             return []
 
         all_masks = np.array(all_masks)

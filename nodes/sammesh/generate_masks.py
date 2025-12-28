@@ -115,18 +115,18 @@ class GenerateMasks:
                     "tooltip": "Grid density for SAM point sampling."
                 }),
                 "pred_iou_thresh": ("FLOAT", {
-                    "default": 0.5,
-                    "min": 0.0,
-                    "max": 1.0,
-                    "step": 0.05,
-                    "tooltip": "Minimum predicted IoU score to keep a mask."
-                }),
-                "stability_score_thresh": ("FLOAT", {
                     "default": 0.7,
                     "min": 0.0,
                     "max": 1.0,
                     "step": 0.05,
-                    "tooltip": "Minimum stability score to keep a mask."
+                    "tooltip": "SAM's self-assessed confidence in each mask's quality. The model predicts how well each mask matches the actual object. Lower values (0.3) keep more masks but may include noise; higher values (0.7+) keep only masks the model is confident about."
+                }),
+                "stability_score_thresh": ("FLOAT", {
+                    "default": 0.85,
+                    "min": 0.0,
+                    "max": 1.0,
+                    "step": 0.05,
+                    "tooltip": "Measures how consistent a mask's shape is when slightly varying the binarization threshold. High stability means clean, confident boundaries; low stability means fuzzy, uncertain edges. Increase to filter out noisy masks with ambiguous borders."
                 }),
                 "min_area": ("INT", {
                     "default": 1024,
@@ -150,8 +150,8 @@ class GenerateMasks:
         channel_config: str = "- normal_x, normal_y, normal_z\n- matte, matte, matte\n- sdf, sdf, sdf",
         mask_channel: str = "mask",
         points_per_side: int = 32,
-        pred_iou_thresh: float = 0.5,
-        stability_score_thresh: float = 0.7,
+        pred_iou_thresh: float = 0.7,
+        stability_score_thresh: float = 0.85,
         min_area: int = 1024,
     ):
         from ...samesh.models.sam import point_grid_from_mask

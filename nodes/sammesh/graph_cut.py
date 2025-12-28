@@ -33,6 +33,10 @@ class GraphCutRepartition:
                 "face_labels": (FACE_LABELS,),
             },
             "optional": {
+                "backend": (["igraph", "pymaxflow", "scipy"], {
+                    "default": "igraph",
+                    "tooltip": "MIN-CUT BACKEND: Algorithm for solving the min-cut/max-flow problem. 'igraph' is the default and well-tested. 'pymaxflow' uses Kolmogorov's algorithm optimized for vision graph cuts (requires: pip install pymaxflow). 'scipy' uses Dinic's algorithm with no extra dependencies."
+                }),
                 "lambda_weight": ("FLOAT", {
                     "default": 6.0,
                     "min": 0.1,
@@ -94,6 +98,7 @@ class GraphCutRepartition:
         self,
         mesh: trimesh.Trimesh,
         face_labels: dict,
+        backend: str = "igraph",
         lambda_weight: float = 6.0,
         iterations: int = 1,
         target_segments: int = 0,
@@ -102,7 +107,7 @@ class GraphCutRepartition:
         noise_threshold: int = 10,
         lambda_tolerance: int = 1,
     ):
-        print("GraphCutRepartition: Refining boundaries with alpha-expansion...")
+        print(f"GraphCutRepartition: Refining boundaries with alpha-expansion (backend={backend})...")
 
         face2label = dict(face_labels['face2label'])
         num_faces = face_labels['num_faces']
@@ -118,6 +123,7 @@ class GraphCutRepartition:
             lambda_range=(lambda_min, lambda_max),
             tolerance=lambda_tolerance,
             noise_threshold=noise_threshold,
+            backend=backend,
         )
 
         # Compute stats
