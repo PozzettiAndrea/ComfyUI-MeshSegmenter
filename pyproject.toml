@@ -27,12 +27,12 @@ dependencies = [
 ]
 
 [project.urls]
-Repository = "https://github.com/yourusername/ComfyUI-MeshSegmenter"
-Documentation = "https://github.com/yourusername/ComfyUI-MeshSegmenter/blob/main/README.md"
+Repository = "https://github.com/PozzettiAndrea/ComfyUI-MeshSegmenter"
+Documentation = "https://github.com/PozzettiAndrea/ComfyUI-MeshSegmenter/blob/main/README.md"
 
 [tool.comfy]
-PublisherId = "meshsegmenter"
-DisplayName = "ComfyUI-MeshSegmenter"
+PublisherId = "pznodes"
+DisplayName = "MeshSegmenter"
 Icon = ""
 
 [build-system]
