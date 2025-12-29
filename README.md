@@ -10,6 +10,8 @@ Mesh segmentation nodes for ComfyUI using SAMesh and PartField backends. Multipl
 
 ![PartField Workflow](docs/partfield.png)
 
+https://github.com/user-attachments/assets/47f73c6c-2301-43a2-b09d-96d92308e715
+
 ## Installation
 
 Install via ComfyUI Manager or clone into `custom_nodes/`:
