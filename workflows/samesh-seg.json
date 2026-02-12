@@ -1,0 +1,587 @@
+{
+  "id": "e302e967-ab8f-4ead-bcd7-b83441af9ae8",
+  "revision": 0,
+  "last_node_id": 56,
+  "last_link_id": 77,
+  "nodes": [
+    {
+      "id": 43,
+      "type": "MeshSegSamModelLoader",
+      "pos": [
+        552.3435327543735,
+        -248.43446007016777
+      ],
+      "size": [
+        270,
+        58
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "sam_model",
+          "type": "SAM_MODEL",
+          "links": [
+            66
+          ]
+        }
+      ],
+      "properties": {
+        "aux_id": "PozzettiAndrea/ComfyUI-MeshSegmenter",
+        "ver": "ea5164988031fc3fa254afc384f06dad2dd0f0dc",
+        "Node name for S&R": "MeshSegSamModelLoader"
+      },
+      "widgets_values": [
+        "SAM2 Hiera Large"
+      ]
+    },
+    {
+      "id": 44,
+      "type": "MultibandPreview",
+      "pos": [
+        531.8149605663973,
+        229.24063138151442
+      ],
+      "size": [
+        270,
+        270
+      ],
+      "flags": {},
+      "order": 3,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "multiband",
+          "type": "MULTIBAND_IMAGE",
+          "link": 58
+        }
+      ],
+      "outputs": [
+        {
+          "name": "preview",
+          "type": "IMAGE",
+          "links": null
+        }
+      ],
+      "properties": {
+        "aux_id": "PozzettiAndrea/ComfyUI-Multiband",
+        "ver": "a41c7db681f298c8b32f6720dad8b3e20012d372",
+        "Node name for S&R": "MultibandPreview"
+      },
+      "widgets_values": [
+        0
+      ]
+    },
+    {
+      "id": 51,
+      "type": "MultibandPreview",
+      "pos": [
+        942.9501142822464,
+        209.15343286243595
+      ],
+      "size": [
+        270,
+        270
+      ],
+      "flags": {},
+      "order": 5,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "multiband",
+          "type": "MULTIBAND_IMAGE",
+          "link": 67
+        }
+      ],
+      "outputs": [
+        {
+          "name": "preview",
+          "type": "IMAGE",
+          "links": null
+        }
+      ],
+      "properties": {
+        "aux_id": "PozzettiAndrea/ComfyUI-Multiband",
+        "ver": "a41c7db681f298c8b32f6720dad8b3e20012d372",
+        "Node name for S&R": "MultibandPreview"
+      },
+      "widgets_values": [
+        2
+      ]
+    },
+    {
+      "id": 52,
+      "type": "MeshSegGenerateMasks",
+      "pos": [
+        914.508274613804,
+        -104.8068744019702
+      ],
+      "size": [
+        400,
+        228
+      ],
+      "flags": {},
+      "order": 4,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "sam_model",
+          "type": "SAM_MODEL",
+          "link": 66
+        },
+        {
+          "name": "renders",
+          "shape": 7,
+          "type": "MULTIBAND_IMAGE",
+          "link": 77
+        }
+      ],
+      "outputs": [
+        {
+          "name": "segmentations",
+          "type": "MULTIBAND_IMAGE",
+          "links": [
+            67,
+            69
+          ]
+        }
+      ],
+      "properties": {
+        "aux_id": "PozzettiAndrea/ComfyUI-MeshSegmenter",
+        "ver": "ea5164988031fc3fa254afc384f06dad2dd0f0dc",
+        "Node name for S&R": "MeshSegGenerateMasks"
+      },
+      "widgets_values": [
+        "- normal_x, normal_y, normal_z\n- matte, matte, matte\n- sdf, sdf, sdf",
+        "mask",
+        32,
+        0.5,
+        0.7,
+        1024
+      ]
+    },
+    {
+      "id": 54,
+      "type": "MeshSegLift2DTo3DLabels",
+      "pos": [
+        1449.2826153811861,
+        135.87387909098325
+      ],
+      "size": [
+        292.220703125,
+        166
+      ],
+      "flags": {},
+      "order": 6,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "mesh",
+          "type": "TRIMESH",
+          "link": 68
+        },
+        {
+          "name": "renders",
+          "type": "MULTIBAND_IMAGE",
+          "link": 70
+        },
+        {
+          "name": "segmentations",
+          "type": "MULTIBAND_IMAGE",
+          "link": 69
+        },
+        {
+          "name": "poses",
+          "type": "CAMERA_POSES",
+          "link": 71
+        }
+      ],
+      "outputs": [
+        {
+          "name": "face_labels",
+          "type": "FACE_LABELS",
+          "links": [
+            72
+          ]
+        }
+      ],
+      "properties": {
+        "aux_id": "PozzettiAndrea/ComfyUI-MeshSegmenter",
+        "ver": "ea5164988031fc3fa254afc384f06dad2dd0f0dc",
+        "Node name for S&R": "MeshSegLift2DTo3DLabels"
+      },
+      "widgets_values": [
+        "seg_00",
+        8,
+        4
+      ]
+    },
+    {
+      "id": 55,
+      "type": "MeshSegSmoothLabels",
+      "pos": [
+        1773.335133958774,
+        111.81541456433175
+      ],
+      "size": [
+        281.908203125,
+        150
+      ],
+      "flags": {},
+      "order": 7,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "mesh",
+          "type": "TRIMESH",
+          "link": 73
+        },
+        {
+          "name": "face_labels",
+          "type": "FACE_LABELS",
+          "link": 72
+        }
+      ],
+      "outputs": [
+        {
+          "name": "smoothed_labels",
+          "type": "FACE_LABELS",
+          "links": [
+            74
+          ]
+        },
+        {
+          "name": "stats",
+          "type": "STRING",
+          "links": null
+        }
+      ],
+      "properties": {
+        "aux_id": "PozzettiAndrea/ComfyUI-MeshSegmenter",
+        "ver": "ea5164988031fc3fa254afc384f06dad2dd0f0dc",
+        "Node name for S&R": "MeshSegSmoothLabels"
+      },
+      "widgets_values": [
+        64,
+        0.025,
+        0.025,
+        true
+      ]
+    },
+    {
+      "id": 4,
+      "type": "GeomPackLoadMesh",
+      "pos": [
+        230.67002686910632,
+        -26.666314357929018
+      ],
+      "size": [
+        270,
+        78
+      ],
+      "flags": {},
+      "order": 1,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "mesh",
+          "type": "TRIMESH",
+          "links": [
+            55,
+            68,
+            73,
+            75
+          ]
+        },
+        {
+          "name": "texture",
+          "type": "IMAGE",
+          "links": null
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfyui-geometrypack",
+        "ver": "3a9f0d8bd0f057cb1fd7d7f022765c6d9c86aec6",
+        "Node name for S&R": "GeomPackLoadMesh",
+        "aux_id": "PozzettiAndrea/ComfyUI-GeometryPack"
+      },
+      "widgets_values": [
+        "3d/flower_in_pot.stl"
+      ]
+    },
+    {
+      "id": 56,
+      "type": "MeshSegApplyLabelsToMesh",
+      "pos": [
+        2109.6869437551472,
+        120.12339042583402
+      ],
+      "size": [
+        270,
+        78
+      ],
+      "flags": {},
+      "order": 8,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "mesh",
+          "type": "TRIMESH",
+          "link": 75
+        },
+        {
+          "name": "face_labels",
+          "type": "FACE_LABELS",
+          "link": 74
+        }
+      ],
+      "outputs": [
+        {
+          "name": "segmented_mesh",
+          "type": "TRIMESH",
+          "links": [
+            76
+          ]
+        },
+        {
+          "name": "preview_render",
+          "type": "IMAGE",
+          "links": null
+        }
+      ],
+      "properties": {
+        "aux_id": "PozzettiAndrea/ComfyUI-MeshSegmenter",
+        "ver": "ea5164988031fc3fa254afc384f06dad2dd0f0dc",
+        "Node name for S&R": "MeshSegApplyLabelsToMesh"
+      },
+      "widgets_values": [
+        42
+      ]
+    },
+    {
+      "id": 9,
+      "type": "GeomPackPreviewMeshVTK",
+      "pos": [
+        2427.884683028877,
+        108.70517852775812
+      ],
+      "size": [
+        512,
+        722
+      ],
+      "flags": {},
+      "order": 9,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "trimesh",
+          "shape": 7,
+          "type": "TRIMESH",
+          "link": 76
+        },
+        {
+          "name": "voxelgrid",
+          "shape": 7,
+          "type": "VOXELGRID",
+          "link": null
+        }
+      ],
+      "outputs": [],
+      "properties": {
+        "cnr_id": "comfyui-geometrypack",
+        "ver": "3a9f0d8bd0f057cb1fd7d7f022765c6d9c86aec6",
+        "Node name for S&R": "GeomPackPreviewMeshVTK",
+        "aux_id": "PozzettiAndrea/ComfyUI-GeometryPack"
+      },
+      "widgets_values": [
+        "fields",
+        ""
+      ]
+    },
+    {
+      "id": 47,
+      "type": "MeshSegMultiViewRenderer",
+      "pos": [
+        538.9942174597899,
+        -99.46799125514266
+      ],
+      "size": [
+        276.810546875,
+        222
+      ],
+      "flags": {},
+      "order": 2,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "mesh",
+          "type": "TRIMESH",
+          "link": 55
+        }
+      ],
+      "outputs": [
+        {
+          "name": "renders",
+          "type": "MULTIBAND_IMAGE",
+          "links": [
+            58,
+            70,
+            77
+          ]
+        },
+        {
+          "name": "poses",
+          "type": "CAMERA_POSES",
+          "links": [
+            71
+          ]
+        }
+      ],
+      "properties": {
+        "aux_id": "PozzettiAndrea/ComfyUI-MeshSegmenter",
+        "ver": "ea5164988031fc3fa254afc384f06dad2dd0f0dc",
+        "Node name for S&R": "MeshSegMultiViewRenderer"
+      },
+      "widgets_values": [
+        "1024",
+        "icosahedron",
+        3,
+        true,
+        false,
+        64,
+        120
+      ]
+    }
+  ],
+  "links": [
+    [
+      55,
+      4,
+      0,
+      47,
+      0,
+      "TRIMESH"
+    ],
+    [
+      58,
+      47,
+      0,
+      44,
+      0,
+      "MULTIBAND_IMAGE"
+    ],
+    [
+      66,
+      43,
+      0,
+      52,
+      0,
+      "SAM_MODEL"
+    ],
+    [
+      67,
+      52,
+      0,
+      51,
+      0,
+      "MULTIBAND_IMAGE"
+    ],
+    [
+      68,
+      4,
+      0,
+      54,
+      0,
+      "TRIMESH"
+    ],
+    [
+      69,
+      52,
+      0,
+      54,
+      2,
+      "MULTIBAND_IMAGE"
+    ],
+    [
+      70,
+      47,
+      0,
+      54,
+      1,
+      "MULTIBAND_IMAGE"
+    ],
+    [
+      71,
+      47,
+      1,
+      54,
+      3,
+      "CAMERA_POSES"
+    ],
+    [
+      72,
+      54,
+      0,
+      55,
+      1,
+      "FACE_LABELS"
+    ],
+    [
+      73,
+      4,
+      0,
+      55,
+      0,
+      "TRIMESH"
+    ],
+    [
+      74,
+      55,
+      0,
+      56,
+      1,
+      "FACE_LABELS"
+    ],
+    [
+      75,
+      4,
+      0,
+      56,
+      0,
+      "TRIMESH"
+    ],
+    [
+      76,
+      56,
+      0,
+      9,
+      0,
+      "TRIMESH"
+    ],
+    [
+      77,
+      47,
+      0,
+      52,
+      1,
+      "MULTIBAND_IMAGE"
+    ]
+  ],
+  "groups": [],
+  "config": {},
+  "extra": {
+    "ds": {
+      "scale": 0.6769647802258667,
+      "offset": [
+        -368.9495355340985,
+        394.7146976651575
+      ]
+    },
+    "frontendVersion": "1.35.9",
+    "workflowRendererVersion": "LG"
+  },
+  "version": 0.4
+}

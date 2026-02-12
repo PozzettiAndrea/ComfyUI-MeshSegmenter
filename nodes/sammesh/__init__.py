@@ -1,0 +1,112 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Copyright (C) 2025 ComfyUI-MeshSegmenter Contributors
+
+"""
+SAMesh - SAM-based Mesh Segmentation Nodes
+
+This module provides modular mesh segmentation using SAM2 (Segment Anything Model 2).
+The pipeline is decomposed into separate nodes for maximum visibility and customization:
+
+Pipeline:
+1. MultiViewRenderer - Render mesh from multiple angles (normals, matte, SDF, mask, face_id)
+2. GenerateMasks - Run SAM on rendered images to generate segmentations
+3. Lift2DTo3DLabels - Convert 2D masks to 3D face labels
+4. SmoothLabels - Remove small components, fill holes, split disconnected regions
+5. GraphCutRepartition - (Optional) Refine boundaries with alpha-expansion graph cuts
+6. ApplyLabelsToMesh - Color mesh by segments
+"""
+
+# Core nodes - always available
+from .model_downloader import SamModelLoader
+from .loader import SamMeshLoader
+from .exporter import SamMeshExporter
+from .renderer import SamMeshRenderer
+
+# Modular pipeline nodes
+from .multiview_renderer import MultiViewRenderer
+from .generate_masks import GenerateMasks
+from .combine_bmasks import CombineBMasks
+from .lift_labels import Lift2DTo3DLabels
+from .smooth_labels import SmoothLabels
+from .graph_cut import GraphCutRepartition
+from .apply_labels import ApplyLabelsToMesh
+
+# Quad mesh support nodes
+from .pyvista_loader import PyVistaLoader, RemapFaceIds
+from .apply_labels_quad import ApplyLabelsToQuadMesh, SplitQuadMeshByLabels
+from .exporter_quad import QuadMeshExporter, ExportQuadMeshParts
+
+NODE_CLASS_MAPPINGS = {
+    # Utility nodes
+    "MeshSegSamModelLoader": SamModelLoader,
+    "MeshSegSamMeshLoader": SamMeshLoader,
+    "MeshSegSamMeshExporter": SamMeshExporter,
+    "MeshSegSamMeshRenderer": SamMeshRenderer,
+
+    # Modular pipeline nodes
+    "MeshSegMultiViewRenderer": MultiViewRenderer,
+    "MeshSegGenerateMasks": GenerateMasks,
+    "MeshSegCombineBMasks": CombineBMasks,
+    "MeshSegLift2DTo3DLabels": Lift2DTo3DLabels,
+    "MeshSegSmoothLabels": SmoothLabels,
+    "MeshSegGraphCutRepartition": GraphCutRepartition,
+    "MeshSegApplyLabelsToMesh": ApplyLabelsToMesh,
+
+    # Quad mesh support nodes
+    "MeshSegPyVistaLoader": PyVistaLoader,
+    "MeshSegRemapFaceIds": RemapFaceIds,
+    "MeshSegApplyLabelsToQuadMesh": ApplyLabelsToQuadMesh,
+    "MeshSegSplitQuadMeshByLabels": SplitQuadMeshByLabels,
+    "MeshSegQuadMeshExporter": QuadMeshExporter,
+    "MeshSegExportQuadMeshParts": ExportQuadMeshParts,
+}
+
+NODE_DISPLAY_NAME_MAPPINGS = {
+    # Utility nodes
+    "MeshSegSamModelLoader": "SAM Model Loader",
+    "MeshSegSamMeshLoader": "Load Mesh (SAMesh)",
+    "MeshSegSamMeshExporter": "Export Segments (SAMesh)",
+    "MeshSegSamMeshRenderer": "Render Mesh Views (SAMesh)",
+
+    # Modular pipeline nodes
+    "MeshSegMultiViewRenderer": "Multi-View Renderer",
+    "MeshSegGenerateMasks": "Generate Masks (SAM)",
+    "MeshSegCombineBMasks": "Combine Binary Masks",
+    "MeshSegLift2DTo3DLabels": "Lift 2D to 3D Labels",
+    "MeshSegSmoothLabels": "Smooth Labels",
+    "MeshSegGraphCutRepartition": "Graph Cut Repartition",
+    "MeshSegApplyLabelsToMesh": "Apply Labels to Mesh",
+
+    # Quad mesh support nodes
+    "MeshSegPyVistaLoader": "PyVista Loader (Quad Support)",
+    "MeshSegRemapFaceIds": "Remap Face IDs (Tri→Quad)",
+    "MeshSegApplyLabelsToQuadMesh": "Apply Labels to Quad Mesh",
+    "MeshSegSplitQuadMeshByLabels": "Split Quad Mesh by Labels",
+    "MeshSegQuadMeshExporter": "Export Quad Mesh (OBJ)",
+    "MeshSegExportQuadMeshParts": "Export Quad Mesh Parts",
+}
+
+__all__ = [
+    'NODE_CLASS_MAPPINGS',
+    'NODE_DISPLAY_NAME_MAPPINGS',
+    # Utility nodes
+    'SamModelLoader',
+    'SamMeshLoader',
+    'SamMeshExporter',
+    'SamMeshRenderer',
+    # Modular pipeline nodes
+    'MultiViewRenderer',
+    'GenerateMasks',
+    'CombineBMasks',
+    'Lift2DTo3DLabels',
+    'SmoothLabels',
+    'GraphCutRepartition',
+    'ApplyLabelsToMesh',
+    # Quad mesh support nodes
+    'PyVistaLoader',
+    'RemapFaceIds',
+    'ApplyLabelsToQuadMesh',
+    'SplitQuadMeshByLabels',
+    'QuadMeshExporter',
+    'ExportQuadMeshParts',
+]

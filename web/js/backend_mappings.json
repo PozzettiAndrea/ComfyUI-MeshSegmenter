@@ -1,0 +1,23 @@
+{
+  "mappings": {
+    "MeshSegSegmentByFeatures": {
+      "agglomerative": [
+        "num_clusters",
+        "seed",
+        "connectivity",
+        "linkage",
+        "keep_features"
+      ],
+      "kmeans": [
+        "num_clusters",
+        "seed",
+        "n_init",
+        "max_iter",
+        "keep_features"
+      ]
+    }
+  },
+  "backend_widgets": {
+    "MeshSegSegmentByFeatures": "backend"
+  }
+}
