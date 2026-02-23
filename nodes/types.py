@@ -43,6 +43,12 @@ QuadMeshInfo dataclass containing:
 PYVISTA_MESH = "PYVISTA_MESH"
 """PyVista PolyData mesh object (supports quads, n-gons, cell data)"""
 
+VIEW_MASKS = "VIEW_MASKS"
+"""Per-view segmentation masks: {'bmasks': list, 'cmasks': list, 'point_status': list}"""
+
+MESH_RENDER_DATA = "MESH_RENDER_DATA"
+"""Render data containing face ID buffers and camera info: {'faces': list, ...}"""
+
 
 # Type validation helpers
 
