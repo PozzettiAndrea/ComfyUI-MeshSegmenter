@@ -1,4 +1,8 @@
 [pypi-dependencies]
+# Installation dependencies
+requests = ">=2.25.0"
+tqdm = ">=4.60.0"
+
 # Core mesh processing
 trimesh = ">=3.15.0"
 numpy = ">=1.21.0"
@@ -12,6 +16,7 @@ opencv-python = ">=4.5.0"
 
 # Deep learning
 huggingface-hub = ">=0.20.0"
+transformers = ">=4.30.0"
 
 # SAM2
 iopath = ">=0.1.10"

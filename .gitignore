@@ -1,3 +1,5 @@
 __pycache__/
 .ipynb_checkpoints/
 web/
+_env_*
+**/_env_*
