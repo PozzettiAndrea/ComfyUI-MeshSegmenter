@@ -1,27 +1,13 @@
 [project]
 name = "comfyui-meshsegmenter"
-description = "Surface mesh segmentation nodes for ComfyUI - SAM-based segmentation, region growing, and more"
+description = "Surface mesh segmentation nodes for ComfyUI - SAM-based segmentation, PartField neural features, and more"
 version = "0.1.0"
-license = { text = "GPL-3.0-or-later" }
-classifiers = [
-    "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
-    "Programming Language :: Python :: 3",
-    "Operating System :: OS Independent",
-]
-dynamic = ["dependencies"]
+license = {file = "LICENSE"}
 
 [project.urls]
 Repository = "https://github.com/PozzettiAndrea/ComfyUI-MeshSegmenter"
-Documentation = "https://github.com/PozzettiAndrea/ComfyUI-MeshSegmenter/blob/main/README.md"
 
 [tool.comfy]
 PublisherId = "pznodes"
 DisplayName = "MeshSegmenter"
 Icon = ""
-
-[build-system]
-requires = ["setuptools>=45", "wheel"]
-build-backend = "setuptools.build_meta"
-
-[tool.setuptools.dynamic]
-dependencies = {file = ["requirements.txt"]}

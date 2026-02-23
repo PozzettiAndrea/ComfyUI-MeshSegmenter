@@ -13,7 +13,7 @@ from tqdm import tqdm
 from omegaconf import OmegaConf
 
 from .types import SAM_MODEL
-from ...samesh.models.mask_utils import (
+from ..samesh.models.mask_utils import (
     combine_bmasks,
     remove_artifacts,
 )
@@ -154,7 +154,7 @@ class GenerateMasks:
         stability_score_thresh: float = 0.85,
         min_area: int = 1024,
     ):
-        from ...samesh.models.sam import point_grid_from_mask
+        from ..samesh.models.sam import point_grid_from_mask
 
         if renders is None:
             raise ValueError("renders (MULTIBAND_IMAGE) input is required!")

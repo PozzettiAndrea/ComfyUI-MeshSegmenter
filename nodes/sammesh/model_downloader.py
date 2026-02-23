@@ -5,20 +5,19 @@
 SAM Model Loader Node - Downloads and loads SAM2/SAM3 models.
 """
 
+import logging
 import os
-import requests
-from tqdm import tqdm
+
+import torch
 from huggingface_hub import hf_hub_download
 from omegaconf import OmegaConf
+from folder_paths import base_path as comfy_base_path
 
 from .types import SAM_MODEL
 
-try:
-    import folder_paths
-    sam_model_dir = os.path.join(folder_paths.models_dir, "sam")
-except ImportError:
-    sam_model_dir = os.path.join(os.path.expanduser("~"), ".cache", "sam_models")
+log = logging.getLogger("meshsegmenter")
 
+sam_model_dir = os.path.join(comfy_base_path, "models", "sam")
 os.makedirs(sam_model_dir, exist_ok=True)
 
 # SAM Model Definitions
@@ -77,7 +76,13 @@ class SamModelLoader:
                     "default": SAM_MODEL_NAMES[0],
                     "tooltip": "Select the SAM model to download and load. SAM2 variants or SAM3."
                 }),
-            }
+            },
+            "optional": {
+                "precision": (["auto", "bf16", "fp16", "fp32"], {
+                    "default": "auto",
+                    "tooltip": "Model precision. auto: best for your GPU (bf16 on Ampere+, fp16 on Volta/Turing, fp32 on older)."
+                }),
+            },
         }
 
     RETURN_TYPES = (SAM_MODEL,)
@@ -85,90 +90,82 @@ class SamModelLoader:
     FUNCTION = "load_model"
     CATEGORY = "meshsegmenter/sammesh"
 
-    def download_file(self, url, save_path, model_name):
-        """Download a file from URL with progress bar."""
-        try:
-            print(f"SamModelLoader ({model_name}): Downloading {os.path.basename(save_path)}...")
-            response = requests.get(url, stream=True)
-            response.raise_for_status()
-            total_size = int(response.headers.get('content-length', 0))
-            block_size = 1024 * 1024  # 1MB
+    def _resolve_dtype(self, precision, device):
+        import comfy.model_management
+        if precision == "auto":
+            if comfy.model_management.should_use_bf16(device):
+                return torch.bfloat16
+            elif comfy.model_management.should_use_fp16(device):
+                return torch.float16
+            else:
+                return torch.float32
+        elif precision == "bf16":
+            return torch.bfloat16
+        elif precision == "fp16":
+            return torch.float16
+        else:
+            return torch.float32
 
-            with open(save_path, 'wb') as f, tqdm(
-                desc=os.path.basename(save_path),
-                total=total_size,
-                unit='iB',
-                unit_scale=True,
-                unit_divisor=1024,
-            ) as bar:
-                for data in response.iter_content(block_size):
-                    size = f.write(data)
-                    bar.update(size)
-
-            print(f"SamModelLoader ({model_name}): Download complete: {save_path}")
-            return save_path
-        except Exception as e:
-            print(f"\033[31mError downloading {url} for {model_name}: {e}\033[0m")
-            if os.path.exists(save_path):
-                os.remove(save_path)
-            raise
-
-    def load_model(self, model_name: str):
+    def load_model(self, model_name: str, precision: str = "auto"):
         """Download (if needed) and load the specified SAM model."""
+        import comfy.model_management
+
         if model_name not in SAM_MODELS:
             raise ValueError(f"Selected model '{model_name}' is not defined.")
 
         # Check cache first
         if model_name in _sam_model_cache:
-            print(f"SamModelLoader: Using cached model '{model_name}'")
+            log.info("SamModelLoader: Using cached model '%s'", model_name)
             return (_sam_model_cache[model_name],)
+
+        load_device = comfy.model_management.get_torch_device()
+        dtype = self._resolve_dtype(precision, load_device)
+        device_str = str(load_device)
 
         model_info = SAM_MODELS[model_name]
         model_type = model_info.get("type", "sam2")
 
         if model_type == "sam3":
-            model = self._load_sam3(model_name, model_info)
+            model = self._load_sam3(model_name, model_info, device_str)
         else:
-            model = self._load_sam2(model_name, model_info)
+            model = self._load_sam2(model_name, model_info, device_str)
 
         # Cache the loaded model
         _sam_model_cache[model_name] = model
-        print(f"SamModelLoader ({model_name}): Model loaded and cached!")
+        log.info("SamModelLoader (%s): Model loaded and cached on %s (%s)", model_name, device_str, dtype)
 
         return (model,)
 
-    def _load_sam2(self, model_name: str, model_info: dict):
-        """Load a SAM2/SAM2.1 model."""
-        checkpoint_filename = model_info["checkpoint_filename"]
-        config_name = model_info["config_name"]  # Hydra config path (e.g., "sam2.1/sam2.1_hiera_l")
-        repo_id = model_info["repo_id"]
-
+    def _download_checkpoint(self, model_name, repo_id, checkpoint_filename):
         checkpoint_path = os.path.join(sam_model_dir, checkpoint_filename)
 
-        # Download Checkpoint if missing
         if not os.path.exists(checkpoint_path):
-            print(f"SamModelLoader ({model_name}): Checkpoint not found. Downloading...")
-            try:
-                hf_hub_download(
-                    repo_id=repo_id,
-                    filename=checkpoint_filename,
-                    local_dir=sam_model_dir,
-                    local_dir_use_symlinks=False,
-                    resume_download=True
-                )
-                print(f"SamModelLoader ({model_name}): Checkpoint downloaded to {checkpoint_path}")
-            except Exception as e:
-                print(f"\033[31mError downloading checkpoint for {model_name}: {e}\033[0m")
-                raise
+            log.info("SamModelLoader (%s): Checkpoint not found. Downloading from %s...", model_name, repo_id)
+            hf_hub_download(
+                repo_id=repo_id,
+                filename=checkpoint_filename,
+                local_dir=sam_model_dir,
+                local_dir_use_symlinks=False,
+                resume_download=True
+            )
+            log.info("SamModelLoader (%s): Checkpoint downloaded to %s", model_name, checkpoint_path)
         else:
-            print(f"SamModelLoader ({model_name}): Checkpoint found: {checkpoint_path}")
+            log.info("SamModelLoader (%s): Checkpoint found: %s", model_name, checkpoint_path)
 
-        # Verify checkpoint exists
         if not os.path.exists(checkpoint_path):
             raise FileNotFoundError(f"Failed to locate checkpoint: {checkpoint_path}")
 
-        # Load the model (configs are bundled in sam2/configs/)
-        print(f"SamModelLoader ({model_name}): Loading SAM2 model with config '{config_name}'...")
+        return checkpoint_path
+
+    def _load_sam2(self, model_name: str, model_info: dict, device: str):
+        """Load a SAM2/SAM2.1 model."""
+        checkpoint_filename = model_info["checkpoint_filename"]
+        config_name = model_info["config_name"]
+        repo_id = model_info["repo_id"]
+
+        checkpoint_path = self._download_checkpoint(model_name, repo_id, checkpoint_filename)
+
+        log.info("SamModelLoader (%s): Loading SAM2 model with config '%s'...", model_name, config_name)
 
         # Default engine config - can be adjusted in GenerateMasks node
         engine_config = {
@@ -182,49 +179,26 @@ class SamModelLoader:
         config = OmegaConf.create({
             "sam": {
                 "checkpoint": checkpoint_path,
-                "model_config": config_name,  # Hydra path like "sam2.1/sam2.1_hiera_l"
+                "model_config": config_name,
                 "auto": True,
                 "ground": False,
                 "engine_config": engine_config,
             }
         })
 
-        from ...samesh.models.sam import Sam2Model
-        model = Sam2Model(config, device='cuda')
+        from ..samesh.models.sam import Sam2Model
+        model = Sam2Model(config, device=device)
 
         return model
 
-    def _load_sam3(self, model_name: str, model_info: dict):
+    def _load_sam3(self, model_name: str, model_info: dict, device: str):
         """Load a SAM3 model."""
         checkpoint_filename = model_info["checkpoint_filename"]
         repo_id = model_info["repo_id"]
 
-        checkpoint_path = os.path.join(sam_model_dir, checkpoint_filename)
+        checkpoint_path = self._download_checkpoint(model_name, repo_id, checkpoint_filename)
 
-        # Download Checkpoint if missing
-        if not os.path.exists(checkpoint_path):
-            print(f"SamModelLoader ({model_name}): Checkpoint not found. Downloading from {repo_id}...")
-            try:
-                hf_hub_download(
-                    repo_id=repo_id,
-                    filename=checkpoint_filename,
-                    local_dir=sam_model_dir,
-                    local_dir_use_symlinks=False,
-                    resume_download=True
-                )
-                print(f"SamModelLoader ({model_name}): Checkpoint downloaded to {checkpoint_path}")
-            except Exception as e:
-                print(f"\033[31mError downloading checkpoint for {model_name}: {e}\033[0m")
-                raise
-        else:
-            print(f"SamModelLoader ({model_name}): Checkpoint found: {checkpoint_path}")
-
-        # Verify checkpoint exists
-        if not os.path.exists(checkpoint_path):
-            raise FileNotFoundError(f"Failed to locate checkpoint: {checkpoint_path}")
-
-        # Load the model
-        print(f"SamModelLoader ({model_name}): Loading SAM3 model...")
+        log.info("SamModelLoader (%s): Loading SAM3 model...", model_name)
 
         # Default engine config
         engine_config = {
@@ -243,7 +217,16 @@ class SamModelLoader:
             }
         })
 
-        from ...samesh.models.sam3 import Sam3Model
-        model = Sam3Model(config, device='cuda')
+        from ..samesh.models.sam3 import Sam3Model
+        model = Sam3Model(config, device=device)
 
         return model
+
+
+NODE_CLASS_MAPPINGS = {
+    "MeshSegSamModelLoader": SamModelLoader,
+}
+
+NODE_DISPLAY_NAME_MAPPINGS = {
+    "MeshSegSamModelLoader": "SAM Model Loader (MeshSeg)",
+}

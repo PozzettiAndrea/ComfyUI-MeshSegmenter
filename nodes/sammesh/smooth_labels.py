@@ -8,7 +8,7 @@ Smooth Labels Node - Smooths face labels by removing small components and fillin
 import trimesh
 
 from .types import FACE_LABELS, QUAD_MESH_INFO
-from ...samesh.models.smoothing import (
+from ..samesh.models.smoothing import (
     build_mesh_graph,
     smooth_labels,
     split_disconnected_components,
@@ -91,7 +91,7 @@ class SmoothLabels:
         # Build mesh adjacency graph - use quad-aware if quad_info provided
         area_faces = None
         if quad_info is not None:
-            from ...samesh.utils.quad_mesh import build_quad_mesh_graph, compute_face_areas
+            from ..samesh.utils.quad_mesh import build_quad_mesh_graph, compute_face_areas
             print("  Using quad-aware adjacency graph")
             mesh_graph = build_quad_mesh_graph(quad_info)
             # Override num_faces with original face count

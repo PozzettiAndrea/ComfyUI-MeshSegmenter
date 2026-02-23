@@ -1,14 +1,15 @@
 [test]
-name = "ComfyUI-MeshSegmenter"
-python_version = "3.11"
-cpu_only = false
-levels = ["syntax", "install", "registration", "instantiation", "validation", "execution"]
+levels = ["syntax", "install", "registration", "instantiation", "execution"]
 
 [test.workflows]
-run = "all"
-screenshot = "all"
+cpu = []
+gpu = "all"
 
 [test.platforms]
 linux = true
+macos = true
 windows = true
 windows_portable = true
+linux_gpu = true
+windows_gpu = true
+windows_portable_gpu = true

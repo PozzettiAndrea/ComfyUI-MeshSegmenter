@@ -62,7 +62,7 @@ class ApplyLabelsToQuadMesh:
         Returns:
             PyVista PolyData with 'labels' and 'colors' cell data
         """
-        from ...samesh.utils.quad_mesh import apply_labels_to_pyvista
+        from ..samesh.utils.quad_mesh import apply_labels_to_pyvista
 
         print("ApplyLabelsToQuadMesh: Applying labels to PyVista mesh...")
 

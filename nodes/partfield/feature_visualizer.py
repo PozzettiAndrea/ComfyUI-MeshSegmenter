@@ -116,7 +116,7 @@ class PartFieldFeatureVisualizer:
             face_points = face_points.reshape(1, -1, 3)
 
             # Import triplane sampling function
-            from ...partfield.model.PVCNN.encoder_pc import sample_triplane_feat
+            from ..partfield_lib.model.PVCNN.encoder_pc import sample_triplane_feat
 
             # Sample features in batches
             n_sample_each = 10000

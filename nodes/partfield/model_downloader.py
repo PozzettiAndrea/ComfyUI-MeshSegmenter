@@ -5,17 +5,16 @@
 PartField Model Downloader Node - Downloads PartField model checkpoint.
 """
 
+import logging
 import os
-import sys
+
 import torch
 from huggingface_hub import hf_hub_download
+from folder_paths import base_path as comfy_base_path
 
-try:
-    import folder_paths
-    partfield_model_dir = os.path.join(folder_paths.models_dir, "partfield")
-except ImportError:
-    partfield_model_dir = os.path.join(os.path.expanduser("~"), ".cache", "partfield_models")
+log = logging.getLogger("meshsegmenter")
 
+partfield_model_dir = os.path.join(comfy_base_path, "models", "partfield")
 os.makedirs(partfield_model_dir, exist_ok=True)
 
 
@@ -97,11 +96,11 @@ class PartFieldModelDownloader:
                 }),
             },
             "optional": {
-                "device": (["cuda", "cpu"], {
-                    "default": "cuda",
-                    "tooltip": "Device to load the model on."
+                "precision": (["auto", "bf16", "fp16", "fp32"], {
+                    "default": "auto",
+                    "tooltip": "Model precision. auto: best for your GPU (bf16 on Ampere+, fp16 on Volta/Turing, fp32 on older)."
                 }),
-            }
+            },
         }
 
     RETURN_TYPES = ("PARTFIELD_MODEL", "STRING",)
@@ -109,8 +108,26 @@ class PartFieldModelDownloader:
     FUNCTION = "download_and_load_model"
     CATEGORY = "meshsegmenter/partfield"
 
-    def download_and_load_model(self, model_name: str, device: str = "cuda"):
+    def _resolve_dtype(self, precision, device):
+        import comfy.model_management
+        if precision == "auto":
+            if comfy.model_management.should_use_bf16(device):
+                return torch.bfloat16
+            elif comfy.model_management.should_use_fp16(device):
+                return torch.float16
+            else:
+                return torch.float32
+        elif precision == "bf16":
+            return torch.bfloat16
+        elif precision == "fp16":
+            return torch.float16
+        else:
+            return torch.float32
+
+    def download_and_load_model(self, model_name: str, precision: str = "auto"):
         """Download and load the specified PartField model."""
+        import comfy.model_management
+
         if model_name not in PARTFIELD_MODELS:
             raise ValueError(f"Selected model '{model_name}' is not defined.")
 
@@ -122,28 +139,27 @@ class PartFieldModelDownloader:
 
         # Download Checkpoint if missing
         if not os.path.exists(checkpoint_path):
-            print(f"PartFieldModelDownloader ({model_name}): Checkpoint not found. Downloading...")
-            try:
-                hf_hub_download(
-                    repo_id=repo_id,
-                    filename=checkpoint_filename,
-                    local_dir=partfield_model_dir,
-                    local_dir_use_symlinks=False,
-                    resume_download=True
-                )
-                print(f"PartFieldModelDownloader ({model_name}): Checkpoint downloaded to {checkpoint_path}")
-            except Exception as e:
-                print(f"\033[31mError downloading checkpoint for {model_name}: {e}\033[0m")
-                raise
+            log.info("PartFieldModelDownloader (%s): Checkpoint not found. Downloading...", model_name)
+            hf_hub_download(
+                repo_id=repo_id,
+                filename=checkpoint_filename,
+                local_dir=partfield_model_dir,
+                local_dir_use_symlinks=False,
+                resume_download=True
+            )
+            log.info("PartFieldModelDownloader (%s): Checkpoint downloaded to %s", model_name, checkpoint_path)
         else:
-            print(f"PartFieldModelDownloader ({model_name}): Checkpoint found: {checkpoint_path}")
+            log.info("PartFieldModelDownloader (%s): Checkpoint found: %s", model_name, checkpoint_path)
 
-        # Verify file exists
         if not os.path.exists(checkpoint_path):
             raise FileNotFoundError(f"Failed to locate checkpoint: {checkpoint_path}")
 
-        # Load the model
-        print(f"PartFieldModelDownloader ({model_name}): Loading model...")
+        # Resolve device and dtype
+        load_device = comfy.model_management.get_torch_device()
+        dtype = self._resolve_dtype(precision, load_device)
+        device_str = str(load_device)
+
+        log.info("PartFieldModelDownloader (%s): Loading model...", model_name)
 
         # Load checkpoint to get hyperparameters
         checkpoint = torch.load(checkpoint_path, map_location='cpu', weights_only=False)
@@ -151,13 +167,13 @@ class PartFieldModelDownloader:
         # Extract config from checkpoint if available, otherwise use defaults
         if 'hyper_parameters' in checkpoint and 'cfg' in checkpoint['hyper_parameters']:
             cfg = checkpoint['hyper_parameters']['cfg']
-            print(f"PartFieldModelDownloader ({model_name}): Using config from checkpoint")
+            log.info("PartFieldModelDownloader (%s): Using config from checkpoint", model_name)
         else:
             cfg = create_partfield_config()
-            print(f"PartFieldModelDownloader ({model_name}): Using default config")
+            log.info("PartFieldModelDownloader (%s): Using default config", model_name)
 
         # Import and instantiate model
-        from ...partfield.model_trainer_pvcnn_only_demo import Model
+        from ..partfield_lib.model_trainer_pvcnn_only_demo import Model
 
         # Create model instance
         model = Model(cfg)
@@ -177,17 +193,26 @@ class PartFieldModelDownloader:
                 new_state_dict[k] = v
 
         model.load_state_dict(new_state_dict, strict=False)
-        model = model.to(device)
+        model = model.to(device_str)
         model.eval()
 
-        print(f"PartFieldModelDownloader ({model_name}): Model loaded successfully on {device}")
+        log.info("PartFieldModelDownloader (%s): Model loaded on %s (%s)", model_name, device_str, dtype)
 
         # Return model wrapped with config and device info
         model_wrapper = {
             'model': model,
             'config': cfg,
-            'device': device,
+            'device': device_str,
             'checkpoint_path': checkpoint_path
         }
 
         return (model_wrapper, checkpoint_path,)
+
+
+NODE_CLASS_MAPPINGS = {
+    "MeshSegPartFieldModelDownloader": PartFieldModelDownloader,
+}
+
+NODE_DISPLAY_NAME_MAPPINGS = {
+    "MeshSegPartFieldModelDownloader": "PartField Model Downloader (MeshSeg)",
+}

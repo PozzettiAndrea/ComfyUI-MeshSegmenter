@@ -14,7 +14,7 @@ import random
 
 # Helper to add paths relative to this script's location
 script_dir = os.path.dirname(os.path.abspath(__file__))
-samesh_base_dir = os.path.join(script_dir, "samesh-main")
+samesh_base_dir = os.path.join(script_dir, "samesh_main")
 samesh_src_dir = os.path.join(samesh_base_dir, "src")
 
 def add_to_path(p):

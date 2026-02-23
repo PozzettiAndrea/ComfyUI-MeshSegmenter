@@ -1,26 +1,13 @@
-# SPDX-License-Identifier: GPL-3.0-or-later
-# Copyright (C) 2025 ComfyUI-MeshSegmenter Contributors
+import logging
+from comfy_env import register_nodes
 
-"""
-ComfyUI MeshSegmenter - Surface Mesh Segmentation Custom Nodes
+log = logging.getLogger("meshsegmenter")
+log.info("loading...")
 
-This package provides mesh segmentation nodes for ComfyUI including:
-- SAM-based mesh segmentation (SAMesh)
-- PartField neural feature field segmentation
-"""
+NODE_CLASS_MAPPINGS, NODE_DISPLAY_NAME_MAPPINGS = register_nodes()
 
-import sys
+from comfy_dynamic_widgets import write_mappings
+write_mappings(NODE_CLASS_MAPPINGS, __file__)
 
-# Only run initialization when loaded by ComfyUI, not during pytest
-if 'pytest' not in sys.modules:
-    from .nodes import NODE_CLASS_MAPPINGS, NODE_DISPLAY_NAME_MAPPINGS
-    print("\033[34m[MeshSegmenter]\033[0m \033[92mLoaded\033[0m")
-else:
-    NODE_CLASS_MAPPINGS = {}
-    NODE_DISPLAY_NAME_MAPPINGS = {}
-
-# Set web directory for JavaScript extensions
 WEB_DIRECTORY = "./web"
-
-# Export the mappings so ComfyUI can discover the nodes
 __all__ = ['NODE_CLASS_MAPPINGS', 'NODE_DISPLAY_NAME_MAPPINGS', 'WEB_DIRECTORY']

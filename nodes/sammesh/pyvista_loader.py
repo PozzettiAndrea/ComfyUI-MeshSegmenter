@@ -12,7 +12,7 @@ face topology mapping. This enables quad-level segmentation.
 import numpy as np
 
 from .types import QUAD_MESH_INFO, PYVISTA_MESH
-from ...samesh.utils.quad_mesh import pyvista_to_trimesh, QuadMeshInfo
+from ..samesh.utils.quad_mesh import pyvista_to_trimesh, QuadMeshInfo
 
 
 class PyVistaLoader:
@@ -121,7 +121,7 @@ class RemapFaceIds:
             quad_info: Passed through for downstream nodes
         """
         import torch
-        from ...samesh.utils.quad_mesh import remap_face_id_buffer
+        from ..samesh.utils.quad_mesh import remap_face_id_buffer
 
         print("RemapFaceIds: Remapping triangle face IDs to original face IDs...")
 
