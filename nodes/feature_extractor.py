@@ -167,3 +167,12 @@ class PartFieldFeatureExtractor:
         print(f"PartFieldFeatureExtractor: Done! Stored features with shape {face_features.shape}")
 
         return (output_mesh,)
+
+
+NODE_CLASS_MAPPINGS = {
+    "MeshSegPartFieldFeatureExtractor": PartFieldFeatureExtractor,
+}
+
+NODE_DISPLAY_NAME_MAPPINGS = {
+    "MeshSegPartFieldFeatureExtractor": "PartField Feature Extractor (MeshSeg)",
+}

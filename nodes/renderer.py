@@ -216,3 +216,12 @@ class SamMeshRenderer:
         image_tensor = torch.from_numpy(image_np)[None,]
 
         return (image_tensor,)
+
+
+NODE_CLASS_MAPPINGS = {
+    "MeshSegSamMeshRenderer": SamMeshRenderer,
+}
+
+NODE_DISPLAY_NAME_MAPPINGS = {
+    "MeshSegSamMeshRenderer": "SAMesh Renderer (MeshSeg)",
+}

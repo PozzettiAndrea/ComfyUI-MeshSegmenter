@@ -176,3 +176,12 @@ class PartFieldFeatureVisualizer:
         print("PartFieldFeatureVisualizer: Done!")
 
         return (pca_mesh,)
+
+
+NODE_CLASS_MAPPINGS = {
+    "MeshSegPartFieldFeatureViz": PartFieldFeatureVisualizer,
+}
+
+NODE_DISPLAY_NAME_MAPPINGS = {
+    "MeshSegPartFieldFeatureViz": "PartField Feature Visualizer (MeshSeg)",
+}

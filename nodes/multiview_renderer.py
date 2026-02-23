@@ -651,3 +651,12 @@ class MultiViewRenderer:
 
         print(f"    Feature edge rendering complete")
         return torch.from_numpy(np.stack(edge_images, axis=0))
+
+
+NODE_CLASS_MAPPINGS = {
+    "MeshSegMultiViewRenderer": MultiViewRenderer,
+}
+
+NODE_DISPLAY_NAME_MAPPINGS = {
+    "MeshSegMultiViewRenderer": "Multi-View Renderer (MeshSeg)",
+}

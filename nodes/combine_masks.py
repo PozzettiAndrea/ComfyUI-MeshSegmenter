@@ -172,3 +172,12 @@ class CombineViewMasks:
         print(f"  Output shape: {masks_viz.shape}")
 
         return (masks_data, masks_viz)
+
+
+NODE_CLASS_MAPPINGS = {
+    "MeshSegCombineViewMasks": CombineViewMasks,
+}
+
+NODE_DISPLAY_NAME_MAPPINGS = {
+    "MeshSegCombineViewMasks": "Combine View Masks (MeshSeg)",
+}

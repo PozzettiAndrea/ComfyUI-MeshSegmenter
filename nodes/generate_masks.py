@@ -312,3 +312,12 @@ class GenerateMasks:
         print(f"  Output: {n_types} segmentation channels + foreground_mask")
 
         return (output_multiband,)
+
+
+NODE_CLASS_MAPPINGS = {
+    "MeshSegGenerateMasks": GenerateMasks,
+}
+
+NODE_DISPLAY_NAME_MAPPINGS = {
+    "MeshSegGenerateMasks": "Generate Masks (MeshSeg)",
+}

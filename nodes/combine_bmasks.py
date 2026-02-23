@@ -158,3 +158,12 @@ class CombineBMasks:
         }
 
         return (result,)
+
+
+NODE_CLASS_MAPPINGS = {
+    "MeshSegCombineBMasks": CombineBMasks,
+}
+
+NODE_DISPLAY_NAME_MAPPINGS = {
+    "MeshSegCombineBMasks": "Combine Binary Masks (MeshSeg)",
+}

@@ -147,3 +147,12 @@ class SmoothLabels:
         print(stats)
 
         return (smoothed_labels, stats)
+
+
+NODE_CLASS_MAPPINGS = {
+    "MeshSegSmoothLabels": SmoothLabels,
+}
+
+NODE_DISPLAY_NAME_MAPPINGS = {
+    "MeshSegSmoothLabels": "Smooth Labels (MeshSeg)",
+}

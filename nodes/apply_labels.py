@@ -167,3 +167,12 @@ class ApplyLabelsToMesh:
             images.append(Image.fromarray(outputs['matte']))
 
         return images
+
+
+NODE_CLASS_MAPPINGS = {
+    "MeshSegApplyLabelsToMesh": ApplyLabelsToMesh,
+}
+
+NODE_DISPLAY_NAME_MAPPINGS = {
+    "MeshSegApplyLabelsToMesh": "Apply Labels To Mesh (MeshSeg)",
+}

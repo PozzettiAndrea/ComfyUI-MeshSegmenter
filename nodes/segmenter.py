@@ -318,3 +318,12 @@ class PartFieldSegmenter:
         print(f"PartFieldSegmenter: Done! Mesh has {len(unique_labels)} segments")
 
         return (segmented_mesh, pca_tensor)
+
+
+NODE_CLASS_MAPPINGS = {
+    "MeshSegPartFieldSegmenter": PartFieldSegmenter,
+}
+
+NODE_DISPLAY_NAME_MAPPINGS = {
+    "MeshSegPartFieldSegmenter": "PartField Segmenter (MeshSeg)",
+}

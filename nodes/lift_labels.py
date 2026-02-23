@@ -186,3 +186,12 @@ class Lift2DTo3DLabels:
         print(f"  Found {unique_labels} unique labels")
 
         return (face_labels_data,)
+
+
+NODE_CLASS_MAPPINGS = {
+    "MeshSegLift2DTo3DLabels": Lift2DTo3DLabels,
+}
+
+NODE_DISPLAY_NAME_MAPPINGS = {
+    "MeshSegLift2DTo3DLabels": "Lift 2D To 3D Labels (MeshSeg)",
+}

@@ -168,3 +168,12 @@ class SamMeshExporter:
             raise
 
         return {}
+
+
+NODE_CLASS_MAPPINGS = {
+    "MeshSegSamMeshExporter": SamMeshExporter,
+}
+
+NODE_DISPLAY_NAME_MAPPINGS = {
+    "MeshSegSamMeshExporter": "SAMesh Exporter (MeshSeg)",
+}

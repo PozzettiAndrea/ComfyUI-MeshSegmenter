@@ -139,3 +139,12 @@ class GraphCutRepartition:
         print(f"  Refined to {unique_labels} segments")
 
         return (refined_labels,)
+
+
+NODE_CLASS_MAPPINGS = {
+    "MeshSegGraphCutRepartition": GraphCutRepartition,
+}
+
+NODE_DISPLAY_NAME_MAPPINGS = {
+    "MeshSegGraphCutRepartition": "Graph Cut Repartition (MeshSeg)",
+}

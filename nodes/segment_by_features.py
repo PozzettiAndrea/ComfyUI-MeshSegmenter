@@ -273,3 +273,12 @@ class SegmentMeshByFeatures:
         print(f"SegmentMeshByFeatures: Done! Mesh has {len(unique_labels)} segments")
 
         return (segmented_mesh, pca_tensor)
+
+
+NODE_CLASS_MAPPINGS = {
+    "MeshSegSegmentByFeatures": SegmentMeshByFeatures,
+}
+
+NODE_DISPLAY_NAME_MAPPINGS = {
+    "MeshSegSegmentByFeatures": "Segment Mesh By Features (MeshSeg)",
+}

@@ -122,3 +122,12 @@ class SamMeshLoader:
         except Exception as e:
             print(f"\033[31mError loading mesh {mesh_full_path}: {e}\033[0m")
             raise
+
+
+NODE_CLASS_MAPPINGS = {
+    "MeshSegSamMeshLoader": SamMeshLoader,
+}
+
+NODE_DISPLAY_NAME_MAPPINGS = {
+    "MeshSegSamMeshLoader": "SAMesh Loader (MeshSeg)",
+}
