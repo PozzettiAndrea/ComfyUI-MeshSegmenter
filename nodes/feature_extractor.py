@@ -2,7 +2,7 @@
 # Copyright (C) 2025 ComfyUI-MeshSegmenter Contributors
 
 """
-PartField Feature Visualizer Node - Visualizes PartField features using PCA.
+PartField Feature Extractor Node - Extracts 448-dim features per face.
 """
 
 import os
@@ -10,13 +10,6 @@ import sys
 import torch
 import numpy as np
 import trimesh
-from sklearn.decomposition import PCA
-
-try:
-    import folder_paths
-    output_dir = folder_paths.get_output_directory()
-except ImportError:
-    output_dir = os.path.join(os.getcwd(), "output")
 
 
 
@@ -39,10 +32,10 @@ def sample_points_on_faces(vertices, faces, n_point_per_face):
     return points
 
 
-class PartFieldFeatureVisualizer:
+class PartFieldFeatureExtractor:
     """
-    Visualizes PartField features on a mesh using PCA-based coloring.
-    Outputs a mesh colored by feature similarity (similar colors = similar features).
+    Extracts PartField neural features (448-dim) for each face of a mesh.
+    Output mesh has features stored in face_attributes['features'].
     """
 
     @classmethod
@@ -57,27 +50,44 @@ class PartFieldFeatureVisualizer:
                     "default": 100,
                     "min": 10,
                     "max": 2000,
-                    "tooltip": "Points sampled per face for feature averaging."
+                    "tooltip": "Points sampled per face for feature averaging. Lower = faster."
+                }),
+                "seed": ("INT", {
+                    "default": 0,
+                    "min": 0,
+                    "max": 0xffffffffffffffff,
+                    "tooltip": "Random seed for reproducibility."
                 }),
             }
         }
 
     RETURN_TYPES = ("TRIMESH",)
-    RETURN_NAMES = ("pca_colored_mesh",)
-    FUNCTION = "visualize_features"
+    RETURN_NAMES = ("mesh_with_features",)
+    FUNCTION = "extract_features"
     CATEGORY = "meshsegmenter/partfield"
 
-    def visualize_features(
+    def extract_features(
         self,
         mesh: trimesh.Trimesh,
         partfield_model: dict,
-        n_points_per_face: int = 100
+        n_points_per_face: int = 100,
+        seed: int = 0
     ):
+        import random
+
+        # Set seeds
+        capped_seed = seed % (2**32)
+        torch.manual_seed(capped_seed)
+        np.random.seed(capped_seed)
+        random.seed(capped_seed)
+        if torch.cuda.is_available():
+            torch.cuda.manual_seed_all(capped_seed)
+
         # Get model and config
         model = partfield_model['model']
         device = partfield_model['device']
 
-        print(f"PartFieldFeatureVisualizer: Processing mesh with {len(mesh.vertices)} vertices, {len(mesh.faces)} faces")
+        print(f"PartFieldFeatureExtractor: Processing mesh with {len(mesh.vertices)} vertices, {len(mesh.faces)} faces")
 
         # Normalize mesh to [-1, 1] range
         vertices = mesh.vertices.copy()
@@ -87,8 +97,8 @@ class PartFieldFeatureVisualizer:
         scale = 2.0 * 0.9 / (bbmax - bbmin).max()
         vertices_norm = (vertices - center) * scale
 
-        # Sample points for PVCNN input
-        print("PartFieldFeatureVisualizer: Sampling surface points...")
+        # Sample points for PVCNN input (100k points)
+        print("PartFieldFeatureExtractor: Sampling surface points...")
         pc, _ = trimesh.sample.sample_surface(
             trimesh.Trimesh(vertices=vertices_norm, faces=mesh.faces, process=False),
             100000
@@ -96,7 +106,7 @@ class PartFieldFeatureVisualizer:
         pc = torch.from_numpy(pc).float().unsqueeze(0).to(device)
 
         # Extract features
-        print("PartFieldFeatureVisualizer: Extracting features...")
+        print("PartFieldFeatureExtractor: Extracting features...")
         with torch.no_grad():
             # Run PVCNN encoder
             pc_feat = model.pvcnn(pc, pc)
@@ -108,6 +118,7 @@ class PartFieldFeatureVisualizer:
             sdf_planes, part_planes = torch.split(planes, [64, planes.shape[2] - 64], dim=2)
 
             # Sample features on mesh faces
+            print("PartFieldFeatureExtractor: Sampling face features...")
             tensor_vertices = torch.from_numpy(vertices_norm).float().to(device)
             tensor_faces = torch.from_numpy(mesh.faces).long().to(device)
 
@@ -116,9 +127,9 @@ class PartFieldFeatureVisualizer:
             face_points = face_points.reshape(1, -1, 3)
 
             # Import triplane sampling function
-            from ..partfield_lib.model.PVCNN.encoder_pc import sample_triplane_feat
+            from .partfield_lib.model.PVCNN.encoder_pc import sample_triplane_feat
 
-            # Sample features in batches
+            # Sample features in batches to avoid OOM
             n_sample_each = 10000
             n_v = face_points.shape[1]
             n_sample = n_v // n_sample_each + 1
@@ -135,6 +146,7 @@ class PartFieldFeatureVisualizer:
                     face_points[:, start_idx:end_idx, :]
                 )
 
+                # Reshape and average over points per face
                 batch_size = end_idx - start_idx
                 if batch_size % n_points_per_face == 0:
                     sampled_feature = sampled_feature.reshape(1, -1, n_points_per_face, sampled_feature.shape[-1])
@@ -144,35 +156,14 @@ class PartFieldFeatureVisualizer:
             face_features = torch.cat(all_samples, dim=1)
             face_features = face_features.reshape(-1, 448).cpu().numpy()
 
-        print(f"PartFieldFeatureVisualizer: Extracted features shape: {face_features.shape}")
+        print(f"PartFieldFeatureExtractor: Extracted features shape: {face_features.shape}")
 
-        # Apply PCA for visualization
-        print("PartFieldFeatureVisualizer: Computing PCA colors...")
-        norms = np.linalg.norm(face_features, axis=-1, keepdims=True)
-        norms[norms == 0] = 1
-        data_scaled = face_features / norms
+        # Create output mesh with features
+        output_mesh = mesh.copy()
 
-        pca = PCA(n_components=3)
-        data_reduced = pca.fit_transform(data_scaled)
+        # Store as single 2D array: shape (n_faces, 448)
+        output_mesh.face_attributes['features'] = face_features.astype(np.float32)
 
-        # Normalize to 0-1
-        data_min = data_reduced.min()
-        data_max = data_reduced.max()
-        if data_max > data_min:
-            data_reduced = (data_reduced - data_min) / (data_max - data_min)
-        else:
-            data_reduced = np.zeros_like(data_reduced)
+        print(f"PartFieldFeatureExtractor: Done! Stored features with shape {face_features.shape}")
 
-        # Create colors
-        colors_255 = (data_reduced * 255).astype(np.uint8)
-        face_colors = np.zeros((len(mesh.faces), 4), dtype=np.uint8)
-        for i in range(len(mesh.faces)):
-            face_colors[i] = np.append(colors_255[i], 255)
-
-        # Create colored mesh
-        pca_mesh = mesh.copy()
-        pca_mesh.visual = trimesh.visual.ColorVisuals(mesh=pca_mesh, face_colors=face_colors)
-
-        print("PartFieldFeatureVisualizer: Done!")
-
-        return (pca_mesh,)
+        return (output_mesh,)

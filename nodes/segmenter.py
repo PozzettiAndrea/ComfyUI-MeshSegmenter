@@ -222,7 +222,7 @@ class PartFieldSegmenter:
             face_points = face_points.reshape(1, -1, 3)
 
             # Import triplane sampling function
-            from ..partfield_lib.model.PVCNN.encoder_pc import sample_triplane_feat
+            from .partfield_lib.model.PVCNN.encoder_pc import sample_triplane_feat
 
             # Sample features in batches to avoid OOM
             n_sample_each = 10000
@@ -267,7 +267,7 @@ class PartFieldSegmenter:
         else:
             # Agglomerative clustering with mesh connectivity
             # Add partfield-src to path for clustering utilities
-            partfield_src = os.path.join(os.path.dirname(os.path.dirname(__file__)), "partfield_src")
+            partfield_src = os.path.join(os.path.dirname(__file__), "partfield_src")
             if partfield_src not in sys.path:
                 sys.path.insert(0, partfield_src)
             from run_part_clustering import (

@@ -8,7 +8,7 @@ Combine BMasks Node - Combines multiple binary mask channels into a single label
 import numpy as np
 import torch
 
-from ..samesh.models.mask_utils import combine_bmasks, remove_artifacts
+from .samesh.models.mask_utils import combine_bmasks, remove_artifacts
 
 
 class CombineBMasks:

@@ -8,7 +8,7 @@ Graph Cut Repartition Node - Refines segmentation boundaries using alpha-expansi
 import trimesh
 
 from .types import FACE_LABELS
-from ..samesh.models.smoothing import (
+from .samesh.models.smoothing import (
     graph_cut_repartition,
     compute_label_stats,
 )

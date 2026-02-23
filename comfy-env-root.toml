@@ -7,3 +7,4 @@ packages = ["torch_scatter"]
 [node_reqs]
 ComfyUI-Env-Manager = "PozzettiAndrea/ComfyUI-Env-Manager"
 ComfyUI-GeometryPack = "PozzettiAndrea/ComfyUI-GeometryPack"
+ComfyUI-Multiband = "PozzettiAndrea/ComfyUI-Multiband"

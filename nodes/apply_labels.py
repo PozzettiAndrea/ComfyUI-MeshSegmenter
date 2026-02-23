@@ -84,7 +84,7 @@ class ApplyLabelsToMesh:
         face_labels: dict,
         colormap_seed: int = 42
     ):
-        from ..samesh.utils.mesh import duplicate_verts
+        from .samesh.utils.mesh import duplicate_verts
 
         print("ApplyLabelsToMesh: Applying segment colors to mesh...")
 
@@ -134,7 +134,7 @@ class ApplyLabelsToMesh:
         os.environ["PYOPENGL_PLATFORM"] = "egl"
 
         from omegaconf import OmegaConf
-        from ..samesh.renderer.renderer import Renderer
+        from .samesh.renderer.renderer import Renderer
 
         # Create renderer
         config = OmegaConf.create({

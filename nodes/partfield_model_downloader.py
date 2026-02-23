@@ -173,7 +173,7 @@ class PartFieldModelDownloader:
             log.info("PartFieldModelDownloader (%s): Using default config", model_name)
 
         # Import and instantiate model
-        from ..partfield_lib.model_trainer_pvcnn_only_demo import Model
+        from .partfield_lib.model_trainer_pvcnn_only_demo import Model
 
         # Create model instance
         model = Model(cfg)

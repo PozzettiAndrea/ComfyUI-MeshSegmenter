@@ -9,7 +9,7 @@ import numpy as np
 import torch
 
 from .types import VIEW_MASKS, MESH_RENDER_DATA
-from ..samesh.models.mask_utils import combine_bmasks, remove_artifacts, colormap_mask
+from .samesh.models.mask_utils import combine_bmasks, remove_artifacts, colormap_mask
 
 
 def numpy_to_tensor(arrays: list, normalize: bool = True) -> torch.Tensor:

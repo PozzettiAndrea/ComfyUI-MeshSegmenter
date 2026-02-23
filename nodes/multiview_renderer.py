@@ -189,7 +189,7 @@ class MultiViewRenderer:
         compute_feature_edges: bool = False,
         feature_edge_angle: float = 30.0
     ):
-        from ..samesh.renderer.renderer import Renderer, render_multiview, colormap_norms
+        from .samesh.renderer.renderer import Renderer, render_multiview, colormap_norms
 
         print(f"MultiViewRenderer: Starting render...")
         print(f"  Resolution: {render_resolution}")
@@ -351,7 +351,7 @@ class MultiViewRenderer:
         sdf_cone_amplitude: int
     ) -> np.ndarray:
         """Compute SDF values per face. Returns array of shape (num_faces,)."""
-        from ..samesh.models.shape_diameter_function import (
+        from .samesh.models.shape_diameter_function import (
             prep_mesh_shape_diameter_function,
             shape_diameter_function,
         )

@@ -8,7 +8,7 @@ Lift 2D to 3D Labels Node - Converts per-view 2D masks to consistent 3D face lab
 import numpy as np
 
 from .types import CAMERA_POSES, FACE_LABELS
-from ..samesh.models.lifting import lift_masks_to_3d
+from .samesh.models.lifting import lift_masks_to_3d
 
 
 class Lift2DTo3DLabels:

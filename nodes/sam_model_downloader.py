@@ -186,7 +186,7 @@ class SamModelLoader:
             }
         })
 
-        from ..samesh.models.sam import Sam2Model
+        from .samesh.models.sam import Sam2Model
         model = Sam2Model(config, device=device)
 
         return model
@@ -217,7 +217,7 @@ class SamModelLoader:
             }
         })
 
-        from ..samesh.models.sam3 import Sam3Model
+        from .samesh.models.sam3 import Sam3Model
         model = Sam3Model(config, device=device)
 
         return model
