@@ -1,3 +1,7 @@
+[cuda]
+packages = ["torch_scatter"]
+
+
 [pypi-dependencies]
 # Installation dependencies
 requests = ">=2.25.0"

@@ -1,9 +1,6 @@
 [apt]
 packages = ["libegl1", "libegl-dev", "libgl1-mesa-glx", "libosmesa6-dev", "libgl1", "libopengl0", "libglu1-mesa"]
 
-[cuda]
-packages = ["torch_scatter"]
-
 [node_reqs]
 ComfyUI-Env-Manager = "PozzettiAndrea/ComfyUI-Env-Manager"
 ComfyUI-GeometryPack = "PozzettiAndrea/ComfyUI-GeometryPack"
