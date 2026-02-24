@@ -177,10 +177,9 @@ class PartFieldSegmenter:
         if torch.cuda.is_available():
             torch.cuda.manual_seed_all(capped_seed)
 
-        # Get model and config
-        model = partfield_model['model']
-        cfg = partfield_model['config']
-        device = partfield_model['device']
+        # Load model inside worker process (lazy, cached)
+        from .feature_extractor import _get_partfield_model
+        model, device = _get_partfield_model(partfield_model)
 
         print(f"PartFieldSegmenter: Processing mesh with {len(mesh.vertices)} vertices, {len(mesh.faces)} faces")
 

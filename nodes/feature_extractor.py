@@ -32,6 +32,76 @@ def sample_points_on_faces(vertices, faces, n_point_per_face):
     return points
 
 
+def _load_partfield_model(partfield_config):
+    """Load PartField model from a serializable config dict.
+
+    Called inside the worker process to avoid IPC serialization issues
+    with CUDA tensors and C++ extensions.
+    """
+    import comfy.model_management
+    from .partfield_model_downloader import create_partfield_config
+
+    checkpoint_path = partfield_config["checkpoint_path"]
+    precision = partfield_config.get("precision", "auto")
+
+    device = comfy.model_management.get_torch_device()
+    device_str = str(device)
+
+    # Resolve dtype
+    if precision == "auto":
+        if comfy.model_management.should_use_bf16(device):
+            dtype = torch.bfloat16
+        elif comfy.model_management.should_use_fp16(device):
+            dtype = torch.float16
+        else:
+            dtype = torch.float32
+    elif precision == "bf16":
+        dtype = torch.bfloat16
+    elif precision == "fp16":
+        dtype = torch.float16
+    else:
+        dtype = torch.float32
+
+    print(f"PartField: Loading model from {checkpoint_path} on {device_str} ({dtype})")
+
+    checkpoint = torch.load(checkpoint_path, map_location='cpu', weights_only=False)
+
+    if 'hyper_parameters' in checkpoint and 'cfg' in checkpoint['hyper_parameters']:
+        cfg = checkpoint['hyper_parameters']['cfg']
+    else:
+        cfg = create_partfield_config()
+
+    from .partfield_lib.model_trainer_pvcnn_only_demo import Model
+    model = Model(cfg)
+
+    state_dict = checkpoint.get('state_dict', checkpoint)
+    new_state_dict = {k[6:] if k.startswith('model.') else k: v for k, v in state_dict.items()}
+    model.load_state_dict(new_state_dict, strict=False)
+    model = model.to(device_str)
+    model.eval()
+    del checkpoint
+
+    print(f"PartField: Model loaded on {device_str}")
+    return model, device_str
+
+
+# Module-level cache so model survives across node executions in the same process
+_cached_model = None
+_cached_model_ckpt = None
+
+
+def _get_partfield_model(partfield_config):
+    """Get or load the PartField model, caching at module level."""
+    global _cached_model, _cached_model_ckpt
+    ckpt = partfield_config["checkpoint_path"]
+    if _cached_model is None or _cached_model_ckpt != ckpt:
+        _cached_model, _cached_device = _load_partfield_model(partfield_config)
+        _cached_model_ckpt = ckpt
+        return _cached_model, _cached_device
+    device_str = str(next(_cached_model.parameters()).device)
+    return _cached_model, device_str
+
+
 class PartFieldFeatureExtractor:
     """
     Extracts PartField neural features (448-dim) for each face of a mesh.
@@ -83,9 +153,8 @@ class PartFieldFeatureExtractor:
         if torch.cuda.is_available():
             torch.cuda.manual_seed_all(capped_seed)
 
-        # Get model and config
-        model = partfield_model['model']
-        device = partfield_model['device']
+        # Load model inside worker process (lazy, cached)
+        model, device = _get_partfield_model(partfield_model)
 
         print(f"PartFieldFeatureExtractor: Processing mesh with {len(mesh.vertices)} vertices, {len(mesh.faces)} faces")
 
