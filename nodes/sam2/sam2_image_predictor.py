@@ -108,7 +108,9 @@ class SAM2ImagePredictor:
             raise NotImplementedError("Image format not supported")
 
         input_image = self._transforms(image)
-        input_image = input_image[None, ...].to(self.device)
+        model_dtype = next(self.model.parameters()).dtype
+        input_image = input_image[None, ...].to(device=self.device, dtype=model_dtype)
+        print(f"      [DEBUG set_image] input_image.dtype={input_image.dtype}, model_dtype={model_dtype}")
 
         assert (
             len(input_image.shape) == 4 and input_image.shape[1] == 3
@@ -151,7 +153,8 @@ class SAM2ImagePredictor:
             self._orig_hw.append(image.shape[:2])
         # Transform the image to the form expected by the model
         img_batch = self._transforms.forward_batch(image_list)
-        img_batch = img_batch.to(self.device)
+        model_dtype = next(self.model.parameters()).dtype
+        img_batch = img_batch.to(device=self.device, dtype=model_dtype)
         batch_size = img_batch.shape[0]
         assert (
             len(img_batch.shape) == 4 and img_batch.shape[1] == 3
@@ -305,14 +308,14 @@ class SAM2ImagePredictor:
     def _prep_prompts(
         self, point_coords, point_labels, box, mask_logits, normalize_coords, img_idx=-1
     ):
-
+        model_dtype = next(self.model.parameters()).dtype
         unnorm_coords, labels, unnorm_box, mask_input = None, None, None, None
         if point_coords is not None:
             assert (
                 point_labels is not None
             ), "point_labels must be supplied if point_coords is supplied."
             point_coords = torch.as_tensor(
-                point_coords, dtype=torch.float, device=self.device
+                point_coords, dtype=model_dtype, device=self.device
             )
             unnorm_coords = self._transforms.transform_coords(
                 point_coords, normalize=normalize_coords, orig_hw=self._orig_hw[img_idx]
@@ -321,13 +324,13 @@ class SAM2ImagePredictor:
             if len(unnorm_coords.shape) == 2:
                 unnorm_coords, labels = unnorm_coords[None, ...], labels[None, ...]
         if box is not None:
-            box = torch.as_tensor(box, dtype=torch.float, device=self.device)
+            box = torch.as_tensor(box, dtype=model_dtype, device=self.device)
             unnorm_box = self._transforms.transform_boxes(
                 box, normalize=normalize_coords, orig_hw=self._orig_hw[img_idx]
             )  # Bx2x2
         if mask_logits is not None:
             mask_input = torch.as_tensor(
-                mask_logits, dtype=torch.float, device=self.device
+                mask_logits, dtype=model_dtype, device=self.device
             )
             if len(mask_input.shape) == 3:
                 mask_input = mask_input[None, :, :, :]
@@ -384,6 +387,14 @@ class SAM2ImagePredictor:
                 "An image must be set with .set_image(...) before mask prediction."
             )
 
+        # DEBUG: trace dtypes entering _predict
+        model_dtype = next(self.model.parameters()).dtype
+        print(f"      [DEBUG _predict] model_dtype={model_dtype}")
+        if point_coords is not None:
+            print(f"      [DEBUG _predict] point_coords.dtype={point_coords.dtype}")
+        if mask_input is not None:
+            print(f"      [DEBUG _predict] mask_input.dtype={mask_input.dtype}")
+
         if point_coords is not None:
             concat_points = (point_coords, point_labels)
         else:
@@ -403,11 +414,19 @@ class SAM2ImagePredictor:
             else:
                 concat_points = (box_coords, box_labels)
 
+        # DEBUG: check what goes into prompt encoder
+        if concat_points is not None:
+            print(f"      [DEBUG _predict] concat_points[0].dtype={concat_points[0].dtype}")
+        print(f"      [DEBUG _predict] image_embed.dtype={self._features['image_embed'][img_idx].dtype}")
+        print(f"      [DEBUG _predict] high_res_feats[0].dtype={self._features['high_res_feats'][0][img_idx].dtype}")
+
         sparse_embeddings, dense_embeddings = self.model.sam_prompt_encoder(
             points=concat_points,
             boxes=None,
             masks=mask_input,
         )
+
+        print(f"      [DEBUG _predict] sparse_embeddings.dtype={sparse_embeddings.dtype}, dense_embeddings.dtype={dense_embeddings.dtype}")
 
         # Predict masks
         batched_mode = (

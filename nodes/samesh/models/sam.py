@@ -434,7 +434,8 @@ class Sam2Model(SamModel):
 
         orig_h, orig_w = im_size
 
-        points = torch.as_tensor(points, dtype=torch.float32, device=predictor.device)
+        model_dtype = next(predictor.model.parameters()).dtype
+        points = torch.as_tensor(points, dtype=model_dtype, device=predictor.device)
         in_points = predictor._transforms.transform_coords(
             points, normalize=True, orig_hw=im_size
         )

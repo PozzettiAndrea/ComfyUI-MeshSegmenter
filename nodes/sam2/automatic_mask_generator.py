@@ -302,8 +302,9 @@ class SAM2AutomaticMaskGenerator:
         orig_h, orig_w = orig_size
 
         # Run model on this batch
+        model_dtype = next(self.predictor.model.parameters()).dtype
         points = torch.as_tensor(
-            points, dtype=torch.float32, device=self.predictor.device
+            points, dtype=model_dtype, device=self.predictor.device
         )
         in_points = self.predictor._transforms.transform_coords(
             points, normalize=normalize, orig_hw=im_size
