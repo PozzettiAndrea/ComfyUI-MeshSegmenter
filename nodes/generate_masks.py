@@ -197,10 +197,11 @@ class GenerateMasks:
             }
         }
 
-    RETURN_TYPES = ("MULTIBAND_IMAGE",)
-    RETURN_NAMES = ("binary_masks",)
+    RETURN_TYPES = ("MULTIBAND_IMAGE", "STRING")
+    RETURN_NAMES = ("binary_masks", "info")
     FUNCTION = "generate_masks"
     CATEGORY = "meshsegmenter/sammesh"
+    OUTPUT_NODE = True
 
     def generate_masks(
         self,
@@ -372,7 +373,27 @@ class GenerateMasks:
         print(f"  Generated {total_masks} masks across {n_views} views from {n_types} input types")
         print(f"  Output: {n_types} segmentation channels + foreground_mask")
 
-        return (output_multiband,)
+        # Build info string
+        info_lines = [
+            "Generate Masks",
+            f"  Views: {n_views}",
+            f"  Input types: {n_types} ({', '.join(image_names)})",
+            f"  Resolution: {h} x {w}",
+            f"  Points per side: {points_per_side}",
+            f"  IoU threshold: {pred_iou_thresh}",
+            f"  Stability threshold: {stability_score_thresh}",
+            f"  Min area: {min_area}",
+            "",
+            "Results:",
+            f"  Total masks generated: {total_masks}",
+            f"  Output channels: {n_types} seg + foreground_mask",
+        ]
+        for type_idx, (img_name, _) in enumerate(image_inputs):
+            type_total = sum(len(bm) for bm in all_bmasks_per_type[type_idx])
+            info_lines.append(f"  {img_name}: {type_total} masks")
+        info_string = "\n".join(info_lines)
+
+        return {"result": (output_multiband, info_string), "ui": {"text": [info_string]}}
 
 
 NODE_CLASS_MAPPINGS = {

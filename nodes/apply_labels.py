@@ -73,10 +73,11 @@ class ApplyLabelsToMesh:
             }
         }
 
-    RETURN_TYPES = ("TRIMESH", "IMAGE")
-    RETURN_NAMES = ("segmented_mesh", "preview_render")
+    RETURN_TYPES = ("TRIMESH", "IMAGE", "STRING")
+    RETURN_NAMES = ("segmented_mesh", "preview_render", "info")
     FUNCTION = "apply_labels"
     CATEGORY = "meshsegmenter/sammesh"
+    OUTPUT_NODE = True
 
     def apply_labels(
         self,
@@ -126,7 +127,33 @@ class ApplyLabelsToMesh:
 
         print(f"  Preview shape: {preview_tensor.shape}")
 
-        return (mesh_colored, preview_tensor)
+        # Build info string
+        unlabeled_count = num_faces - labeled_count
+        seg_counts = {}
+        for face_idx, label in face2label.items():
+            if int(face_idx) < num_faces:
+                seg_counts[label] = seg_counts.get(label, 0) + 1
+        sorted_segs = sorted(seg_counts.items(), key=lambda x: x[1], reverse=True)
+        info_lines = [
+            "Apply Labels To Mesh",
+            f"  Total faces: {num_faces:,}",
+            f"  Labeled faces: {labeled_count:,} ({100*labeled_count/num_faces:.1f}%)",
+            f"  Unlabeled faces: {unlabeled_count:,} ({100*unlabeled_count/num_faces:.1f}%)",
+            f"  Segments: {max_label}",
+            f"  Colormap seed: {colormap_seed}",
+            f"  Preview: {preview_tensor.shape[0]} views at {preview_tensor.shape[1]}x{preview_tensor.shape[2]}",
+        ]
+        if sorted_segs:
+            info_lines.append("")
+            info_lines.append("Segments (by face count):")
+            for label, count in sorted_segs[:10]:
+                pct = 100 * count / num_faces
+                info_lines.append(f"  Label {label}: {count:,} faces ({pct:.1f}%)")
+            if len(sorted_segs) > 10:
+                info_lines.append(f"  ... and {len(sorted_segs) - 10} more")
+        info_string = "\n".join(info_lines)
+
+        return {"result": (mesh_colored, preview_tensor, info_string), "ui": {"text": [info_string]}}
 
     def _render_preview(self, mesh: trimesh.Trimesh, resolution: int = 512) -> list:
         """Render 4 preview views of the colored mesh."""

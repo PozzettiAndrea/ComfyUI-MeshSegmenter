@@ -69,9 +69,10 @@ class SmoothLabels:
         }
 
     RETURN_TYPES = (FACE_LABELS, "STRING")
-    RETURN_NAMES = ("smoothed_labels", "stats")
+    RETURN_NAMES = ("smoothed_labels", "info")
     FUNCTION = "smooth_labels"
     CATEGORY = "meshsegmenter/sammesh"
+    OUTPUT_NODE = True
 
     def smooth_labels(
         self,
@@ -135,18 +136,34 @@ class SmoothLabels:
             'label_stats': label_stats,
         }
 
-        stats = f"""Smoothing Stats:
-  Total faces: {num_faces:,}
-  Labeled: {labeled_count:,} ({100*labeled_count/num_faces:.1f}%)
-  Unlabeled: {unlabeled_count:,} ({100*unlabeled_count/num_faces:.1f}%)
-  Segments: {unique_labels}
-  Iterations: {smoothing_iterations}
-  Size threshold: {size_threshold_pct*100:.1f}%
-  Area threshold: {area_threshold_pct*100:.1f}%"""
+        # Build info string
+        sorted_stats = sorted(label_stats.items(), key=lambda x: x[1], reverse=True)
+        info_lines = [
+            "Smooth Labels",
+            f"  Total faces: {num_faces:,}",
+            f"  Labeled: {labeled_count:,} ({100*labeled_count/num_faces:.1f}%)",
+            f"  Unlabeled: {unlabeled_count:,} ({100*unlabeled_count/num_faces:.1f}%)",
+            f"  Segments: {unique_labels}",
+            "",
+            "Parameters:",
+            f"  Iterations: {smoothing_iterations}",
+            f"  Size threshold: {size_threshold_pct*100:.1f}%",
+            f"  Area threshold: {area_threshold_pct*100:.1f}%",
+            f"  Split disconnected: {split_disconnected}",
+        ]
+        if sorted_stats:
+            info_lines.append("")
+            info_lines.append("Segments (by face count):")
+            for label, count in sorted_stats[:10]:
+                pct = 100 * count / num_faces
+                info_lines.append(f"  Label {label}: {count:,} faces ({pct:.1f}%)")
+            if len(sorted_stats) > 10:
+                info_lines.append(f"  ... and {len(sorted_stats) - 10} more")
+        info_string = "\n".join(info_lines)
 
-        print(stats)
+        print(info_string)
 
-        return (smoothed_labels, stats)
+        return {"result": (smoothed_labels, info_string), "ui": {"text": [info_string]}}
 
 
 NODE_CLASS_MAPPINGS = {

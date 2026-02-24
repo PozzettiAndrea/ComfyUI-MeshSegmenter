@@ -80,10 +80,11 @@ class Lift2DTo3DLabels:
             }
         }
 
-    RETURN_TYPES = (FACE_LABELS,)
-    RETURN_NAMES = ("face_labels",)
+    RETURN_TYPES = (FACE_LABELS, "STRING")
+    RETURN_NAMES = ("face_labels", "info")
     FUNCTION = "lift_labels"
     CATEGORY = "meshsegmenter/sammesh"
+    OUTPUT_NODE = True
 
     def lift_labels(
         self,
@@ -185,7 +186,37 @@ class Lift2DTo3DLabels:
         print(f"  Labeled {labeled_count}/{num_faces} faces ({100*labeled_count/num_faces:.1f}%)")
         print(f"  Found {unique_labels} unique labels")
 
-        return (face_labels_data,)
+        # Build info string
+        sorted_labels = sorted(label_counts.items(), key=lambda x: x[1], reverse=True)
+        info_lines = [
+            "Lift 2D To 3D Labels",
+            f"  Mesh faces: {num_faces:,}",
+            f"  Views processed: {n_views}",
+            f"  Seg channel: {seg_channel}",
+            "",
+            "Parameters:",
+            f"  face2label threshold: {face2label_threshold}",
+            f"  connections threshold: {connections_threshold}",
+            f"  bin resolution: {connections_bin_resolution}",
+            f"  bin threshold pct: {connections_bin_threshold_pct}",
+            f"  counter lens min: {counter_lens_threshold_min}",
+            "",
+            "Results:",
+            f"  Labeled faces: {labeled_count:,} / {num_faces:,} ({100*labeled_count/num_faces:.1f}%)",
+            f"  Unlabeled faces: {num_faces - labeled_count:,} ({100*(num_faces - labeled_count)/num_faces:.1f}%)",
+            f"  Unique labels: {unique_labels}",
+        ]
+        if sorted_labels:
+            info_lines.append("")
+            info_lines.append("Top segments (by face count):")
+            for label, count in sorted_labels[:10]:
+                pct = 100 * count / num_faces
+                info_lines.append(f"  Label {label}: {count:,} faces ({pct:.1f}%)")
+            if len(sorted_labels) > 10:
+                info_lines.append(f"  ... and {len(sorted_labels) - 10} more")
+        info_string = "\n".join(info_lines)
+
+        return {"result": (face_labels_data, info_string), "ui": {"text": [info_string]}}
 
 
 NODE_CLASS_MAPPINGS = {
