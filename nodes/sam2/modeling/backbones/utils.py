@@ -12,6 +12,9 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
+import comfy.ops
+ops = comfy.ops.disable_weight_init
+
 
 def window_partition(x, window_size):
     """
@@ -82,7 +85,7 @@ class PatchEmbed(nn.Module):
             embed_dim (int):  embed_dim (int): Patch embedding dimension.
         """
         super().__init__()
-        self.proj = nn.Conv2d(
+        self.proj = ops.Conv2d(
             in_chans, embed_dim, kernel_size=kernel_size, stride=stride, padding=padding
         )
 

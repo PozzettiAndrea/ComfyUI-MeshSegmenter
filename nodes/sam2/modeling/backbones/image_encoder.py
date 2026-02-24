@@ -10,6 +10,9 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
+import comfy.ops
+ops = comfy.ops.disable_weight_init
+
 
 class ImageEncoder(nn.Module):
     def __init__(
@@ -76,7 +79,7 @@ class FpnNeck(nn.Module):
             current = nn.Sequential()
             current.add_module(
                 "conv",
-                nn.Conv2d(
+                ops.Conv2d(
                     in_channels=dim,
                     out_channels=d_model,
                     kernel_size=kernel_size,

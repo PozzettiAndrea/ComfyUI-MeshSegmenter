@@ -18,35 +18,32 @@ from .samesh.models.mask_utils import (
     remove_artifacts,
 )
 
-# Per-worker model cache (each comfy-env worker is a separate process)
-_sam_model_cache: dict = {}
+def _load_sam_patcher(sam_config: dict):
+    """Load SAM model on CPU, wrap in ModelPatcher for ComfyUI VRAM management.
 
-
-def _resolve_dtype(precision: str, device) -> torch.dtype:
+    Building on CPU avoids inference tensor issues from torch.inference_mode().
+    ModelPatcher handles GPU loading/offloading automatically.
+    """
     import comfy.model_management
-    if precision == "auto":
-        if comfy.model_management.should_use_bf16(device):
-            return torch.bfloat16
-        elif comfy.model_management.should_use_fp16(device):
-            return torch.float16
-        else:
-            return torch.float32
-    return {"bf16": torch.bfloat16, "fp16": torch.float16}.get(precision, torch.float32)
-
-
-def _instantiate_sam_model(sam_config: dict):
-    """Instantiate Sam2Model/Sam3Model from a serializable config dict, with caching."""
-    import comfy.model_management
-
-    cache_key = (sam_config["model_name"], sam_config["precision"])
-    if cache_key in _sam_model_cache:
-        print(f"GenerateMasks: Using cached model '{sam_config['model_name']}'")
-        return _sam_model_cache[cache_key]
+    from comfy.model_patcher import ModelPatcher
 
     load_device = comfy.model_management.get_torch_device()
-    dtype = _resolve_dtype(sam_config["precision"], load_device)
-    device_str = str(load_device)
+    offload_device = comfy.model_management.unet_offload_device()
     model_type = sam_config["type"]
+
+    # Resolve dtype from precision string (shared by SAM2 and SAM3)
+    precision = sam_config.get("precision", "auto")
+    if precision == "auto":
+        if comfy.model_management.should_use_bf16(load_device):
+            dtype = torch.bfloat16
+        elif comfy.model_management.should_use_fp16(load_device):
+            dtype = torch.float16
+        else:
+            dtype = None
+    elif precision == "fp32":
+        dtype = None
+    else:
+        dtype = {"bf16": torch.bfloat16, "fp16": torch.float16}.get(precision)
 
     if model_type == "sam2":
         omega_config = OmegaConf.create({
@@ -59,7 +56,7 @@ def _instantiate_sam_model(sam_config: dict):
             }
         })
         from .samesh.models.sam import Sam2Model
-        model = Sam2Model(omega_config, device=device_str)
+        model = Sam2Model(omega_config, device='cpu', dtype=dtype)
     elif model_type == "sam3":
         omega_config = OmegaConf.create({
             "sam3": {
@@ -68,13 +65,35 @@ def _instantiate_sam_model(sam_config: dict):
             }
         })
         from .samesh.models.sam3 import Sam3Model
-        model = Sam3Model(omega_config, device=device_str)
+        model = Sam3Model(omega_config, device='cpu', dtype=dtype)
     else:
         raise ValueError(f"Unknown SAM model type: {model_type}")
 
-    _sam_model_cache[cache_key] = model
-    print(f"GenerateMasks: Loaded {model_type} model '{sam_config['model_name']}' on {device_str} ({dtype})")
-    return model
+    patcher = ModelPatcher(
+        model=model,
+        load_device=load_device,
+        offload_device=offload_device,
+        size=comfy.model_management.module_size(model),
+    )
+
+    dtype_str = str(dtype).replace('torch.', '') if dtype else 'fp32'
+    print(f"GenerateMasks: Loaded {model_type} model '{sam_config['model_name']}' "
+          f"in ModelPatcher (load={load_device}, offload={offload_device}, dtype={dtype_str})")
+    return patcher
+
+
+# Module-level cache so model survives across node executions in the same process
+_sam_patcher_cache: dict = {}
+
+
+def _get_sam_patcher(sam_config: dict):
+    """Get or load the SAM ModelPatcher, caching at module level."""
+    cache_key = (sam_config["model_name"], sam_config["precision"])
+    if cache_key not in _sam_patcher_cache:
+        _sam_patcher_cache[cache_key] = _load_sam_patcher(sam_config)
+    else:
+        print(f"GenerateMasks: Using cached model '{sam_config['model_name']}'")
+    return _sam_patcher_cache[cache_key]
 
 
 def tensor_to_pil_list(tensor: torch.Tensor) -> list:
@@ -262,8 +281,11 @@ class GenerateMasks:
         print(f"  Points per side: {points_per_side}")
         print(f"  Min area: {min_area}")
 
-        # Instantiate model from serializable config (cached per-worker)
-        model = _instantiate_sam_model(sam_model)
+        # Load SAM model via ModelPatcher (cached, handles VRAM)
+        import comfy.model_management
+        patcher = _get_sam_patcher(sam_model)
+        comfy.model_management.load_models_gpu([patcher])
+        model = patcher.model  # Sam2Model/Sam3Model, now on GPU
 
         # Update model engine config with current parameters
         model.engine.points_per_side = points_per_side
@@ -290,32 +312,56 @@ class GenerateMasks:
         n_types = len(image_inputs)
         all_bmasks_per_type = [[[] for _ in range(n_views)] for _ in range(n_types)]
 
+        # Check if model supports batch encoding (Sam2Model and Sam3Model)
+        use_batch = hasattr(model, 'process_images_batch')
+
         for type_idx, (img_name, img_tensor) in enumerate(image_inputs):
             print(f"  Processing {img_name}...")
-            pil_images = tensor_to_pil_list(img_tensor)
 
-            for view_idx, image in enumerate(tqdm(pil_images, desc=f"    SAM on {img_name}")):
-                img_arr = np.array(image)
-                h, w = img_arr.shape[:2]
+            # Prepare numpy images and point grids for all views
+            np_images = []
+            view_point_grids = []
+            for view_idx in range(n_views):
+                img_arr = (img_tensor[view_idx].numpy() * 255).astype(np.uint8)
+                np_images.append(img_arr)
 
-                # Get valid mask for this view
                 valid_mask = face_mask_np[view_idx] > 0.5
-
-                # Sample point grid within valid region
                 try:
-                    point_grid = point_grid_from_mask(valid_mask, points_per_side ** 2)
-                    model.engine.point_grids = [point_grid]
+                    pg = point_grid_from_mask(valid_mask, points_per_side ** 2)
                 except ValueError:
-                    point_grid = np.array([])
+                    pg = np.zeros((0, 2), dtype=np.float64)
+                view_point_grids.append(pg)
 
-                # Run SAM
+            if use_batch:
+                # Batch encode + per-view decode (faster)
+                try:
+                    print(f"    Batch encoding {n_views} views...")
+                    batch_results = model.process_images_batch(np_images, view_point_grids)
+                    for view_idx, bmasks in enumerate(batch_results):
+                        filtered = [m for m in bmasks if m.sum() >= min_area]
+                        if filtered:
+                            all_bmasks_per_type[type_idx][view_idx].extend(filtered)
+                    continue  # skip sequential fallback
+                except Exception as e:
+                    print(f"    Warning: Batch processing failed ({e}), falling back to sequential")
+
+            # Sequential fallback (SAM3 or batch failure)
+            for view_idx in tqdm(range(n_views), desc=f"    SAM on {img_name}"):
+                image = Image.fromarray(np_images[view_idx])
+
+                # Set point grid for this view
+                pg = view_point_grids[view_idx]
+                if len(pg) > 0:
+                    model.engine.point_grids = [pg]
+                else:
+                    model.engine.point_grids = [np.array([])]
+
                 try:
                     bmasks = model(image)
                 except Exception as e:
                     print(f"      Warning: SAM failed on view {view_idx}: {e}")
                     bmasks = np.zeros((1, h, w), dtype=bool)
 
-                # Filter by area and add to this type's view mask list
                 filtered = [m for m in bmasks if m.sum() >= min_area]
                 if filtered:
                     all_bmasks_per_type[type_idx][view_idx].extend(filtered)

@@ -101,7 +101,7 @@ class MultiViewRenderer:
     Renders a mesh from multiple camera angles.
 
     Outputs:
-    - render_data: Raw buffers for 2D→3D lifting (face IDs, poses, raw normals)
+    - render_data: Raw buffers for 2D->3D lifting (face IDs, poses, raw normals)
     - normals: RGB normal maps (black background)
     - matte: RGB shaded renders (black background)
     - sdf: RGB SDF renders (black if compute_sdf=False)
@@ -265,7 +265,7 @@ class MultiViewRenderer:
         # 4. Curvature (optional) - dihedral angle based, single channel, smoothly interpolated
         if compute_curvature:
             curvature_per_face = self._compute_dihedral_curvature_per_face(mesh)
-            # normalize=False because curvature is already normalized to [0,1] based on π
+            # normalize=False because curvature is already normalized to [0,1] based on pi
             curvature_tensor = self._values_to_pixels_smooth(
                 mesh, curvature_per_face, renders['faces'], renders['bcent'], normalize=False
             )

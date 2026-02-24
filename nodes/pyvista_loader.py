@@ -180,5 +180,5 @@ NODE_CLASS_MAPPINGS = {
 
 NODE_DISPLAY_NAME_MAPPINGS = {
     "PyVistaLoader": "PyVista Mesh Loader (Quad Support)",
-    "RemapFaceIds": "Remap Face IDs (Tri→Quad)",
+    "RemapFaceIds": "Remap Face IDs (Tri->Quad)",
 }

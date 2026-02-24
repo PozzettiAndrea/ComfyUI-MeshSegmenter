@@ -8,18 +8,14 @@ SAM3 doesn't have a built-in AutomaticMaskGenerator like SAM2,
 so we implement one by sampling a grid of points and calling predict_inst.
 """
 
-import os
-import sys
 import logging
-from pathlib import Path
-from typing import List, Tuple, Dict, Any
+from typing import List, Dict, Any
 
 import numpy as np
 import torch
 import torch.nn as nn
 from PIL import Image
 from omegaconf import OmegaConf
-from tqdm import tqdm
 
 
 def point_grid(points_per_side: int) -> np.ndarray:
@@ -269,8 +265,23 @@ class SAM3AutomaticMaskGenerator:
                         _area_filtered += 1
                         continue
 
+                    # Compute stability score from low-res logit masks
+                    if low_res_masks is not None and i < len(low_res_masks):
+                        stab = calculate_stability_score(
+                            low_res_masks[i:i+1],
+                            mask_threshold=0.0,
+                            stability_score_offset=self.stability_score_offset,
+                        )
+                        stability = float(stab[0])
+                    else:
+                        stability = float(score)
+
+                    if stability < self.stability_score_thresh:
+                        continue
+
                     all_masks.append(mask)
                     all_scores.append(score)
+                    all_stability.append(stability)
 
             except Exception as e:
                 _error_count += 1
@@ -295,11 +306,14 @@ class SAM3AutomaticMaskGenerator:
         # Apply NMS
         keep_indices = nms_masks(all_masks, all_scores, self.box_nms_thresh)
 
+        all_stability_arr = np.array(all_stability)
+
         # Build output annotations
         annotations = []
         for idx in keep_indices:
             mask = all_masks[idx]
             score = all_scores[idx]
+            stability = all_stability_arr[idx]
             box = mask_to_box(mask)
 
             annotations.append({
@@ -307,7 +321,7 @@ class SAM3AutomaticMaskGenerator:
                 'area': int(mask.sum()),
                 'bbox': [int(box[0]), int(box[1]), int(box[2] - box[0]), int(box[3] - box[1])],
                 'predicted_iou': float(score),
-                'stability_score': float(score),  # Use score as stability for now
+                'stability_score': float(stability),
             })
 
         return annotations
@@ -320,56 +334,57 @@ class Sam3Model(nn.Module):
     This allows GenerateMasks node to use either SAM2 or SAM3 interchangeably.
     """
 
-    def __init__(self, config: OmegaConf, device='cuda'):
+    def __init__(self, config: OmegaConf, device='cuda', dtype=None):
         """
         Args:
             config: OmegaConf with sam3.checkpoint path
             device: torch device
+            dtype: torch dtype for precision (bf16/fp16/fp32)
         """
         super().__init__()
         self.config = config
         self.device = device
+        self.dtype = dtype
 
-        self._load_model()
+        self._load_model(dtype=dtype)
         self._setup_engine()
 
-    def _load_model(self):
-        """Load SAM3 model from checkpoint."""
-        from ..sam3_lib.sam3_video_predictor import Sam3VideoPredictor
-        from ..sam3_lib.model.sam3_image_processor import Sam3Processor
+    def _load_model(self, dtype=None):
+        """Load SAM3 image model using clean vendored sam3 package."""
+        from ...sam3 import build_sam3_image_model
+        from ...sam3.utils import Sam3Processor
+        from ...sam3.attention import set_sam3_dtype, set_sam3_backend
 
         checkpoint_path = self.config.sam3.checkpoint
 
-        # BPE tokenizer path (relative to samesh/models/sam3.py -> samesh/sam3_lib/)
-        bpe_path = Path(__file__).parent.parent / "sam3_lib" / "bpe_simple_vocab_16e6.txt.gz"
-        if not bpe_path.exists():
-            # Fallback to absolute path
-            import importlib.util
-            spec = importlib.util.find_spec("samesh.sam3_lib")
-            if spec and spec.origin:
-                bpe_path = Path(spec.origin).parent / "bpe_simple_vocab_16e6.txt.gz"
+        print(f"[SAM3] Loading image model from: {checkpoint_path}")
+        print(f"[SAM3] Building on {self.device} (ModelPatcher moves to GPU before inference), dtype: {dtype}")
 
-        print(f"[SAM3] Loading model from: {checkpoint_path}")
+        # Configure attention backend for ComfyUI
+        set_sam3_backend("auto")
 
-        # Build video predictor (contains image model)
-        self._video_predictor = Sam3VideoPredictor(
+        # Apply precision if specified
+        if dtype is not None and dtype in (torch.bfloat16, torch.float16):
+            set_sam3_dtype(dtype)
+
+        # Build image model directly (NOT video predictor — saves VRAM)
+        self._detector = build_sam3_image_model(
             checkpoint_path=str(checkpoint_path),
-            bpe_path=str(bpe_path),
+            device=self.device,
+            eval_mode=True,
             enable_inst_interactivity=True,
+            load_from_HF=False,  # Checkpoint already downloaded by SamModelLoader
         )
 
-        # Get the detector model for image segmentation
-        self._detector = self._video_predictor.model.detector
-
-        # Create processor
+        # Create processor with proper device
         self._processor = Sam3Processor(
             model=self._detector,
             resolution=1008,
             device=str(self.device),
-            confidence_threshold=0.2
+            confidence_threshold=0.2,
         )
 
-        print(f"[SAM3] Model loaded successfully")
+        print(f"[SAM3] Image model loaded successfully")
 
     def _setup_engine(self):
         """Setup automatic mask generator."""
@@ -410,6 +425,202 @@ class Sam3Model(nn.Module):
         masks = np.stack([anno['segmentation'] for anno in annotations])
 
         return masks
+
+    def process_images_batch(
+        self,
+        images: list,
+        point_grids: list,
+        encode_batch_size: int = 6,
+    ) -> list:
+        """
+        Batch-encode images then run per-image AMG decode.
+
+        Uses processor.set_image_batch() for efficient backbone encoding, then
+        extracts per-image features and runs point prediction per view.
+
+        Args:
+            images: list of np.ndarray (H,W,3) uint8
+            point_grids: list of np.ndarray (N,2) normalized [0,1] per image
+            encode_batch_size: max images per encoding batch (VRAM limit)
+
+        Returns:
+            list of np.ndarray (N_masks, H, W) bool per image
+        """
+        import time
+
+        engine = self.engine
+        processor = self._processor
+        detector = self._detector
+        predictor = detector.inst_interactive_predictor
+        backbone_model = predictor.model
+
+        all_masks_out = []
+        t_total = time.time()
+
+        for batch_start in range(0, len(images), encode_batch_size):
+            batch_end = min(batch_start + encode_batch_size, len(images))
+            sub_images = images[batch_start:batch_end]
+            sub_grids = point_grids[batch_start:batch_end]
+            batch_label = f"[{batch_start+1}-{batch_end}/{len(images)}]"
+
+            # Convert numpy to PIL for set_image_batch
+            pil_images = [Image.fromarray(img) for img in sub_images]
+
+            # Batch encode backbone
+            t_enc = time.time()
+            state = processor.set_image_batch(pil_images)
+            t_enc = time.time() - t_enc
+            print(f"      {batch_label} Encoded {len(sub_images)} images in {t_enc:.2f}s")
+
+            # Pre-compute backbone features once for the whole sub-batch
+            backbone_out = state["backbone_out"]["sam2_backbone_out"]
+            (_, vision_feats, _, feat_sizes) = backbone_model._prepare_backbone_features(backbone_out)
+            vision_feats[-1] = vision_feats[-1] + backbone_model.no_mem_embed
+
+            bb_feat_sizes = predictor._bb_feat_sizes
+
+            # Per-image decode
+            for local_idx in range(len(sub_images)):
+                view_idx = batch_start + local_idx
+                h, w = sub_images[local_idx].shape[:2]
+
+                pg = sub_grids[local_idx]
+                if len(pg) == 0:
+                    all_masks_out.append(np.zeros((1, h, w), dtype=bool))
+                    print(f"      View {view_idx+1}/{len(images)}: skipped (no valid points)")
+                    continue
+
+                t_view = time.time()
+
+                # Extract per-image features from batch (dim 1 is batch)
+                vision_feats_single = [feat[:, local_idx:local_idx+1, :] for feat in vision_feats]
+
+                feats = [
+                    feat.permute(1, 2, 0).view(1, -1, *fs)
+                    for feat, fs in zip(vision_feats_single[::-1], bb_feat_sizes[::-1])
+                ][::-1]
+
+                # Set features on predictor for this image
+                predictor._features = {
+                    "image_embed": feats[-1],
+                    "high_res_feats": feats[:-1],
+                }
+                predictor._is_image_set = True
+                predictor._orig_hw = [
+                    (state["original_heights"][local_idx], state["original_widths"][local_idx])
+                ]
+
+                # Scale normalized points to pixel coords
+                points_pixel = pg.copy()
+                points_pixel[:, 0] *= w
+                points_pixel[:, 1] *= h
+
+                # Batched point prediction — call _predict() directly with
+                # (N, 1, 2) shape so each point is a separate prompt.
+                # This replaces 1024 individual predict() calls with ~16 batched calls.
+                points_per_batch = 64  # conservative for 1024×1024 images
+                orig_hw = predictor._orig_hw[0]
+
+                points_tensor = torch.as_tensor(
+                    points_pixel, dtype=torch.float32, device=predictor.device
+                )
+                transformed_pts = predictor._transforms.transform_coords(
+                    points_tensor, normalize=True, orig_hw=orig_hw
+                )
+
+                # Cast features to fp32 for batched decode (repeat_image=True has bf16 issues)
+                if self.dtype and self.dtype != torch.float32:
+                    predictor._features = {
+                        "image_embed": predictor._features["image_embed"].float(),
+                        "high_res_feats": [f.float() for f in predictor._features["high_res_feats"]],
+                    }
+
+                view_masks = []
+                view_scores = []
+
+                for bp_start in range(0, len(transformed_pts), points_per_batch):
+                    bp_end = min(bp_start + points_per_batch, len(transformed_pts))
+                    batch_pts = transformed_pts[bp_start:bp_end]
+                    batch_labels = torch.ones(
+                        len(batch_pts), dtype=torch.int, device=predictor.device
+                    )
+
+                    # (N, 1, 2) = N separate single-point prompts
+                    masks_t, iou_preds_t, low_res_t = predictor._predict(
+                        batch_pts[:, None, :],
+                        batch_labels[:, None],
+                        multimask_output=True,
+                        return_logits=True,
+                    )
+                    # masks_t: (N, 3, H, W) logits, iou_preds_t: (N, 3)
+
+                    # Flatten to (N*3,) for filtering
+                    n_pts = masks_t.shape[0]
+                    n_multi = masks_t.shape[1]
+                    iou_flat = iou_preds_t.reshape(-1)  # (N*3,)
+                    low_res_flat = low_res_t.reshape(-1, *low_res_t.shape[2:])  # (N*3, 64, 64)
+                    masks_flat = masks_t.reshape(-1, *masks_t.shape[2:])  # (N*3, H, W)
+
+                    # Filter by IoU
+                    keep_iou = iou_flat > engine.pred_iou_thresh
+                    if not keep_iou.any():
+                        del masks_t, iou_preds_t, low_res_t
+                        continue
+
+                    iou_kept = iou_flat[keep_iou]
+                    low_res_kept = low_res_flat[keep_iou]
+                    masks_kept = masks_flat[keep_iou]
+
+                    # Stability score from low-res logits
+                    high = (low_res_kept > 0.0).sum(dim=(-2, -1)).float()
+                    low = (low_res_kept > -engine.stability_score_offset).sum(dim=(-2, -1)).float()
+                    stability = torch.where(low > 0, high / low, torch.zeros_like(high))
+
+                    keep_stab = stability >= engine.stability_score_thresh
+                    if not keep_stab.any():
+                        del masks_t, iou_preds_t, low_res_t
+                        continue
+
+                    iou_kept = iou_kept[keep_stab]
+                    masks_kept = masks_kept[keep_stab]
+
+                    # Threshold logits to boolean
+                    masks_bool = (masks_kept > 0.0).cpu().numpy()
+                    iou_np = iou_kept.cpu().numpy()
+
+                    # Filter by area
+                    for i in range(len(masks_bool)):
+                        area = masks_bool[i].sum()
+                        if area >= engine.min_mask_region_area:
+                            view_masks.append(masks_bool[i])
+                            view_scores.append(float(iou_np[i]))
+
+                    del masks_t, iou_preds_t, low_res_t
+
+                # NMS
+                n_masks = 0
+                if view_masks:
+                    masks_arr = np.array(view_masks)
+                    scores_arr = np.array(view_scores)
+                    keep = nms_masks(masks_arr, scores_arr, engine.box_nms_thresh)
+                    kept = masks_arr[keep]
+                    kept = sorted(kept, key=lambda m: m.sum(), reverse=True)
+                    all_masks_out.append(np.stack(kept))
+                    n_masks = len(kept)
+                else:
+                    all_masks_out.append(np.zeros((1, h, w), dtype=bool))
+
+                t_view = time.time() - t_view
+                print(f"      View {view_idx+1}/{len(images)}: {n_masks} masks in {t_view:.2f}s")
+
+            # Cleanup predictor state
+            predictor._features = None
+            predictor._is_image_set = False
+
+        t_total = time.time() - t_total
+        print(f"      Total batch: {len(images)} views in {t_total:.2f}s ({t_total/len(images):.2f}s/view)")
+
+        return all_masks_out
 
     def forward(self, image: Image.Image) -> np.ndarray:
         """

@@ -130,6 +130,7 @@ class SamModelLoader:
             sam_config["config_name"] = model_info["config_name"]
             sam_config["engine_config"] = {
                 "points_per_side": 32,
+                "points_per_batch": 256,
                 "crop_n_layers": 0,
                 "pred_iou_thresh": 0.5,
                 "stability_score_thresh": 0.7,

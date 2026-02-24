@@ -13,6 +13,10 @@ import torch.nn.functional as F
 from torch import nn, Tensor
 
 from ..position_encoding import apply_rotary_enc, compute_axial_cis
+import comfy.ops
+import comfy.model_management
+ops = comfy.ops.disable_weight_init
+
 from ..sam2_utils import MLP
 
 
@@ -60,7 +64,7 @@ class TwoWayTransformer(nn.Module):
         self.final_attn_token_to_image = Attention(
             embedding_dim, num_heads, downsample_rate=attention_downsample_rate
         )
-        self.norm_final_attn = nn.LayerNorm(embedding_dim)
+        self.norm_final_attn = ops.LayerNorm(embedding_dim)
 
     def forward(
         self,
@@ -134,19 +138,19 @@ class TwoWayAttentionBlock(nn.Module):
         """
         super().__init__()
         self.self_attn = Attention(embedding_dim, num_heads)
-        self.norm1 = nn.LayerNorm(embedding_dim)
+        self.norm1 = ops.LayerNorm(embedding_dim)
 
         self.cross_attn_token_to_image = Attention(
             embedding_dim, num_heads, downsample_rate=attention_downsample_rate
         )
-        self.norm2 = nn.LayerNorm(embedding_dim)
+        self.norm2 = ops.LayerNorm(embedding_dim)
 
         self.mlp = MLP(
             embedding_dim, mlp_dim, embedding_dim, num_layers=2, activation=activation
         )
-        self.norm3 = nn.LayerNorm(embedding_dim)
+        self.norm3 = ops.LayerNorm(embedding_dim)
 
-        self.norm4 = nn.LayerNorm(embedding_dim)
+        self.norm4 = ops.LayerNorm(embedding_dim)
         self.cross_attn_image_to_token = Attention(
             embedding_dim, num_heads, downsample_rate=attention_downsample_rate
         )
@@ -210,10 +214,10 @@ class Attention(nn.Module):
             self.internal_dim % num_heads == 0
         ), "num_heads must divide embedding_dim."
 
-        self.q_proj = nn.Linear(embedding_dim, self.internal_dim)
-        self.k_proj = nn.Linear(self.kv_in_dim, self.internal_dim)
-        self.v_proj = nn.Linear(self.kv_in_dim, self.internal_dim)
-        self.out_proj = nn.Linear(self.internal_dim, embedding_dim)
+        self.q_proj = ops.Linear(embedding_dim, self.internal_dim)
+        self.k_proj = ops.Linear(self.kv_in_dim, self.internal_dim)
+        self.v_proj = ops.Linear(self.kv_in_dim, self.internal_dim)
+        self.out_proj = ops.Linear(self.internal_dim, embedding_dim)
 
         self.dropout_p = dropout
 
@@ -267,9 +271,7 @@ class RoPEAttention(Attention):
             compute_axial_cis, dim=self.internal_dim // self.num_heads, theta=rope_theta
         )
         freqs_cis = self.compute_cis(end_x=feat_sizes[0], end_y=feat_sizes[1])
-        self.freqs_cis = (
-            freqs_cis.to("cuda") if torch.cuda.is_available() else freqs_cis
-        )
+        self.freqs_cis = freqs_cis.to(comfy.model_management.get_torch_device())
         self.rope_k_repeat = rope_k_repeat
 
     def forward(

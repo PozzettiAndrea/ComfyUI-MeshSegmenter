@@ -7,6 +7,8 @@
 import os
 import time
 
+import contextlib
+
 import numpy as np
 import torch
 from tqdm import tqdm
@@ -17,7 +19,8 @@ from .build_sam import build_sam2_video_predictor
 assert torch.cuda.is_available()
 device = torch.device("cuda")
 
-torch.autocast(device_type="cuda", dtype=torch.bfloat16).__enter__()
+# autocast disabled for ComfyUI compatibility
+contextlib.nullcontext().__enter__()
 if torch.cuda.get_device_properties(0).major >= 8:
     # turn on tfloat32 for Ampere GPUs (https://pytorch.org/docs/stable/notes/cuda.html#tensorfloat-32-tf32-on-ampere-devices)
     torch.backends.cuda.matmul.allow_tf32 = True
@@ -69,7 +72,7 @@ _, out_obj_ids, out_mask_logits = predictor.add_new_points_or_box(
 )
 
 # Warmup and then average FPS over several runs
-with torch.autocast("cuda", torch.bfloat16):
+with contextlib.nullcontext():
     with torch.inference_mode():
         for i in tqdm(range(runs), disable=not verbose, desc="Benchmarking"):
             start = time.time()

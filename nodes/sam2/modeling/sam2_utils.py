@@ -13,6 +13,9 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
+import comfy.ops
+ops = comfy.ops.disable_weight_init
+
 from ..utils.misc import mask_to_box
 
 
@@ -123,7 +126,7 @@ class MLP(nn.Module):
         self.num_layers = num_layers
         h = [hidden_dim] * (num_layers - 1)
         self.layers = nn.ModuleList(
-            nn.Linear(n, k) for n, k in zip([input_dim] + h, h + [output_dim])
+            ops.Linear(n, k) for n, k in zip([input_dim] + h, h + [output_dim])
         )
         self.sigmoid_output = sigmoid_output
         self.act = activation()

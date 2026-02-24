@@ -42,7 +42,7 @@ class GraphCutRepartition:
                     "min": 0.1,
                     "max": 20.0,
                     "step": 0.5,
-                    "tooltip": "SMOOTHNESS WEIGHT (λ): Controls the balance between data fidelity and boundary smoothness in the graph cut energy function. The algorithm minimizes: E = Σ(data_cost) + λ × Σ(smoothness_cost). Data cost is 0 if a face keeps its label, 1 otherwise. Smoothness cost is based on dihedral angles: sharp edges (creases) have LOW cost to cut, flat regions have HIGH cost. Higher λ values produce smoother boundaries that follow mesh creases but may merge small segments. Lower λ values preserve more segments but may have jagged boundaries. Typical range: 1-15. Ignored when target_segments > 0."
+                    "tooltip": "SMOOTHNESS WEIGHT (lambda): Controls the balance between data fidelity and boundary smoothness in the graph cut energy function. The algorithm minimizes: E = Sum(data_cost) + lambda * Sum(smoothness_cost). Data cost is 0 if a face keeps its label, 1 otherwise. Smoothness cost is based on dihedral angles: sharp edges (creases) have LOW cost to cut, flat regions have HIGH cost. Higher lambda values produce smoother boundaries that follow mesh creases but may merge small segments. Lower lambda values preserve more segments but may have jagged boundaries. Typical range: 1-15. Ignored when target_segments > 0."
                 }),
                 "iterations": ("INT", {
                     "default": 1,

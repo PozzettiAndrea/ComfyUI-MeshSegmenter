@@ -32,38 +32,27 @@ def sample_points_on_faces(vertices, faces, n_point_per_face):
     return points
 
 
-def _load_partfield_model(partfield_config):
-    """Load PartField model from a serializable config dict.
+def _load_partfield_patcher(partfield_config):
+    """Load PartField model, wrap in ModelPatcher for ComfyUI VRAM management.
 
-    Called inside the worker process to avoid IPC serialization issues
-    with CUDA tensors and C++ extensions.
+    Model is created on CPU with comfy ops (disable_weight_init) to:
+    - Avoid inference tensor issues from torch.inference_mode()
+    - Enable efficient weight loading (skip init)
+    - Let ModelPatcher handle GPU loading/offloading
     """
     import comfy.model_management
+    import comfy.ops
+    from comfy.model_patcher import ModelPatcher
     from .partfield_model_downloader import create_partfield_config
 
     checkpoint_path = partfield_config["checkpoint_path"]
-    precision = partfield_config.get("precision", "auto")
 
-    device = comfy.model_management.get_torch_device()
-    device_str = str(device)
+    load_device = comfy.model_management.get_torch_device()
+    offload_device = comfy.model_management.unet_offload_device()
 
-    # Resolve dtype
-    if precision == "auto":
-        if comfy.model_management.should_use_bf16(device):
-            dtype = torch.bfloat16
-        elif comfy.model_management.should_use_fp16(device):
-            dtype = torch.float16
-        else:
-            dtype = torch.float32
-    elif precision == "bf16":
-        dtype = torch.bfloat16
-    elif precision == "fp16":
-        dtype = torch.float16
-    else:
-        dtype = torch.float32
+    print(f"PartField: Loading model from {checkpoint_path}")
 
-    print(f"PartField: Loading model from {checkpoint_path} on {device_str} ({dtype})")
-
+    # Load checkpoint on CPU
     checkpoint = torch.load(checkpoint_path, map_location='cpu', weights_only=False)
 
     if 'hyper_parameters' in checkpoint and 'cfg' in checkpoint['hyper_parameters']:
@@ -71,35 +60,45 @@ def _load_partfield_model(partfield_config):
     else:
         cfg = create_partfield_config()
 
-    from .partfield_lib.model_trainer_pvcnn_only_demo import Model
-    model = Model(cfg)
+    # Use comfy ops for efficient loading (skip weight init)
+    operations = comfy.ops.disable_weight_init
+
+    # Create model on CPU to avoid inference tensor issues
+    from .partfield.model_trainer_pvcnn_only_demo import Model
+    model = Model(cfg, init_device="cpu", operations=operations)
 
     state_dict = checkpoint.get('state_dict', checkpoint)
-    new_state_dict = {k[6:] if k.startswith('model.') else k: v for k, v in state_dict.items()}
+    new_state_dict = {k[6:] if k.startswith('model.') else k: v
+                      for k, v in state_dict.items()}
     model.load_state_dict(new_state_dict, strict=False)
-    model = model.to(device_str)
     model.eval()
     del checkpoint
 
-    print(f"PartField: Model loaded on {device_str}")
-    return model, device_str
+    # Wrap in ModelPatcher — ComfyUI manages GPU loading/offloading
+    patcher = ModelPatcher(
+        model=model,
+        load_device=load_device,
+        offload_device=offload_device,
+        size=comfy.model_management.module_size(model),
+    )
+
+    print(f"PartField: Model wrapped in ModelPatcher (load={load_device}, offload={offload_device})")
+    return patcher
 
 
 # Module-level cache so model survives across node executions in the same process
-_cached_model = None
-_cached_model_ckpt = None
+_cached_patcher = None
+_cached_patcher_ckpt = None
 
 
-def _get_partfield_model(partfield_config):
-    """Get or load the PartField model, caching at module level."""
-    global _cached_model, _cached_model_ckpt
+def _get_partfield_patcher(partfield_config):
+    """Get or load the PartField ModelPatcher, caching at module level."""
+    global _cached_patcher, _cached_patcher_ckpt
     ckpt = partfield_config["checkpoint_path"]
-    if _cached_model is None or _cached_model_ckpt != ckpt:
-        _cached_model, _cached_device = _load_partfield_model(partfield_config)
-        _cached_model_ckpt = ckpt
-        return _cached_model, _cached_device
-    device_str = str(next(_cached_model.parameters()).device)
-    return _cached_model, device_str
+    if _cached_patcher is None or _cached_patcher_ckpt != ckpt:
+        _cached_patcher = _load_partfield_patcher(partfield_config)
+        _cached_patcher_ckpt = ckpt
+    return _cached_patcher
 
 
 class PartFieldFeatureExtractor:
@@ -144,6 +143,7 @@ class PartFieldFeatureExtractor:
         seed: int = 0
     ):
         import random
+        import comfy.model_management
 
         # Set seeds
         capped_seed = seed % (2**32)
@@ -153,8 +153,13 @@ class PartFieldFeatureExtractor:
         if torch.cuda.is_available():
             torch.cuda.manual_seed_all(capped_seed)
 
-        # Load model inside worker process (lazy, cached)
-        model, device = _get_partfield_model(partfield_model)
+        # Get ModelPatcher (lazy load, cached)
+        patcher = _get_partfield_patcher(partfield_model)
+
+        # Let ComfyUI load model to GPU (handles VRAM, offloads other models if needed)
+        comfy.model_management.load_models_gpu([patcher])
+        model = patcher.model
+        device = patcher.load_device
 
         print(f"PartFieldFeatureExtractor: Processing mesh with {len(mesh.vertices)} vertices, {len(mesh.faces)} faces")
 
@@ -196,7 +201,7 @@ class PartFieldFeatureExtractor:
             face_points = face_points.reshape(1, -1, 3)
 
             # Import triplane sampling function
-            from .partfield_lib.model.PVCNN.encoder_pc import sample_triplane_feat
+            from .partfield.model.PVCNN.encoder_pc import sample_triplane_feat
 
             # Sample features in batches to avoid OOM
             n_sample_each = 10000

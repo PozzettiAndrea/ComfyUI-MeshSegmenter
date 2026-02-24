@@ -3,7 +3,7 @@ import sys
 import os
 import logging
 from pathlib import Path
-from contextlib import contextmanager
+from contextlib import contextmanager, nullcontext
 
 import cv2
 import numpy as np
@@ -265,15 +265,25 @@ class SamModel(nn.Module):
 class Sam2Model(SamModel):
     """
     """
+    def __init__(self, config: OmegaConf, device='cuda', dtype=None):
+        self.dtype = dtype
+        super().__init__(config, device)
+
     def setup_sam(self, mode='auto'):
         """
         """
         self.sam_model = build_sam2(self.config.sam.model_config, self.config.sam.checkpoint, device=self.device, apply_postprocessing=False)
         self.sam_model.eval()
+        if self.dtype is not None:
+            self.sam_model.to(dtype=self.dtype)
         self.engine = {
             'pred': SAM2ImagePredictor,
             'auto': SAM2AutomaticMaskGenerator,
         }[mode](self.sam_model, **self.config.sam.get('engine_config', {}))
+
+    def _autocast_ctx(self):
+        """Return nullcontext (model weights are already cast to target dtype)."""
+        return nullcontext()
 
     def process_image(self, image: Image, prompt: dict = None) -> NumpyTensor['n h w']:
         """
@@ -281,7 +291,7 @@ class Sam2Model(SamModel):
         """
         image = np.array(image)
 
-        with suppress_output():
+        with suppress_output(), self._autocast_ctx():
             if self.config.sam.auto:
                 annotations = self.engine.generate(image)
             else:
@@ -292,6 +302,192 @@ class Sam2Model(SamModel):
         annotations = sorted(annotations, key=lambda x: x['area'], reverse=True)
         masks = np.stack([anno['segmentation'] for anno in annotations])
         return masks
+
+    def process_images_batch(
+        self,
+        images: list,
+        point_grids: list,
+        encode_batch_size: int = 6,
+    ) -> list:
+        """
+        Batch-encode images then run per-image AMG decode.
+
+        Uses set_image_batch() for efficient backbone encoding, then
+        _predict(img_idx=i) to run the mask decoder per view.
+
+        Args:
+            images: list of np.ndarray (H,W,3) uint8
+            point_grids: list of np.ndarray (N,2) normalized [0,1] per image
+            encode_batch_size: max images per encoding batch (VRAM limit)
+
+        Returns:
+            list of np.ndarray (N_masks, H, W) bool per image
+        """
+        import time
+        from torchvision.ops.boxes import batched_nms
+        from ...sam2.utils.amg import (
+            MaskData,
+            batch_iterator,
+            calculate_stability_score,
+            mask_to_rle_pytorch,
+            rle_to_mask,
+            batched_mask_to_box,
+            is_box_near_crop_edge,
+            uncrop_masks,
+        )
+
+        engine = self.engine
+        predictor = engine.predictor
+
+        all_masks_out = []
+        t_total = time.time()
+
+        # Process in sub-batches for VRAM
+        for batch_start in range(0, len(images), encode_batch_size):
+            batch_end = min(batch_start + encode_batch_size, len(images))
+            sub_images = images[batch_start:batch_end]
+            sub_grids = point_grids[batch_start:batch_end]
+            batch_label = f"[{batch_start+1}-{batch_end}/{len(images)}]"
+
+            # Batch encode
+            t_enc = time.time()
+            with self._autocast_ctx():
+                predictor.set_image_batch(sub_images)
+            t_enc = time.time() - t_enc
+            print(f"      {batch_label} Encoded {len(sub_images)} images in {t_enc:.2f}s")
+
+            # Per-image AMG decode
+            for local_idx, (image, pg) in enumerate(zip(sub_images, sub_grids)):
+                view_idx = batch_start + local_idx
+                h, w = image.shape[:2]
+                im_size = (h, w)
+                crop_box = [0, 0, w, h]
+
+                if len(pg) == 0:
+                    all_masks_out.append(np.zeros((1, h, w), dtype=bool))
+                    print(f"      View {view_idx+1}/{len(images)}: skipped (no valid points)")
+                    continue
+
+                t_view = time.time()
+
+                # Scale normalized points to pixel coords
+                points_for_image = pg.copy()
+                points_for_image[:, 0] *= w
+                points_for_image[:, 1] *= h
+
+                # Run point batches against cached features
+                data = MaskData()
+                with self._autocast_ctx():
+                    for (points_batch,) in batch_iterator(engine.points_per_batch, points_for_image):
+                        batch_data = self._process_point_batch(
+                            predictor, engine, points_batch,
+                            im_size, crop_box, local_idx,
+                        )
+                        data.cat(batch_data)
+                        del batch_data
+
+                # NMS
+                n_masks = 0
+                if "boxes" in data._stats and len(data["boxes"]) > 0:
+                    keep = batched_nms(
+                        data["boxes"].float(),
+                        data["iou_preds"],
+                        torch.zeros_like(data["boxes"][:, 0]),
+                        iou_threshold=engine.box_nms_thresh,
+                    )
+                    data.filter(keep)
+
+                data.to_numpy()
+
+                # Extract binary masks from RLE
+                if "rles" in data._stats and len(data["rles"]) > 0:
+                    masks = [rle_to_mask(rle) for rle in data["rles"]]
+                    masks = sorted(masks, key=lambda m: m.sum(), reverse=True)
+                    all_masks_out.append(np.stack(masks))
+                    n_masks = len(masks)
+                else:
+                    all_masks_out.append(np.zeros((1, h, w), dtype=bool))
+
+                t_view = time.time() - t_view
+                print(f"      View {view_idx+1}/{len(images)}: {n_masks} masks in {t_view:.2f}s")
+
+            predictor.reset_predictor()
+
+        t_total = time.time() - t_total
+        print(f"      Total batch: {len(images)} views in {t_total:.2f}s ({t_total/len(images):.2f}s/view)")
+
+        return all_masks_out
+
+    @staticmethod
+    def _process_point_batch(predictor, engine, points, im_size, crop_box, img_idx):
+        """
+        Replicate AMG._process_batch() logic using img_idx for batched features.
+        """
+        from ...sam2.utils.amg import (
+            MaskData,
+            calculate_stability_score,
+            mask_to_rle_pytorch,
+            batched_mask_to_box,
+            is_box_near_crop_edge,
+            uncrop_masks,
+        )
+
+        orig_h, orig_w = im_size
+
+        points = torch.as_tensor(points, dtype=torch.float32, device=predictor.device)
+        in_points = predictor._transforms.transform_coords(
+            points, normalize=True, orig_hw=im_size
+        )
+        in_labels = torch.ones(
+            in_points.shape[0], dtype=torch.int, device=in_points.device
+        )
+
+        masks, iou_preds, low_res_masks = predictor._predict(
+            in_points[:, None, :],
+            in_labels[:, None],
+            multimask_output=engine.multimask_output,
+            return_logits=True,
+            img_idx=img_idx,
+        )
+
+        data = MaskData(
+            masks=masks.flatten(0, 1),
+            iou_preds=iou_preds.flatten(0, 1),
+            points=points.repeat_interleave(masks.shape[1], dim=0),
+            low_res_masks=low_res_masks.flatten(0, 1),
+        )
+        del masks
+
+        # Filter by IoU
+        if engine.pred_iou_thresh > 0.0:
+            keep = data["iou_preds"] > engine.pred_iou_thresh
+            data.filter(keep)
+
+        # Filter by stability
+        data["stability_score"] = calculate_stability_score(
+            data["masks"], engine.mask_threshold, engine.stability_score_offset
+        )
+        if engine.stability_score_thresh > 0.0:
+            keep = data["stability_score"] >= engine.stability_score_thresh
+            data.filter(keep)
+
+        # Threshold and boxes
+        data["masks"] = data["masks"] > engine.mask_threshold
+        data["boxes"] = batched_mask_to_box(data["masks"])
+
+        # Filter edge boxes
+        keep = ~is_box_near_crop_edge(
+            data["boxes"], crop_box, [0, 0, orig_w, orig_h]
+        )
+        if not torch.all(keep):
+            data.filter(keep)
+
+        # RLE encode
+        data["masks"] = uncrop_masks(data["masks"], crop_box, orig_h, orig_w)
+        data["rles"] = mask_to_rle_pytorch(data["masks"])
+        del data["masks"]
+
+        return data
 
 
 if __name__ == '__main__':

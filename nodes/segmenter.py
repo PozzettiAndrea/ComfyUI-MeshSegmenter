@@ -6,7 +6,6 @@ PartField Segmenter Node - Segments mesh using PartField neural features.
 """
 
 import os
-import sys
 import torch
 import numpy as np
 import trimesh
@@ -177,9 +176,15 @@ class PartFieldSegmenter:
         if torch.cuda.is_available():
             torch.cuda.manual_seed_all(capped_seed)
 
+        import comfy.model_management
         # Load model inside worker process (lazy, cached)
-        from .feature_extractor import _get_partfield_model
-        model, device = _get_partfield_model(partfield_model)
+        from .feature_extractor import _get_partfield_patcher
+        patcher = _get_partfield_patcher(partfield_model)
+
+        # Let ComfyUI load model to GPU (handles VRAM, offloads other models if needed)
+        comfy.model_management.load_models_gpu([patcher])
+        model = patcher.model
+        device = patcher.load_device
 
         print(f"PartFieldSegmenter: Processing mesh with {len(mesh.vertices)} vertices, {len(mesh.faces)} faces")
 
@@ -221,7 +226,7 @@ class PartFieldSegmenter:
             face_points = face_points.reshape(1, -1, 3)
 
             # Import triplane sampling function
-            from .partfield_lib.model.PVCNN.encoder_pc import sample_triplane_feat
+            from .partfield.model.PVCNN.encoder_pc import sample_triplane_feat
 
             # Sample features in batches to avoid OOM
             n_sample_each = 10000
@@ -265,11 +270,7 @@ class PartFieldSegmenter:
             labels = clustering.fit_predict(face_features_norm)
         else:
             # Agglomerative clustering with mesh connectivity
-            # Add partfield-src to path for clustering utilities
-            partfield_src = os.path.join(os.path.dirname(__file__), "partfield_src")
-            if partfield_src not in sys.path:
-                sys.path.insert(0, partfield_src)
-            from run_part_clustering import (
+            from .partfield.clustering import (
                 construct_face_adjacency_matrix_naive,
                 construct_face_adjacency_matrix_facemst,
                 construct_face_adjacency_matrix_ccmst
