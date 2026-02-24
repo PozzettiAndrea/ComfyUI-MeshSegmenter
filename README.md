@@ -1,10 +1,16 @@
-----------
-Work in Progress! This node is not finished.
-----------
-
 # ComfyUI-MeshSegmenter
 
+<div align="center">
+<a href="https://pozzettiandrea.github.io/ComfyUI-MeshSegmenter/">
+<img src="https://pozzettiandrea.github.io/ComfyUI-MeshSegmenter/gallery-preview.png" alt="Workflow Test Gallery" width="800">
+</a>
+<br>
+<b><a href="https://pozzettiandrea.github.io/ComfyUI-MeshSegmenter/">View Live Test Gallery →</a></b>
+</div>
+
 Mesh segmentation nodes for ComfyUI using SAMesh and PartField backends. Multiple clustering options available.
+WIP ;) gonna add a bunch of methods eventually. For now it's SaMesh and PartField.
+My ultimate goal is to do some good segmentation for CAD reconstruction.
 
 ![SAMesh Workflow](docs/samesh.png)
 
