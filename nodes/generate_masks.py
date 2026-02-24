@@ -18,6 +18,65 @@ from .samesh.models.mask_utils import (
     remove_artifacts,
 )
 
+# Per-worker model cache (each comfy-env worker is a separate process)
+_sam_model_cache: dict = {}
+
+
+def _resolve_dtype(precision: str, device) -> torch.dtype:
+    import comfy.model_management
+    if precision == "auto":
+        if comfy.model_management.should_use_bf16(device):
+            return torch.bfloat16
+        elif comfy.model_management.should_use_fp16(device):
+            return torch.float16
+        else:
+            return torch.float32
+    return {"bf16": torch.bfloat16, "fp16": torch.float16}.get(precision, torch.float32)
+
+
+def _instantiate_sam_model(sam_config: dict):
+    """Instantiate Sam2Model/Sam3Model from a serializable config dict, with caching."""
+    import comfy.model_management
+
+    cache_key = (sam_config["model_name"], sam_config["precision"])
+    if cache_key in _sam_model_cache:
+        print(f"GenerateMasks: Using cached model '{sam_config['model_name']}'")
+        return _sam_model_cache[cache_key]
+
+    load_device = comfy.model_management.get_torch_device()
+    dtype = _resolve_dtype(sam_config["precision"], load_device)
+    device_str = str(load_device)
+    model_type = sam_config["type"]
+
+    if model_type == "sam2":
+        omega_config = OmegaConf.create({
+            "sam": {
+                "checkpoint": sam_config["checkpoint_path"],
+                "model_config": sam_config["config_name"],
+                "auto": True,
+                "ground": False,
+                "engine_config": sam_config["engine_config"],
+            }
+        })
+        from .samesh.models.sam import Sam2Model
+        model = Sam2Model(omega_config, device=device_str)
+    elif model_type == "sam3":
+        omega_config = OmegaConf.create({
+            "sam3": {
+                "checkpoint": sam_config["checkpoint_path"],
+                "engine_config": sam_config["engine_config"],
+            }
+        })
+        from .samesh.models.sam3 import Sam3Model
+        model = Sam3Model(omega_config, device=device_str)
+    else:
+        raise ValueError(f"Unknown SAM model type: {model_type}")
+
+    _sam_model_cache[cache_key] = model
+    print(f"GenerateMasks: Loaded {model_type} model '{sam_config['model_name']}' on {device_str} ({dtype})")
+    return model
+
+
 def tensor_to_pil_list(tensor: torch.Tensor) -> list:
     """Convert ComfyUI image tensor (B, H, W, C) to list of PIL Images."""
     images = []
@@ -202,11 +261,13 @@ class GenerateMasks:
         print(f"  Points per side: {points_per_side}")
         print(f"  Min area: {min_area}")
 
+        # Instantiate model from serializable config (cached per-worker)
+        model = _instantiate_sam_model(sam_model)
+
         # Update model engine config with current parameters
-        sam_model.engine.points_per_side = points_per_side
-        sam_model.engine.pred_iou_thresh = pred_iou_thresh
-        sam_model.engine.stability_score_thresh = stability_score_thresh
-        model = sam_model
+        model.engine.points_per_side = points_per_side
+        model.engine.pred_iou_thresh = pred_iou_thresh
+        model.engine.stability_score_thresh = stability_score_thresh
 
         # Get dimensions from first image input
         first_img = image_inputs[0][1]

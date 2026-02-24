@@ -2,15 +2,14 @@
 # Copyright (C) 2025 ComfyUI-MeshSegmenter Contributors
 
 """
-SAM Model Loader Node - Downloads and loads SAM2/SAM3 models.
+SAM Model Loader Node - Downloads SAM2/SAM3 checkpoints and returns
+a serializable config dict for downstream nodes to instantiate.
 """
 
 import logging
 import os
 
-import torch
 from huggingface_hub import hf_hub_download
-from omegaconf import OmegaConf
 from folder_paths import base_path as comfy_base_path
 
 from .types import SAM_MODEL
@@ -58,14 +57,11 @@ SAM_MODELS = {
 
 SAM_MODEL_NAMES = list(SAM_MODELS.keys())
 
-# Cache for loaded models
-_sam_model_cache = {}
-
 
 class SamModelLoader:
     """
-    Downloads and loads a SAM2 or SAM3 model.
-    Returns the loaded model ready for use in Generate Masks node.
+    Downloads a SAM2 or SAM3 checkpoint and returns a serializable config dict.
+    The actual model is instantiated by downstream nodes (e.g. GenerateMasks).
     """
 
     @classmethod
@@ -90,52 +86,6 @@ class SamModelLoader:
     FUNCTION = "load_model"
     CATEGORY = "meshsegmenter/sammesh"
 
-    def _resolve_dtype(self, precision, device):
-        import comfy.model_management
-        if precision == "auto":
-            if comfy.model_management.should_use_bf16(device):
-                return torch.bfloat16
-            elif comfy.model_management.should_use_fp16(device):
-                return torch.float16
-            else:
-                return torch.float32
-        elif precision == "bf16":
-            return torch.bfloat16
-        elif precision == "fp16":
-            return torch.float16
-        else:
-            return torch.float32
-
-    def load_model(self, model_name: str, precision: str = "auto"):
-        """Download (if needed) and load the specified SAM model."""
-        import comfy.model_management
-
-        if model_name not in SAM_MODELS:
-            raise ValueError(f"Selected model '{model_name}' is not defined.")
-
-        # Check cache first
-        if model_name in _sam_model_cache:
-            log.info("SamModelLoader: Using cached model '%s'", model_name)
-            return (_sam_model_cache[model_name],)
-
-        load_device = comfy.model_management.get_torch_device()
-        dtype = self._resolve_dtype(precision, load_device)
-        device_str = str(load_device)
-
-        model_info = SAM_MODELS[model_name]
-        model_type = model_info.get("type", "sam2")
-
-        if model_type == "sam3":
-            model = self._load_sam3(model_name, model_info, device_str)
-        else:
-            model = self._load_sam2(model_name, model_info, device_str)
-
-        # Cache the loaded model
-        _sam_model_cache[model_name] = model
-        log.info("SamModelLoader (%s): Model loaded and cached on %s (%s)", model_name, device_str, dtype)
-
-        return (model,)
-
     def _download_checkpoint(self, model_name, repo_id, checkpoint_filename):
         checkpoint_path = os.path.join(sam_model_dir, checkpoint_filename)
 
@@ -157,70 +107,46 @@ class SamModelLoader:
 
         return checkpoint_path
 
-    def _load_sam2(self, model_name: str, model_info: dict, device: str):
-        """Load a SAM2/SAM2.1 model."""
-        checkpoint_filename = model_info["checkpoint_filename"]
-        config_name = model_info["config_name"]
+    def load_model(self, model_name: str, precision: str = "auto"):
+        """Download (if needed) the checkpoint and return a serializable config dict."""
+        if model_name not in SAM_MODELS:
+            raise ValueError(f"Selected model '{model_name}' is not defined.")
+
+        model_info = SAM_MODELS[model_name]
+        model_type = model_info.get("type", "sam2")
         repo_id = model_info["repo_id"]
+        checkpoint_filename = model_info["checkpoint_filename"]
 
         checkpoint_path = self._download_checkpoint(model_name, repo_id, checkpoint_filename)
 
-        log.info("SamModelLoader (%s): Loading SAM2 model with config '%s'...", model_name, config_name)
-
-        # Default engine config - can be adjusted in GenerateMasks node
-        engine_config = {
-            "points_per_side": 32,
-            "crop_n_layers": 0,
-            "pred_iou_thresh": 0.5,
-            "stability_score_thresh": 0.7,
-            "stability_score_offset": 1.0,
+        sam_config = {
+            "type": model_type,
+            "model_name": model_name,
+            "checkpoint_path": checkpoint_path,
+            "precision": precision,
         }
 
-        config = OmegaConf.create({
-            "sam": {
-                "checkpoint": checkpoint_path,
-                "model_config": config_name,
-                "auto": True,
-                "ground": False,
-                "engine_config": engine_config,
+        if model_type == "sam2":
+            sam_config["config_name"] = model_info["config_name"]
+            sam_config["engine_config"] = {
+                "points_per_side": 32,
+                "crop_n_layers": 0,
+                "pred_iou_thresh": 0.5,
+                "stability_score_thresh": 0.7,
+                "stability_score_offset": 1.0,
             }
-        })
-
-        from .samesh.models.sam import Sam2Model
-        model = Sam2Model(config, device=device)
-
-        return model
-
-    def _load_sam3(self, model_name: str, model_info: dict, device: str):
-        """Load a SAM3 model."""
-        checkpoint_filename = model_info["checkpoint_filename"]
-        repo_id = model_info["repo_id"]
-
-        checkpoint_path = self._download_checkpoint(model_name, repo_id, checkpoint_filename)
-
-        log.info("SamModelLoader (%s): Loading SAM3 model...", model_name)
-
-        # Default engine config
-        engine_config = {
-            "points_per_side": 32,
-            "pred_iou_thresh": 0.5,
-            "stability_score_thresh": 0.7,
-            "stability_score_offset": 1.0,
-            "min_mask_region_area": 100,
-            "box_nms_thresh": 0.7,
-        }
-
-        config = OmegaConf.create({
-            "sam3": {
-                "checkpoint": checkpoint_path,
-                "engine_config": engine_config,
+        else:  # sam3
+            sam_config["engine_config"] = {
+                "points_per_side": 32,
+                "pred_iou_thresh": 0.5,
+                "stability_score_thresh": 0.7,
+                "stability_score_offset": 1.0,
+                "min_mask_region_area": 100,
+                "box_nms_thresh": 0.7,
             }
-        })
 
-        from .samesh.models.sam3 import Sam3Model
-        model = Sam3Model(config, device=device)
-
-        return model
+        log.info("SamModelLoader (%s): Config prepared, checkpoint at %s", model_name, checkpoint_path)
+        return (sam_config,)
 
 
 NODE_CLASS_MAPPINGS = {

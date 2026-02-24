@@ -24,7 +24,8 @@ Dict containing face-to-label mapping:
 """
 
 SAM_MODEL = "SAM_MODEL"
-"""Loaded SAM2 model instance (Sam2Model object)"""
+"""Serializable SAM model config dict (JSON-safe for comfy-env worker boundaries):
+{'type', 'model_name', 'checkpoint_path', 'config_name', 'engine_config', 'precision'}"""
 
 QUAD_MESH_INFO = "QUAD_MESH_INFO"
 """
