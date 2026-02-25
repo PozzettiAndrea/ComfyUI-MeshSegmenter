@@ -1,8 +1,9 @@
 import sys
 import os
 
-# Set EGL for headless rendering BEFORE any OpenGL imports
-os.environ["PYOPENGL_PLATFORM"] = "egl"
+# Set EGL for headless rendering BEFORE any OpenGL imports (Linux only)
+if sys.platform != "win32":
+    os.environ["PYOPENGL_PLATFORM"] = "egl"
 
 import json
 import argparse

@@ -1,7 +1,6 @@
 from pathlib import Path
 
 import numpy as np
-import pandas as pd
 import trimesh
 from trimesh.base import Trimesh, ColorVisuals, Scene
 

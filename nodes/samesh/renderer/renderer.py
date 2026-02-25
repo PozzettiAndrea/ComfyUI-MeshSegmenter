@@ -1,6 +1,8 @@
 import os
-os.environ['PYOPENGL_PLATFORM'] = 'egl'
-os.environ['EGL_DEVICE_ID'] = '-1' # NOTE: necessary to not create GPU contention
+import sys
+if sys.platform != 'win32':
+    os.environ['PYOPENGL_PLATFORM'] = 'egl'
+    os.environ['EGL_DEVICE_ID'] = '-1'  # NOTE: necessary to not create GPU contention
 
 ### START VOODOO ###
 # Dark encantation for disabling anti-aliasing in pyrender (if needed)

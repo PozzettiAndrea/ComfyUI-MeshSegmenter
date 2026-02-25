@@ -7,8 +7,10 @@ Outputs normals, matte, optional SDF, and face ID mask for SAM processing.
 """
 
 import os
+import sys
 
-os.environ["PYOPENGL_PLATFORM"] = "egl"
+if sys.platform != "win32":
+    os.environ["PYOPENGL_PLATFORM"] = "egl"
 
 import numpy as np
 import torch
