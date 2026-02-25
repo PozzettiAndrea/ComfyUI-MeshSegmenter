@@ -8,17 +8,17 @@ Capturing execution frames: partfield-seg.json
   [Console-warning] WARNING: Multiple instances of Three.js being imported.
   [ComfyUI] [DEPRECATION WARNING] Detected import of deprecated legacy API: /scripts/ui.js. This is likely caused by a custom node extension using outdated APIs. Please update your extensions or contact the extension author for an updated version.
   [Console-error] [vite:preloadError] Error: Extension named 'Comfy.DynamicWidgets' already registered.
-    at Proxy.registerExtension (http://127.0.0.1:41891/assets/systemStatsStore-D9aNY5gT.js:1:5552)
-    at Proxy.wrappedAction (http://127.0.0.1:41891/assets/vendor-vue-core-X6q-rGJs.js:2:90540)
-    at Object.registerExtension (http://127.0.0.1:41891/assets/dialogService-Cqui0UMO.js:3:162873)
-    at ComfyApp.registerExtension (http://127.0.0.1:41891/assets/dialogService-Cqui0UMO.js:177:20566)
-    at http://127.0.0.1:41891/extensions/ComfyUI-MeshSegmenter/js/dynamic_widgets.js:125:5
+    at Proxy.registerExtension (http://127.0.0.1:41892/assets/systemStatsStore-D9aNY5gT.js:1:5552)
+    at Proxy.wrappedAction (http://127.0.0.1:41892/assets/vendor-vue-core-X6q-rGJs.js:2:90540)
+    at Object.registerExtension (http://127.0.0.1:41892/assets/dialogService-Cqui0UMO.js:3:162873)
+    at ComfyApp.registerExtension (http://127.0.0.1:41892/assets/dialogService-Cqui0UMO.js:177:20566)
+    at http://127.0.0.1:41892/extensions/ComfyUI-GeometryPack/js/dynamic_widgets.js:125:5
   [Console-error] [vite:preloadError] Error: Extension named 'geompack.text_report' already registered.
-    at Proxy.registerExtension (http://127.0.0.1:41891/assets/systemStatsStore-D9aNY5gT.js:1:5552)
-    at Proxy.wrappedAction (http://127.0.0.1:41891/assets/vendor-vue-core-X6q-rGJs.js:2:90540)
-    at Object.registerExtension (http://127.0.0.1:41891/assets/dialogService-Cqui0UMO.js:3:162873)
-    at ComfyApp.registerExtension (http://127.0.0.1:41891/assets/dialogService-Cqui0UMO.js:177:20566)
-    at http://127.0.0.1:41891/extensions/ComfyUI-GeometryPack/js/text_report.js:81:5
+    at Proxy.registerExtension (http://127.0.0.1:41892/assets/systemStatsStore-D9aNY5gT.js:1:5552)
+    at Proxy.wrappedAction (http://127.0.0.1:41892/assets/vendor-vue-core-X6q-rGJs.js:2:90540)
+    at Object.registerExtension (http://127.0.0.1:41892/assets/dialogService-Cqui0UMO.js:3:162873)
+    at ComfyApp.registerExtension (http://127.0.0.1:41892/assets/dialogService-Cqui0UMO.js:177:20566)
+    at http://127.0.0.1:41892/extensions/ComfyUI-GeometryPack/js/text_report.js:81:5
   [Console-error] Failed to load resource: the server responded with a status of 404 (Not Found)
   [Console-warning] [ComfyUI Deprecated] Importing from "scripts/ui.js" is deprecated and will be removed in v1.34.
   [Console-warning] [MaskEditor] ComfyApp.open_maskeditor is deprecated. Plugins should migrate to using the command system or direct node context menu integration.
@@ -38,33 +38,32 @@ Capturing execution frames: partfield-seg.json
   [ComfyUI]     Inputs: {"model_name": "PartField Objaverse", "precision": "auto"}
   [ComfyUI]   Node 3: GeomPackLoadMesh
   [ComfyUI]     Inputs: {"file_path": "3d/camera.stl"}
+  [ComfyUI] [comfy-env] Removed stale socket: /dev/shm/comfy_worker_6321eb2d721a.sock
   [ComfyUI]   Node 4: GeomPackPreviewMeshVTK
-  [ComfyUI]     Inputs: {"mode": "fields", "preview_vtk": "{\"show_edges\":false,\"camera_state\":\"{\\\"position\\\":[-0.8282762793706179,0.9686317332557772,1.8112815922815064],\\\"focalPoint\\\":[0.01331613670409254,0.0410
-  [ComfyUI] [comfy-env] Removed stale socket: /dev/shm/comfy_worker_9f79ae2a692c.sock
-  [ComfyUI]   Node 5: MeshSegPartFieldFeatureExtractor
-  [ComfyUI] [comfy-env] Removed stale socket: /dev/shm/comfy_worker_c2b8ccf153dd.sock
-  [ComfyUI]     Inputs: {"n_points_per_face": 100, "seed": 42, "mesh": ["3", 0], "partfield_model": ["1", 0]}
   [ComfyUI] ComfyUI-Multiband loaded: 15 nodes registered
-  [ComfyUI] [comfy-env] SubprocessWorker: /home/shadeform/workspaces/MeshSegmenter-0837/ComfyUI/custom_nodes/ComfyUI-MeshSegmenter/nodes/_env_703529/bin/python
+  [ComfyUI]     Inputs: {"mode": "fields", "preview_vtk": "{\"show_edges\":false,\"camera_state\":\"{\\\"position\\\":[-0.8282762793706179,0.9686317332557772,1.8112815922815064],\\\"focalPoint\\\":[0.01331613670409254,0.0410
+  [ComfyUI] [comfy-env] SubprocessWorker: /home/shadeform/workspaces/MeshSegmenter-1140/ComfyUI/custom_nodes/ComfyUI-MeshSegmenter/nodes/_env_703529/bin/python
+  [ComfyUI]   Node 5: MeshSegPartFieldFeatureExtractor
+  [ComfyUI] [comfy-env] env_vars: {'COMFYUI_BASE': '/home/shadeform/workspaces/MeshSegmenter-1140/ComfyUI'}
+  [ComfyUI]     Inputs: {"n_points_per_face": 100, "seed": 42, "mesh": ["3", 0], "partfield_model": ["1", 0]}
+  [ComfyUI] [ComfyUI-MeshSegmenter] python: /home/shadeform/workspaces/MeshSegmenter-1140/ComfyUI/custom_nodes/ComfyUI-MeshSegmenter/nodes/_env_703529/bin/python
   [ComfyUI]   Node 6: MeshSegSegmentByFeatures
-  [ComfyUI] [comfy-env] env_vars: {'COMFYUI_BASE': '/home/shadeform/workspaces/MeshSegmenter-0837/ComfyUI'}
+  [ComfyUI] [ComfyUI-MeshSegmenter] sys_path sent to worker: ['/home/shadeform/workspaces/MeshSegmenter-1140/ComfyUI', '/home/shadeform/workspaces/MeshSegmenter-1140/ComfyUI/custom_nodes/ComfyUI-MeshSegmenter', '/home/shadeform/workspaces/MeshSegmenter-1140/ComfyUI/custom_nodes/ComfyUI-MeshSegmenter/nodes/_env_703529/lib/python3.1/site-packages', '/home/shadeform/workspaces/MeshSegmenter-1140/ComfyUI/custom_nodes/ComfyUI-MeshSegmenter']
   [ComfyUI]     Inputs: {"backend": "kmeans", "num_clusters": 20, "seed": 42, "connectivity": "face_mst", "linkage": "average", "n_init": 10, "max_iter": 300, "keep_features": false, "mesh": ["5", 0]}
-  [ComfyUI] Generated prompt_id: e1899673-2fea-4600-a60d-2cf1aeff338c
-  [ComfyUI] [ComfyUI-MeshSegmenter] python: /home/shadeform/workspaces/MeshSegmenter-0837/ComfyUI/custom_nodes/ComfyUI-MeshSegmenter/nodes/_env_703529/bin/python
-  [ComfyUI] [ComfyUI-MeshSegmenter] sys_path sent to worker: ['/home/shadeform/workspaces/MeshSegmenter-0837/ComfyUI', '/home/shadeform/workspaces/MeshSegmenter-0837/ComfyUI/custom_nodes/ComfyUI-MeshSegmenter', '/home/shadeform/workspaces/MeshSegmenter-0837/ComfyUI/custom_nodes/ComfyUI-MeshSegmenter/nodes/_env_703529/lib/python3.1/site-packages', '/home/shadeform/workspaces/MeshSegmenter-0837/ComfyUI/custom_nodes/ComfyUI-MeshSegmenter']
+  [ComfyUI] [SubprocessWorker] is_pixi=False, python=/home/shadeform/workspaces/MeshSegmenter-1140/ComfyUI/custom_nodes/ComfyUI-MeshSegmenter/nodes/_env_703529/bin/python
+  [ComfyUI] Generated prompt_id: ecebe066-ad50-45d5-bad7-c34a242f29c4
+  [ComfyUI] [SubprocessWorker] launching cmd=['/home/shadeform/workspaces/MeshSegmenter-1140/ComfyUI/custom_nodes/ComfyUI-MeshSegmenter/nodes/_env_703529/bin/python', '/tmp/comfyui_pvenv_rq7y0odt/persistent_worker.py', 'unix:///dev/shm/comfy_worker_fd95c87ec15e.sock']...
   [ComfyUI] Calling execution.validate_prompt()...
+  [ComfyUI] [SubprocessWorker] PATH has 8 entries:
   [ComfyUI] Validation result: valid=True
-  [ComfyUI] [SubprocessWorker] is_pixi=False, python=/home/shadeform/workspaces/MeshSegmenter-0837/ComfyUI/custom_nodes/ComfyUI-MeshSegmenter/nodes/_env_703529/bin/python
-  [ComfyUI] [SubprocessWorker] launching cmd=['/home/shadeform/workspaces/MeshSegmenter-0837/ComfyUI/custom_nodes/ComfyUI-MeshSegmenter/nodes/_env_703529/bin/python', '/tmp/comfyui_pvenv_fwfg34_k/persistent_worker.py', 'unix:///dev/shm/comfy_worker_98155039c48d.sock']...
+  [ComfyUI] [SubprocessWorker]   [0] /home/shadeform/.local/bin
   [ComfyUI] === Validation PASSED ===
+  [ComfyUI] [SubprocessWorker]   [1] /home/shadeform/.local/bin
   [ComfyUI] got prompt
-  [ComfyUI] [SubprocessWorker] PATH has 8 entries:
+  [ComfyUI] [SubprocessWorker]   [2] /home/shadeform/.local/bin
   [ComfyUI] [SubprocessWorker] call_method: nodes.partfield_model_downloader.PartFieldModelDownloader.download_and_load_model
-  [ComfyUI] [SubprocessWorker]   [0] /home/shadeform/.local/bin
-  [ComfyUI] [SubprocessWorker] acquired lock, ensuring started...
-  [ComfyUI] [SubprocessWorker]   [1] /home/shadeform/.local/bin
-  [ComfyUI] [SubprocessWorker]   [2] /home/shadeform/.local/bin
   [ComfyUI] [SubprocessWorker]   [3] /home/shadeform/.venv/bin
+  [ComfyUI] [SubprocessWorker] acquired lock, ensuring started...
   [ComfyUI] [SubprocessWorker]   [4] /usr/local/bin
   [ComfyUI] [SubprocessWorker]   [5] /usr/bin
   [ComfyUI] [SubprocessWorker]   [6] /bin
@@ -78,28 +77,31 @@ Capturing execution frames: partfield-seg.json
   [ComfyUI] [worker]   [5] /usr/bin
   [ComfyUI] [worker]   [6] /bin
   [ComfyUI] [worker]   [7] /snap/bin
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter] ERROR: Failed to import comfy_kitchen, Error: No module named 'comfy_kitchen', fp8 and fp4 support will not be available.
   Frame 2 saved (frame_001.jpg, t=2.4s)
-  [capture-periodic] freeze=3ms shot=157ms unfreeze=3ms saved=True
+  [capture-periodic] freeze=4ms shot=143ms unfreeze=4ms saved=True
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter] ERROR: Failed to import comfy_kitchen, Error: No module named 'comfy_kitchen', fp8 and fp4 support will not be available.
   [ComfyUI] [SubprocessWorker] worker started/confirmed
   [ComfyUI] [SubprocessWorker] serializing kwargs to shm...
   [ComfyUI] [SubprocessWorker] created 0 shm blocks
   [ComfyUI] [SubprocessWorker] sending request via socket...
-  [capture-loop] iter=50 t=5.9s state={'complete': False, 'error': None, 'executedCount': 0, 'wsState': 1} eval_ms=3
-  [ComfyUI] /home/shadeform/workspaces/MeshSegmenter-0837/ComfyUI/custom_nodes/ComfyUI-MeshSegmenter/nodes/_env_703529/lib/python3.1/site-packages/huggingface_hub/utils/_validators.py:186: UserWarning: The `resume_download` argument is deprecated and ignored in `hf_hub_download`. Downloads always resume whenever possible.
+  [capture-loop] iter=50 t=6.0s state={'complete': False, 'error': None, 'executedCount': 0, 'wsState': 1} eval_ms=3
+  [ComfyUI] /home/shadeform/workspaces/MeshSegmenter-1140/ComfyUI/custom_nodes/ComfyUI-MeshSegmenter/nodes/_env_703529/lib/python3.1/site-packages/huggingface_hub/utils/_validators.py:186: UserWarning: The `resume_download` argument is deprecated and ignored in `hf_hub_download`. Downloads always resume whenever possible.
   [ComfyUI]   warnings.warn(
-  [ComfyUI] /home/shadeform/workspaces/MeshSegmenter-0837/ComfyUI/custom_nodes/ComfyUI-MeshSegmenter/nodes/_env_703529/lib/python3.1/site-packages/huggingface_hub/utils/_validators.py:202: UserWarning: The `local_dir_use_symlinks` argument is deprecated and ignored in `hf_hub_download`. Downloading to a local directory does not use symlinks anymore.
+  [ComfyUI] /home/shadeform/workspaces/MeshSegmenter-1140/ComfyUI/custom_nodes/ComfyUI-MeshSegmenter/nodes/_env_703529/lib/python3.1/site-packages/huggingface_hub/utils/_validators.py:202: UserWarning: The `local_dir_use_symlinks` argument is deprecated and ignored in `hf_hub_download`. Downloading to a local directory does not use symlinks anymore.
   [ComfyUI]   warnings.warn(
-  [capture-loop] iter=100 t=11.9s state={'complete': False, 'error': None, 'executedCount': 0, 'wsState': 1} eval_ms=4
+  [ComfyUI] Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter] WARNING: Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+  [capture-loop] iter=100 t=12.0s state={'complete': False, 'error': None, 'executedCount': 0, 'wsState': 1} eval_ms=6
+  [capture-loop] iter=150 t=17.8s state={'complete': False, 'error': None, 'executedCount': 0, 'wsState': 1} eval_ms=3
   [ComfyUI] [SubprocessWorker] got response: ok
-  [ComfyUI] [comfy-env] SubprocessWorker: /home/shadeform/workspaces/MeshSegmenter-0837/ComfyUI/custom_nodes/ComfyUI-GeometryPack/nodes/main/_env_12709f/bin/python
+  [ComfyUI] [comfy-env] SubprocessWorker: /home/shadeform/workspaces/MeshSegmenter-1140/ComfyUI/custom_nodes/ComfyUI-GeometryPack/nodes/main/_env_12709f/bin/python
   [ComfyUI] [SubprocessWorker] call_method: nodes.main.io.load_mesh.LoadMesh.load_mesh
-  [ComfyUI] [comfy-env] env_vars: {'KMP_DUPLICATE_LIB_OK': 'TRUE', 'OMP_NUM_THREADS': '1', 'COMFYUI_BASE': '/home/shadeform/workspaces/MeshSegmenter-0837/ComfyUI'}
+  [ComfyUI] [comfy-env] env_vars: {'KMP_DUPLICATE_LIB_OK': 'TRUE', 'OMP_NUM_THREADS': '1', 'COMFYUI_BASE': '/home/shadeform/workspaces/MeshSegmenter-1140/ComfyUI'}
   [ComfyUI] [SubprocessWorker] acquired lock, ensuring started...
-  [ComfyUI] [ComfyUI-GeometryPack] python: /home/shadeform/workspaces/MeshSegmenter-0837/ComfyUI/custom_nodes/ComfyUI-GeometryPack/nodes/main/_env_12709f/bin/python
-  [ComfyUI] [ComfyUI-GeometryPack] sys_path sent to worker: ['/home/shadeform/workspaces/MeshSegmenter-0837/ComfyUI', '/home/shadeform/workspaces/MeshSegmenter-0837/ComfyUI/custom_nodes/ComfyUI-GeometryPack', '/home/shadeform/workspaces/MeshSegmenter-0837/ComfyUI/custom_nodes/ComfyUI-GeometryPack/nodes/main/_env_12709f/lib/python3.1/site-packages', '/home/shadeform/workspaces/MeshSegmenter-0837/ComfyUI/custom_nodes/ComfyUI-GeometryPack']
-  [ComfyUI] [SubprocessWorker] is_pixi=False, python=/home/shadeform/workspaces/MeshSegmenter-0837/ComfyUI/custom_nodes/ComfyUI-GeometryPack/nodes/main/_env_12709f/bin/python
-  [ComfyUI] [SubprocessWorker] launching cmd=['/home/shadeform/workspaces/MeshSegmenter-0837/ComfyUI/custom_nodes/ComfyUI-GeometryPack/nodes/main/_env_12709f/bin/python', '/tmp/comfyui_pvenv_tvzhks8a/persistent_worker.py', 'unix:///dev/shm/comfy_worker_65ef9a6d016d.sock']...
+  [ComfyUI] [ComfyUI-GeometryPack] python: /home/shadeform/workspaces/MeshSegmenter-1140/ComfyUI/custom_nodes/ComfyUI-GeometryPack/nodes/main/_env_12709f/bin/python
+  [ComfyUI] [ComfyUI-GeometryPack] sys_path sent to worker: ['/home/shadeform/workspaces/MeshSegmenter-1140/ComfyUI', '/home/shadeform/workspaces/MeshSegmenter-1140/ComfyUI/custom_nodes/ComfyUI-GeometryPack', '/home/shadeform/workspaces/MeshSegmenter-1140/ComfyUI/custom_nodes/ComfyUI-GeometryPack/nodes/main/_env_12709f/lib/python3.1/site-packages', '/home/shadeform/workspaces/MeshSegmenter-1140/ComfyUI/custom_nodes/ComfyUI-GeometryPack']
+  [ComfyUI] [SubprocessWorker] is_pixi=False, python=/home/shadeform/workspaces/MeshSegmenter-1140/ComfyUI/custom_nodes/ComfyUI-GeometryPack/nodes/main/_env_12709f/bin/python
+  [ComfyUI] [SubprocessWorker] launching cmd=['/home/shadeform/workspaces/MeshSegmenter-1140/ComfyUI/custom_nodes/ComfyUI-GeometryPack/nodes/main/_env_12709f/bin/python', '/tmp/comfyui_pvenv_gkt4w93j/persistent_worker.py', 'unix:///dev/shm/comfy_worker_de34443f0c08.sock']...
   [ComfyUI] [SubprocessWorker] PATH has 8 entries:
   [ComfyUI] [SubprocessWorker]   [0] /home/shadeform/.local/bin
   [ComfyUI] [SubprocessWorker]   [1] /home/shadeform/.local/bin
@@ -122,16 +124,17 @@ Capturing execution frames: partfield-seg.json
   [ComfyUI] [SubprocessWorker] serializing kwargs to shm...
   [ComfyUI] [SubprocessWorker] created 0 shm blocks
   [ComfyUI] [SubprocessWorker] sending request via socket...
+  Frame 3 saved (frame_002.jpg, t=22.3s)
+  [capture-periodic] freeze=3ms shot=132ms unfreeze=3ms saved=True
   [ComfyUI] [worker:ComfyUI-GeometryPack] [LoadMesh] Found mesh in input folder: 3d/camera.stl
-  [ComfyUI] [worker:ComfyUI-GeometryPack] [load_mesh_file] Loading: /home/shadeform/workspaces/MeshSegmenter-0837/ComfyUI/input/3d/camera.stl
-  Frame 3 saved (frame_002.jpg, t=13.4s)
-  [capture-periodic] freeze=3ms shot=139ms unfreeze=3ms saved=True
+  [ComfyUI] [worker:ComfyUI-GeometryPack] [load_mesh_file] Loading: /home/shadeform/workspaces/MeshSegmenter-1140/ComfyUI/input/3d/camera.stl
   [ComfyUI] [worker:ComfyUI-GeometryPack] [load_mesh_file] Loaded type: Trimesh
   [ComfyUI] [worker:ComfyUI-GeometryPack] [load_mesh_file] Initial mesh: 15223 vertices, 29428 faces
   [ComfyUI] [worker:ComfyUI-GeometryPack] [load_mesh_file] Successfully loaded: 15223 vertices, 29428 faces
   [ComfyUI] [worker:ComfyUI-GeometryPack] [LoadMesh] Loaded: 15223 vertices, 29428 faces
   [ComfyUI] [worker:ComfyUI-GeometryPack] [LoadMesh] No texture found in mesh
   [ComfyUI] [SubprocessWorker] got response: ok
+  [capture-loop] iter=200 t=23.8s state={'complete': False, 'error': None, 'executedCount': 0, 'wsState': 1} eval_ms=4
   [ComfyUI] [SubprocessWorker] call_method: nodes.feature_extractor.PartFieldFeatureExtractor.extract_features
   [ComfyUI] [SubprocessWorker] acquired lock, ensuring started...
   [ComfyUI] [ComfyUI-MeshSegmenter] Health check: ping (timeout=5.0s)...
@@ -141,17 +144,17 @@ Capturing execution frames: partfield-seg.json
   [ComfyUI] [SubprocessWorker] created 1 shm blocks
   [ComfyUI] [SubprocessWorker] sending request via socket...
   [ComfyUI] [worker:ComfyUI-MeshSegmenter] WARNING: No comfy kitchen, using old apply_rope functions.
-  Frame 4 saved (frame_003.jpg, t=15.7s)
-  [capture-periodic] freeze=3ms shot=123ms unfreeze=3ms saved=True
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter] PartField: Loading model from /home/shadeform/workspaces/MeshSegmenter-0837/ComfyUI/models/partfield/model_objaverse.ckpt
-  [capture-loop] iter=150 t=17.7s state={'complete': False, 'error': None, 'executedCount': 0, 'wsState': 1} eval_ms=3
+  Frame 4 saved (frame_003.jpg, t=26.8s)
+  [capture-periodic] freeze=3ms shot=140ms unfreeze=4ms saved=True
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter] PartField: Loading model from /home/shadeform/workspaces/MeshSegmenter-1140/ComfyUI/models/partfield/model_objaverse.ckpt
+  [capture-loop] iter=250 t=29.7s state={'complete': False, 'error': None, 'executedCount': 0, 'wsState': 1} eval_ms=4
   [ComfyUI] [worker:ComfyUI-MeshSegmenter] PartField: Model wrapped in ModelPatcher (load=cuda:0, offload=cpu)
-  [ComfyUI] [comfy-env] VRAM request: 0.43GB, free before eviction: 48.09GB
-  [ComfyUI] [comfy-env] VRAM after eviction: 48.09GB
+  [ComfyUI] [comfy-env] VRAM request: 0.43GB, free before eviction: 42.65GB
+  [ComfyUI] [comfy-env] VRAM after eviction: 42.65GB
   [ComfyUI] [worker:ComfyUI-MeshSegmenter] PartFieldFeatureExtractor: Processing mesh with 15223 vertices, 29428 faces
   [ComfyUI] [worker:ComfyUI-MeshSegmenter] PartFieldFeatureExtractor: Sampling surface points...
   [ComfyUI] [worker:ComfyUI-MeshSegmenter] PartFieldFeatureExtractor: Extracting features...
-  [ComfyUI] /home/shadeform/workspaces/MeshSegmenter-0837/ComfyUI/custom_nodes/ComfyUI-MeshSegmenter/nodes/partfield/model/PVCNN/pv_module/voxelization.py:17: UserWarning: The reduce argument of torch.scatter with Tensor src is deprecated and will be removed in a future PyTorch release. Use torch.scatter_reduce instead for more reduction options. (Triggered internally at /pytorch/aten/src/ATen/native/TensorAdvancedIndexing.cpp:232.)
+  [ComfyUI] /home/shadeform/workspaces/MeshSegmenter-1140/ComfyUI/custom_nodes/ComfyUI-MeshSegmenter/nodes/partfield/model/PVCNN/pv_module/voxelization.py:17: UserWarning: The reduce argument of torch.scatter with Tensor src is deprecated and will be removed in a future PyTorch release. Use torch.scatter_reduce instead for more reduction options. (Triggered internally at /pytorch/aten/src/ATen/native/TensorAdvancedIndexing.cpp:232.)
   [ComfyUI]   out_feature = result.scatter_(index=indices.long(), src=features, dim=2, reduce='add')
   [ComfyUI] [worker:ComfyUI-MeshSegmenter] PartFieldFeatureExtractor: Sampling face features...
   [ComfyUI] [worker:ComfyUI-MeshSegmenter] PartFieldFeatureExtractor: Extracted features shape: (29428, 448)
@@ -167,11 +170,11 @@ Capturing execution frames: partfield-seg.json
   [ComfyUI] [SubprocessWorker] sending request via socket...
   [ComfyUI] [worker:ComfyUI-MeshSegmenter] SegmentMeshByFeatures: Processing mesh with 29428 faces, 448 feature dimensions
   [ComfyUI] [worker:ComfyUI-MeshSegmenter] SegmentMeshByFeatures: Running kmeans clustering with 20 clusters...
-  [capture-loop] iter=200 t=23.4s state={'complete': False, 'error': None, 'executedCount': 0, 'wsState': 1} eval_ms=4
-  Frame 5 saved (frame_004.jpg, t=24.4s)
-  [capture-periodic] freeze=3ms shot=252ms unfreeze=3ms saved=True
-  [capture-loop] iter=250 t=29.4s state={'complete': False, 'error': None, 'executedCount': 0, 'wsState': 1} eval_ms=3
-  [capture-loop] iter=300 t=35.0s state={'complete': False, 'error': None, 'executedCount': 0, 'wsState': 1} eval_ms=5
+  Frame 5 saved (frame_004.jpg, t=33.4s)
+  [capture-periodic] freeze=3ms shot=127ms unfreeze=3ms saved=True
+  [capture-loop] iter=300 t=35.5s state={'complete': False, 'error': None, 'executedCount': 0, 'wsState': 1} eval_ms=3
+  [capture-loop] iter=350 t=41.2s state={'complete': False, 'error': None, 'executedCount': 0, 'wsState': 1} eval_ms=3
+  [capture-loop] iter=400 t=46.9s state={'complete': False, 'error': None, 'executedCount': 0, 'wsState': 1} eval_ms=4
   [ComfyUI] [worker:ComfyUI-MeshSegmenter] SegmentMeshByFeatures: Found 20 segments
   [ComfyUI] [worker:ComfyUI-MeshSegmenter] SegmentMeshByFeatures: Done! Mesh has 20 segments
   [ComfyUI] [SubprocessWorker] got response: ok
@@ -188,19 +191,19 @@ Capturing execution frames: partfield-seg.json
   [ComfyUI] [worker:ComfyUI-GeometryPack] [PreviewMeshVTK] DEBUG - hasattr face_attributes: True
   [ComfyUI] [worker:ComfyUI-GeometryPack] [PreviewMeshVTK] DEBUG - vertex_attributes: {}
   [ComfyUI] [worker:ComfyUI-GeometryPack] [PreviewMeshVTK] DEBUG - len(vertex_attributes): 0
-  [ComfyUI] [worker:ComfyUI-GeometryPack] [PreviewMeshVTK] DEBUG - face_attributes: {'stl': array([0, 0, 0, ..., 0, 0, 0], shape=(29428,), dtype=uint16), 'features': array([[-0.38969728,  0.40786538,  0.09768847, ..., -0.341482  ,
-  [ComfyUI]         -0.16808105, -1.3800054 ],
-  [ComfyUI]        [-0.35702392,  0.3984854 , -0.00814084, ..., -0.30971995,
-  [ComfyUI]         -0.19949988, -1.2917302 ],
-  [ComfyUI]        [-0.46132815,  0.4520354 ,  0.0138035 , ..., -0.32444367,
-  [ComfyUI]         -0.25252032, -1.3443681 ],
+  [ComfyUI] [worker:ComfyUI-GeometryPack] [PreviewMeshVTK] DEBUG - face_attributes: {'stl': array([0, 0, 0, ..., 0, 0, 0], shape=(29428,), dtype=uint16), 'features': array([[-0.389606  ,  0.40780932,  0.09764968, ..., -0.34130087,
+  [ComfyUI]         -0.16815771, -1.3797842 ],
+  [ComfyUI]        [-0.35695028,  0.39840996, -0.00816302, ..., -0.3095498 ,
+  [ComfyUI]         -0.19958663, -1.29151   ],
+  [ComfyUI]        [-0.46129698,  0.45196214,  0.01384769, ..., -0.3242128 ,
+  [ComfyUI]         -0.2525744 , -1.344197  ],
   [ComfyUI]        ...,
-  [ComfyUI]        [-0.8924006 ,  1.410722  ,  0.0690597 , ..., -0.537067  ,
-  [ComfyUI]         -0.8088938 ,  1.1595545 ],
-  [ComfyUI]        [-0.6360224 ,  1.1885943 ,  0.05990208, ..., -0.41394445,
-  [ComfyUI]         -0.6840532 ,  1.1098732 ],
-  [ComfyUI]        [-0.38448086,  0.8657258 ,  0.11357788, ..., -0.21368551,
-  [ComfyUI]         -0.4558105 ,  1.0870246 ]], shape=(29428, 448), dtype=float32), 'seg': array([19, 19, 19, ..., 18, 18, 18], shape=(29428,), dtype=int32)}
+  [ComfyUI]        [-0.89212006,  1.4109122 ,  0.06902993, ..., -0.53624594,
+  [ComfyUI]         -0.8090582 ,  1.1594586 ],
+  [ComfyUI]        [-0.63579136,  1.1886961 ,  0.05981522, ..., -0.41320044,
+  [ComfyUI]         -0.68415314,  1.109763  ],
+  [ComfyUI]        [-0.38431388,  0.8657645 ,  0.11349256, ..., -0.21297722,
+  [ComfyUI]         -0.45595515,  1.0869424 ]], shape=(29428, 448), dtype=float32), 'seg': array([5, 5, 5, ..., 3, 3, 3], shape=(29428,), dtype=int32)}
   [ComfyUI] [worker:ComfyUI-GeometryPack] [PreviewMeshVTK] DEBUG - len(face_attributes): 3
   [ComfyUI] [worker:ComfyUI-GeometryPack] [PreviewMeshVTK] DEBUG - has_vertex_attrs: False
   [ComfyUI] [worker:ComfyUI-GeometryPack] [PreviewMeshVTK] DEBUG - has_face_attrs: True
@@ -209,29 +212,27 @@ Capturing execution frames: partfield-seg.json
   [ComfyUI] [worker:ComfyUI-GeometryPack] [PreviewMeshVTK] Visual data - has_visual: True, kind: face, texture: False, vertex_colors: False
   [ComfyUI] [worker:ComfyUI-GeometryPack] [PreviewMeshVTK] Using VTP format (fields=True, point_cloud=False)
   [ComfyUI] [worker:ComfyUI-GeometryPack] [PreviewMeshVTK] Using fields mode - VTP/STL export
-  [ComfyUI] [worker:ComfyUI-GeometryPack] [_export_mesh_with_scalars_vtp] Exporting mesh to VTP: /home/shadeform/workspaces/MeshSegmenter-0837/ComfyUI/output/preview_vtk_6d39839b.vtp
+  [ComfyUI] [worker:ComfyUI-GeometryPack] [_export_mesh_with_scalars_vtp] Exporting mesh to VTP: /home/shadeform/workspaces/MeshSegmenter-1140/ComfyUI/output/preview_vtk_175e4910.vtp
   [ComfyUI] [worker:ComfyUI-GeometryPack] [_export_mesh_with_scalars_vtp]   Adding face field: stl
   [ComfyUI] [worker:ComfyUI-GeometryPack] [_export_mesh_with_scalars_vtp]   Skipping high-dim field: features (shape (29428, 448))
   [ComfyUI] [worker:ComfyUI-GeometryPack] [_export_mesh_with_scalars_vtp]   Adding face field: seg
   [ComfyUI] [worker:ComfyUI-GeometryPack] [_export_mesh_with_scalars_vtp] Export complete: 15223 vertices, 29428 faces
-  [ComfyUI] [worker:ComfyUI-GeometryPack] [PreviewMeshVTK] Exported VTP to: /home/shadeform/workspaces/MeshSegmenter-0837/ComfyUI/output/preview_vtk_6d39839b.vtp
+  [ComfyUI] [worker:ComfyUI-GeometryPack] [PreviewMeshVTK] Exported VTP to: /home/shadeform/workspaces/MeshSegmenter-1140/ComfyUI/output/preview_vtk_175e4910.vtp
   [ComfyUI] [worker:ComfyUI-GeometryPack] [PreviewMeshVTK] Face attributes: ['stl', 'features', 'seg']
   [ComfyUI] [worker:ComfyUI-GeometryPack] [PreviewMeshVTK] Fields mode info: watertight=False, volume=None, area=2.5197333868965197, fields=['face.stl', 'face.features', 'face.seg']
   [ComfyUI] [SubprocessWorker] got response: ok
-  [ComfyUI] Prompt executed in 37.50 seconds
-  Frame 6 saved (frame_005.jpg, t=37.6s)
-  [capture-periodic] freeze=3ms shot=124ms unfreeze=3ms saved=True
+  [ComfyUI] Prompt executed in 49.78 seconds
   [Console-error] No input!
   Node executed (1 total), capturing...
   [Console-warning] Canvas2D: Multiple readback operations using getImageData are faster with the willReadFrequently attribute set to true. See: https://html.spec.whatwg.org/multipage/canvas.html#concept-canvas-will-read-frequently
   [Console-error] No input!
-  Frame 7 saved (frame_006.jpg, t=38.4s)
-  [capture-node] freeze=214ms shot=167ms unfreeze=0ms saved=True
-  Execution complete (t=38.4s)
-  Captured 7 unique frames over 38.84s
+  Frame 6 saved (frame_005.jpg, t=51.0s)
+  [capture-node] freeze=205ms shot=170ms unfreeze=0ms saved=True
+  Execution complete (t=51.0s)
+  Captured 6 unique frames over 51.45s
   [debug] iframes: 1
-  [debug]   iframe[0]: src=http://127.0.0.1:41891/extensions/ComfyUI-GeometryPack/viewer_vtk.html?v=1772008, canvas=588x553, rafFrozen=True
+  [debug]   iframe[0]: src=http://127.0.0.1:41892/extensions/ComfyUI-GeometryPack/viewer_vtk.html?v=1772019, canvas=588x553, rafFrozen=True
   [timing] trigger_3d_previews: 0.0s
   Saved high-quality screenshot: partfield-seg_executed.png
-  [timing] final_screenshot: 1.3s
-    Captured 8 video frames
+  [timing] final_screenshot: 1.4s
+    Captured 7 video frames

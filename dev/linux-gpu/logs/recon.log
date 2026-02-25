@@ -7,20 +7,20 @@ Capturing execution frames: recon.json
   [Console-error] Failed to load resource: the server responded with a status of 404 (Not Found)
   [Console-warning] WARNING: Multiple instances of Three.js being imported.
   [Console-error] [vite:preloadError] Error: Extension named 'Comfy.DynamicWidgets' already registered.
-    at Proxy.registerExtension (http://127.0.0.1:41891/assets/systemStatsStore-D9aNY5gT.js:1:5552)
-    at Proxy.wrappedAction (http://127.0.0.1:41891/assets/vendor-vue-core-X6q-rGJs.js:2:90540)
-    at Object.registerExtension (http://127.0.0.1:41891/assets/dialogService-Cqui0UMO.js:3:162873)
-    at ComfyApp.registerExtension (http://127.0.0.1:41891/assets/dialogService-Cqui0UMO.js:177:20566)
-    at http://127.0.0.1:41891/extensions/ComfyUI-GeometryPack/js/dynamic_widgets.js:125:5
+    at Proxy.registerExtension (http://127.0.0.1:41892/assets/systemStatsStore-D9aNY5gT.js:1:5552)
+    at Proxy.wrappedAction (http://127.0.0.1:41892/assets/vendor-vue-core-X6q-rGJs.js:2:90540)
+    at Object.registerExtension (http://127.0.0.1:41892/assets/dialogService-Cqui0UMO.js:3:162873)
+    at ComfyApp.registerExtension (http://127.0.0.1:41892/assets/dialogService-Cqui0UMO.js:177:20566)
+    at http://127.0.0.1:41892/extensions/ComfyUI-MeshSegmenter/js/dynamic_widgets.js:125:5
   [Console-error] [vite:preloadError] Error: Extension named 'geompack.text_report' already registered.
-    at Proxy.registerExtension (http://127.0.0.1:41891/assets/systemStatsStore-D9aNY5gT.js:1:5552)
-    at Proxy.wrappedAction (http://127.0.0.1:41891/assets/vendor-vue-core-X6q-rGJs.js:2:90540)
-    at Object.registerExtension (http://127.0.0.1:41891/assets/dialogService-Cqui0UMO.js:3:162873)
-    at ComfyApp.registerExtension (http://127.0.0.1:41891/assets/dialogService-Cqui0UMO.js:177:20566)
-    at http://127.0.0.1:41891/extensions/ComfyUI-MeshSegmenter/js/text_report.js:81:5
-  [Console-error] Failed to load resource: the server responded with a status of 404 (Not Found)
+    at Proxy.registerExtension (http://127.0.0.1:41892/assets/systemStatsStore-D9aNY5gT.js:1:5552)
+    at Proxy.wrappedAction (http://127.0.0.1:41892/assets/vendor-vue-core-X6q-rGJs.js:2:90540)
+    at Object.registerExtension (http://127.0.0.1:41892/assets/dialogService-Cqui0UMO.js:3:162873)
+    at ComfyApp.registerExtension (http://127.0.0.1:41892/assets/dialogService-Cqui0UMO.js:177:20566)
+    at http://127.0.0.1:41892/extensions/ComfyUI-MeshSegmenter/js/text_report.js:81:5
   [Console-warning] [ComfyUI Deprecated] Importing from "scripts/ui.js" is deprecated and will be removed in v1.34.
   [Console-warning] [MaskEditor] ComfyApp.open_maskeditor is deprecated. Plugins should migrate to using the command system or direct node context menu integration.
+  [Console-error] Failed to load resource: the server responded with a status of 404 (Not Found)
   [Console-warning] [ComfyUI Deprecated] Importing from "scripts/ui/components/buttonGroup.js" is deprecated and will be removed in v1.34.
   [Console-warning] [ComfyUI Deprecated] Importing from "scripts/ui/components/button.js" is deprecated and will be removed in v1.34.
   [Console-warning] Canvas2D: Multiple readback operations using getImageData are faster with the willReadFrequently attribute set to true. See: https://html.spec.whatwg.org/multipage/canvas.html#concept-canvas-will-read-frequently
@@ -28,8 +28,8 @@ Capturing execution frames: recon.json
   Frame 1 saved (frame_000.jpg, t=0.0s)
   Validating workflow...
   [ComfyUI] === /validate endpoint called ===
-  Queuing workflow for execution...
   [ComfyUI] Received JSON with keys: ['prompt']
+  Queuing workflow for execution...
   [ComfyUI] Prompt has 19 nodes
   [ComfyUI]   Node 4: GeomPackLoadMesh
   [ComfyUI]     Inputs: {"file_path": "3d/final_mesh.stl"}
@@ -69,7 +69,7 @@ Capturing execution frames: recon.json
   [ComfyUI]     Inputs: {"backend": "instant_meshes", "target_edge_length": 1, "iterations": 3, "feature_angle": 30, "adaptive": "false", "target_vertex_count": 40000, "deterministic": "true", "crease_angle": 45, "target_fac
   [ComfyUI]   Node 81: GeomPackPreviewMeshMulti
   [ComfyUI]     Inputs: {"mode": "fields", "preview_multi": "{\"show_edges\":false,\"camera_state\":\"{\\\"position\\\":[0.06999074674422821,1.6080296765811755,-1.6544419153817933],\\\"focalPoint\\\":[-0.00005452334880828857
-  [ComfyUI] Generated prompt_id: 20686ad7-d0a4-492b-b195-dbb9c05a0eba
+  [ComfyUI] Generated prompt_id: 4cedda8d-b8d7-4757-ab65-0ccaa7d39b13
   [ComfyUI] Calling execution.validate_prompt()...
   [ComfyUI] Validation result: valid=True
   [ComfyUI] === Validation PASSED ===
@@ -83,7 +83,7 @@ Capturing execution frames: recon.json
   [ComfyUI] [SubprocessWorker] created 0 shm blocks
   [ComfyUI] [SubprocessWorker] sending request via socket...
   [ComfyUI] [worker:ComfyUI-GeometryPack] [LoadMesh] Found mesh in input folder: 3d/final_mesh.stl
-  [ComfyUI] [worker:ComfyUI-GeometryPack] [load_mesh_file] Loading: /home/shadeform/workspaces/MeshSegmenter-0837/ComfyUI/input/3d/final_mesh.stl
+  [ComfyUI] [worker:ComfyUI-GeometryPack] [load_mesh_file] Loading: /home/shadeform/workspaces/MeshSegmenter-1140/ComfyUI/input/3d/final_mesh.stl
   [ComfyUI] [worker:ComfyUI-GeometryPack] [load_mesh_file] Loaded type: Trimesh
   [ComfyUI] [worker:ComfyUI-GeometryPack] [load_mesh_file] Initial mesh: 244813 vertices, 489722 faces
   [ComfyUI] [worker:ComfyUI-GeometryPack] [load_mesh_file] Cleanup: 244813->244813 vertices, 489722->489721 faces
@@ -106,14 +106,14 @@ Capturing execution frames: recon.json
   [ComfyUI] [worker:ComfyUI-GeometryPack] [MeshFix] Options: remove_small=True, join=False, fill_holes=True, clean=True
   [ComfyUI] [worker:ComfyUI-GeometryPack] ============================================================
   [ComfyUI] 
-  Frame 2 saved (frame_001.jpg, t=2.3s)
-  [capture-periodic] freeze=3ms shot=127ms unfreeze=11ms saved=True
+  Frame 2 saved (frame_001.jpg, t=2.4s)
+  [capture-periodic] freeze=3ms shot=131ms unfreeze=7ms saved=True
   [ComfyUI] WARNING- Some cuts were necessary to cope with non manifold configuration.
   [ComfyUI] WARNING- 2 double-triangles have been removed.
   [ComfyUI] [worker:ComfyUI-GeometryPack] [MeshFix] Removing small components...
   [ComfyUI] [worker:ComfyUI-GeometryPack] [MeshFix] Filling holes (max_edges=100000, refine=True)...
   [ComfyUI] [worker:ComfyUI-GeometryPack] [MeshFix] Cleaning mesh (iterations=10, inner_loops=3)...
-  [capture-loop] iter=50 t=5.8s state={'complete': False, 'error': None, 'executedCount': 0, 'wsState': 1} eval_ms=3
+  [capture-loop] iter=50 t=6.1s state={'complete': False, 'error': None, 'executedCount': 0, 'wsState': 1} eval_ms=5
   [ComfyUI] [worker:ComfyUI-GeometryPack] [MeshFix] Result: 244,811 vertices, 489,718 faces
   [ComfyUI] [worker:ComfyUI-GeometryPack] [MeshFix] Watertight: False -> True
   [ComfyUI] [SubprocessWorker] got response: ok
@@ -124,16 +124,34 @@ Capturing execution frames: recon.json
   [ComfyUI] [SubprocessWorker] worker started/confirmed
   [ComfyUI] [SubprocessWorker] serializing kwargs to shm...
   [ComfyUI] [SubprocessWorker] created 1 shm blocks
-  Node executed (1 total), capturing...
   [ComfyUI] [SubprocessWorker] sending request via socket...
+  Node executed (1 total), capturing...
   [ComfyUI] [worker:ComfyUI-GeometryPack]
   [ComfyUI] ============================================================
   [ComfyUI] [worker:ComfyUI-GeometryPack] [Remesh] Backend: instant_meshes
   [ComfyUI] [worker:ComfyUI-GeometryPack] [Remesh] Input: 244,811 vertices, 489,718 faces
   [ComfyUI] [worker:ComfyUI-GeometryPack] [Remesh] Parameters: target_vertex_count=40,000, deterministic=true, crease_angle=45.0
-  Frame 3 saved (frame_002.jpg, t=10.3s)
-  [capture-node] freeze=3ms shot=145ms unfreeze=7ms saved=True
-  [capture-loop] iter=100 t=11.8s state={'complete': False, 'error': None, 'executedCount': 1, 'wsState': 1} eval_ms=4
+  Frame 3 saved (frame_002.jpg, t=11.0s)
+  [capture-node] freeze=4ms shot=139ms unfreeze=7ms saved=True
+  [capture-loop] iter=100 t=12.6s state={'complete': False, 'error': None, 'executedCount': 1, 'wsState': 1} eval_ms=3
+  [ComfyUI] [worker:ComfyUI-GeometryPack]
+  [ComfyUI] === WATCHDOG TICK 1 ===
+  [ComfyUI] [worker:ComfyUI-GeometryPack] Current thread 0x000076f2d683c640 (most recent call first):
+  [ComfyUI]   File "/tmp/comfyui_pvenv_gkt4w93j/persistent_worker.py", line 42 in _watchdog
+  [ComfyUI]   File "/home/shadeform/workspaces/MeshSegmenter-1140/ComfyUI/custom_nodes/ComfyUI-GeometryPack/nodes/main/_env_12709f/lib/python3.12/threading.py", line 1012 in run
+  [ComfyUI]   File "/home/shadeform/workspaces/MeshSegmenter-1140/ComfyUI/custom_nodes/ComfyUI-GeometryPack/nodes/main/_env_12709f/lib/python3.12/threading.py", line 1075 in _bootstrap_inner
+  [ComfyUI]   File "/home/shadeform/workspaces/MeshSegmenter-1140/ComfyUI/custom_nodes/ComfyUI-GeometryPack/nodes/main/_env_12709f/lib/python3.12/threading.py", line 1032 in _bootstrap
+  [ComfyUI] 
+  [ComfyUI] Thread 0x000076f2d72c5740 (most recent call first):
+  [ComfyUI]   File "/home/shadeform/workspaces/MeshSegmenter-1140/ComfyUI/custom_nodes/ComfyUI-GeometryPack/nodes/main/_env_12709f/lib/python3.1/site-packages/trimesh/base.py", line 520 in vertices
+  [ComfyUI]   File "/home/shadeform/workspaces/MeshSegmenter-1140/ComfyUI/custom_nodes/ComfyUI-GeometryPack/nodes/main/_env_12709f/lib/python3.1/site-packages/trimesh/base.py", line 188 in __init__
+  [ComfyUI]   File "/home/shadeform/workspaces/MeshSegmenter-1140/ComfyUI/custom_nodes/ComfyUI-GeometryPack/nodes/main/remeshing/remesh.py", line 326 in _instant_meshes
+  [ComfyUI]   File "/home/shadeform/workspaces/MeshSegmenter-1140/ComfyUI/custom_nodes/ComfyUI-GeometryPack/nodes/main/remeshing/remesh.py", line 259 in remesh
+  [ComfyUI]   File "/tmp/comfyui_pvenv_gkt4w93j/persistent_worker.py", line 1143 in main
+  [ComfyUI]   File "/tmp/comfyui_pvenv_gkt4w93j/persistent_worker.py", line 1174 in <module>
+  [ComfyUI] 
+  [ComfyUI] [worker:ComfyUI-GeometryPack] === END ===
+  [ComfyUI] 
   [ComfyUI] [worker:ComfyUI-GeometryPack] ============================================================
   [ComfyUI] 
   [ComfyUI] [worker:ComfyUI-GeometryPack] [Remesh] Output: 159994 vertices (-84817), 320080 faces (-169638)
@@ -143,17 +161,18 @@ Capturing execution frames: recon.json
   [ComfyUI] [ComfyUI-MeshSegmenter] Health check: ping (timeout=5.0s)...
   [ComfyUI] [ComfyUI-MeshSegmenter] Health check: failed
   [ComfyUI] [ComfyUI-MeshSegmenter] Socket unhealthy, restarting worker...
-  [ComfyUI] /home/shadeform/workspaces/MeshSegmenter-0837/ComfyUI/custom_nodes/ComfyUI-MeshSegmenter/nodes/_env_703529/lib/python3.12/multiprocessing/resource_tracker.py:279: UserWarning: resource_tracker: There appear to be 2 leaked shared_memory objects to clean up at shutdown
+  [ComfyUI] /home/shadeform/workspaces/MeshSegmenter-1140/ComfyUI/custom_nodes/ComfyUI-MeshSegmenter/nodes/_env_703529/lib/python3.12/multiprocessing/resource_tracker.py:279: UserWarning: resource_tracker: There appear to be 2 leaked shared_memory objects to clean up at shutdown
   [ComfyUI]   warnings.warn('resource_tracker: There appear to be %d '
-  [ComfyUI] /home/shadeform/workspaces/MeshSegmenter-0837/ComfyUI/custom_nodes/ComfyUI-MeshSegmenter/nodes/_env_703529/lib/python3.12/multiprocessing/resource_tracker.py:292: UserWarning: resource_tracker: '/psm_0b1c0c27': [Errno 2] No such file or directory: '/psm_0b1c0c27'
+  [ComfyUI] /home/shadeform/workspaces/MeshSegmenter-1140/ComfyUI/custom_nodes/ComfyUI-MeshSegmenter/nodes/_env_703529/lib/python3.12/multiprocessing/resource_tracker.py:292: UserWarning: resource_tracker: '/psm_2726773c': [Errno 2] No such file or directory: '/psm_2726773c'
   [ComfyUI]   warnings.warn('resource_tracker: %r: %s' % (name, e))
-  [ComfyUI] /home/shadeform/workspaces/MeshSegmenter-0837/ComfyUI/custom_nodes/ComfyUI-MeshSegmenter/nodes/_env_703529/lib/python3.12/multiprocessing/resource_tracker.py:292: UserWarning: resource_tracker: '/psm_4b46241a': [Errno 2] No such file or directory: '/psm_4b46241a'
+  [ComfyUI] /home/shadeform/workspaces/MeshSegmenter-1140/ComfyUI/custom_nodes/ComfyUI-MeshSegmenter/nodes/_env_703529/lib/python3.12/multiprocessing/resource_tracker.py:292: UserWarning: resource_tracker: '/psm_c37376d4': [Errno 2] No such file or directory: '/psm_c37376d4'
   [ComfyUI]   warnings.warn('resource_tracker: %r: %s' % (name, e))
+  [capture-loop] iter=150 t=18.5s state={'complete': False, 'error': None, 'executedCount': 2, 'wsState': 1} eval_ms=4
   Node executed (2 total), capturing...
-  [ComfyUI] [ComfyUI-MeshSegmenter] python: /home/shadeform/workspaces/MeshSegmenter-0837/ComfyUI/custom_nodes/ComfyUI-MeshSegmenter/nodes/_env_703529/bin/python
-  [ComfyUI] [ComfyUI-MeshSegmenter] sys_path sent to worker: ['/home/shadeform/workspaces/MeshSegmenter-0837/ComfyUI', '/home/shadeform/workspaces/MeshSegmenter-0837/ComfyUI/custom_nodes/ComfyUI-MeshSegmenter', '/home/shadeform/workspaces/MeshSegmenter-0837/ComfyUI/custom_nodes/ComfyUI-MeshSegmenter/nodes/_env_703529/lib/python3.1/site-packages', '/home/shadeform/workspaces/MeshSegmenter-0837/ComfyUI/custom_nodes/ComfyUI-MeshSegmenter']
-  [ComfyUI] [SubprocessWorker] is_pixi=False, python=/home/shadeform/workspaces/MeshSegmenter-0837/ComfyUI/custom_nodes/ComfyUI-MeshSegmenter/nodes/_env_703529/bin/python
-  [ComfyUI] [SubprocessWorker] launching cmd=['/home/shadeform/workspaces/MeshSegmenter-0837/ComfyUI/custom_nodes/ComfyUI-MeshSegmenter/nodes/_env_703529/bin/python', '/tmp/comfyui_pvenv_fwfg34_k/persistent_worker.py', 'unix:///dev/shm/comfy_worker_b3e2db2e7f42.sock']...
+  [ComfyUI] [ComfyUI-MeshSegmenter] python: /home/shadeform/workspaces/MeshSegmenter-1140/ComfyUI/custom_nodes/ComfyUI-MeshSegmenter/nodes/_env_703529/bin/python
+  [ComfyUI] [ComfyUI-MeshSegmenter] sys_path sent to worker: ['/home/shadeform/workspaces/MeshSegmenter-1140/ComfyUI', '/home/shadeform/workspaces/MeshSegmenter-1140/ComfyUI/custom_nodes/ComfyUI-MeshSegmenter', '/home/shadeform/workspaces/MeshSegmenter-1140/ComfyUI/custom_nodes/ComfyUI-MeshSegmenter/nodes/_env_703529/lib/python3.1/site-packages', '/home/shadeform/workspaces/MeshSegmenter-1140/ComfyUI/custom_nodes/ComfyUI-MeshSegmenter']
+  [ComfyUI] [SubprocessWorker] is_pixi=False, python=/home/shadeform/workspaces/MeshSegmenter-1140/ComfyUI/custom_nodes/ComfyUI-MeshSegmenter/nodes/_env_703529/bin/python
+  [ComfyUI] [SubprocessWorker] launching cmd=['/home/shadeform/workspaces/MeshSegmenter-1140/ComfyUI/custom_nodes/ComfyUI-MeshSegmenter/nodes/_env_703529/bin/python', '/tmp/comfyui_pvenv_rq7y0odt/persistent_worker.py', 'unix:///dev/shm/comfy_worker_3d1e8d5b6260.sock']...
   [ComfyUI] [SubprocessWorker] PATH has 8 entries:
   [ComfyUI] [SubprocessWorker]   [0] /home/shadeform/.local/bin
   [ComfyUI] [SubprocessWorker]   [1] /home/shadeform/.local/bin
@@ -164,7 +183,9 @@ Capturing execution frames: recon.json
   [ComfyUI] [SubprocessWorker]   [6] /bin
   [ComfyUI] [SubprocessWorker]   [7] /snap/bin
   [ComfyUI] [worker] PATH has 8 entries:
+  Frame 4 saved (frame_003.jpg, t=18.7s)
   [ComfyUI] [worker]   [0] /home/shadeform/.local/bin
+  [capture-node] freeze=4ms shot=292ms unfreeze=9ms saved=True
   [ComfyUI] [worker]   [1] /home/shadeform/.local/bin
   [ComfyUI] [worker]   [2] /home/shadeform/.local/bin
   [ComfyUI] [worker]   [3] /home/shadeform/.venv/bin
@@ -172,75 +193,35 @@ Capturing execution frames: recon.json
   [ComfyUI] [worker]   [5] /usr/bin
   [ComfyUI] [worker]   [6] /bin
   [ComfyUI] [worker]   [7] /snap/bin
-  Frame 4 saved (frame_003.jpg, t=17.1s)
-  [capture-node] freeze=6ms shot=212ms unfreeze=7ms saved=True
-  [capture-loop] iter=150 t=18.0s state={'complete': False, 'error': None, 'executedCount': 2, 'wsState': 1} eval_ms=3
   [ComfyUI] [worker:ComfyUI-MeshSegmenter] ERROR: Failed to import comfy_kitchen, Error: No module named 'comfy_kitchen', fp8 and fp4 support will not be available.
   [ComfyUI] [SubprocessWorker] worker started/confirmed
   [ComfyUI] [SubprocessWorker] serializing kwargs to shm...
   [ComfyUI] [SubprocessWorker] created 1 shm blocks
   [ComfyUI] [SubprocessWorker] sending request via socket...
+  [capture-loop] iter=200 t=24.7s state={'complete': False, 'error': None, 'executedCount': 2, 'wsState': 1} eval_ms=2
   [ComfyUI] [worker:ComfyUI-MeshSegmenter] [Decimate] Backend: pyvista_quadric
   [ComfyUI] [worker:ComfyUI-MeshSegmenter] [Decimate] Input: 244811 vertices, 489718 faces
   [ComfyUI] [worker:ComfyUI-MeshSegmenter] [Decimate] Target: 48971 faces
-  [capture-loop] iter=200 t=23.6s state={'complete': False, 'error': None, 'executedCount': 2, 'wsState': 1} eval_ms=3
+  [capture-loop] iter=250 t=30.5s state={'complete': False, 'error': None, 'executedCount': 2, 'wsState': 1} eval_ms=3
   [ComfyUI] [worker:ComfyUI-MeshSegmenter] [Decimate] pyvista_quadric: 489718 -> 48970 faces (90.0% reduction)
   [ComfyUI] [SubprocessWorker] got response: ok
   [ComfyUI] [SubprocessWorker] call_method: nodes.main.visualization.preview_mesh_multi.PreviewMeshMultiNode.preview_multi
   [ComfyUI] [SubprocessWorker] acquired lock, ensuring started...
   [ComfyUI] [ComfyUI-GeometryPack] Health check: ping (timeout=5.0s)...
-  [ComfyUI] [ComfyUI-GeometryPack] Health check: failed
-  [ComfyUI] [ComfyUI-GeometryPack] Socket unhealthy, restarting worker...
-  [ComfyUI] /home/shadeform/workspaces/MeshSegmenter-0837/ComfyUI/custom_nodes/ComfyUI-GeometryPack/nodes/main/_env_12709f/lib/python3.12/multiprocessing/resource_tracker.py:279: UserWarning: resource_tracker: There appear to be 6 leaked shared_memory objects to clean up at shutdown
-  [ComfyUI]   warnings.warn('resource_tracker: There appear to be %d '
-  [ComfyUI] [ComfyUI-GeometryPack] python: /home/shadeform/workspaces/MeshSegmenter-0837/ComfyUI/custom_nodes/ComfyUI-GeometryPack/nodes/main/_env_12709f/bin/python
-  [ComfyUI] /home/shadeform/workspaces/MeshSegmenter-0837/ComfyUI/custom_nodes/ComfyUI-GeometryPack/nodes/main/_env_12709f/lib/python3.12/multiprocessing/resource_tracker.py:292: UserWarning: resource_tracker: '/psm_d7c1ce8e': [Errno 2] No such file or directory: '/psm_d7c1ce8e'
-  [ComfyUI] [ComfyUI-GeometryPack] sys_path sent to worker: ['/home/shadeform/workspaces/MeshSegmenter-0837/ComfyUI', '/home/shadeform/workspaces/MeshSegmenter-0837/ComfyUI/custom_nodes/ComfyUI-GeometryPack', '/home/shadeform/workspaces/MeshSegmenter-0837/ComfyUI/custom_nodes/ComfyUI-GeometryPack/nodes/main/_env_12709f/lib/python3.1/site-packages', '/home/shadeform/workspaces/MeshSegmenter-0837/ComfyUI/custom_nodes/ComfyUI-GeometryPack']
-  [ComfyUI]   warnings.warn('resource_tracker: %r: %s' % (name, e))
-  [ComfyUI] [SubprocessWorker] is_pixi=False, python=/home/shadeform/workspaces/MeshSegmenter-0837/ComfyUI/custom_nodes/ComfyUI-GeometryPack/nodes/main/_env_12709f/bin/python
-  [ComfyUI] /home/shadeform/workspaces/MeshSegmenter-0837/ComfyUI/custom_nodes/ComfyUI-GeometryPack/nodes/main/_env_12709f/lib/python3.12/multiprocessing/resource_tracker.py:292: UserWarning: resource_tracker: '/psm_d8bdf49a': [Errno 2] No such file or directory: '/psm_d8bdf49a'
-  [ComfyUI] [SubprocessWorker] launching cmd=['/home/shadeform/workspaces/MeshSegmenter-0837/ComfyUI/custom_nodes/ComfyUI-GeometryPack/nodes/main/_env_12709f/bin/python', '/tmp/comfyui_pvenv_tvzhks8a/persistent_worker.py', 'unix:///dev/shm/comfy_worker_1d668af1fc83.sock']...
-  [ComfyUI]   warnings.warn('resource_tracker: %r: %s' % (name, e))
-  [ComfyUI] [SubprocessWorker] PATH has 8 entries:
-  [ComfyUI] /home/shadeform/workspaces/MeshSegmenter-0837/ComfyUI/custom_nodes/ComfyUI-GeometryPack/nodes/main/_env_12709f/lib/python3.12/multiprocessing/resource_tracker.py:292: UserWarning: resource_tracker: '/psm_6f6d5a21': [Errno 2] No such file or directory: '/psm_6f6d5a21'
-  [ComfyUI] [SubprocessWorker]   [0] /home/shadeform/.local/bin
-  [ComfyUI]   warnings.warn('resource_tracker: %r: %s' % (name, e))
-  [ComfyUI] [SubprocessWorker]   [1] /home/shadeform/.local/bin
-  [ComfyUI] /home/shadeform/workspaces/MeshSegmenter-0837/ComfyUI/custom_nodes/ComfyUI-GeometryPack/nodes/main/_env_12709f/lib/python3.12/multiprocessing/resource_tracker.py:292: UserWarning: resource_tracker: '/psm_0b9412b1': [Errno 2] No such file or directory: '/psm_0b9412b1'
-  [ComfyUI] [SubprocessWorker]   [2] /home/shadeform/.local/bin
-  [ComfyUI]   warnings.warn('resource_tracker: %r: %s' % (name, e))
-  [ComfyUI] [SubprocessWorker]   [3] /home/shadeform/.venv/bin
-  [ComfyUI] /home/shadeform/workspaces/MeshSegmenter-0837/ComfyUI/custom_nodes/ComfyUI-GeometryPack/nodes/main/_env_12709f/lib/python3.12/multiprocessing/resource_tracker.py:292: UserWarning: resource_tracker: '/psm_479ccc7a': [Errno 2] No such file or directory: '/psm_479ccc7a'
-  [ComfyUI] [SubprocessWorker]   [4] /usr/local/bin
-  [ComfyUI]   warnings.warn('resource_tracker: %r: %s' % (name, e))
-  [ComfyUI] [SubprocessWorker]   [5] /usr/bin
-  [ComfyUI] /home/shadeform/workspaces/MeshSegmenter-0837/ComfyUI/custom_nodes/ComfyUI-GeometryPack/nodes/main/_env_12709f/lib/python3.12/multiprocessing/resource_tracker.py:292: UserWarning: resource_tracker: '/psm_d15741d5': [Errno 2] No such file or directory: '/psm_d15741d5'
-  [ComfyUI] [SubprocessWorker]   [6] /bin
-  [ComfyUI]   warnings.warn('resource_tracker: %r: %s' % (name, e))
-  [ComfyUI] [SubprocessWorker]   [7] /snap/bin
-  [ComfyUI] [worker] PATH has 8 entries:
-  [ComfyUI] [worker]   [0] /home/shadeform/.local/bin
-  [ComfyUI] [worker]   [1] /home/shadeform/.local/bin
-  [ComfyUI] [worker]   [2] /home/shadeform/.local/bin
-  [ComfyUI] [worker]   [3] /home/shadeform/.venv/bin
-  [ComfyUI] [worker]   [4] /usr/local/bin
-  [ComfyUI] [worker]   [5] /usr/bin
-  [ComfyUI] [worker]   [6] /bin
-  [ComfyUI] [worker]   [7] /snap/bin
+  [ComfyUI] [ComfyUI-GeometryPack] Health check: ok
   [ComfyUI] [SubprocessWorker] worker started/confirmed
   [ComfyUI] [SubprocessWorker] serializing kwargs to shm...
   [ComfyUI] [SubprocessWorker] created 3 shm blocks
   [ComfyUI] [SubprocessWorker] sending request via socket...
-  Frame 5 saved (frame_004.jpg, t=28.2s)
-  [capture-periodic] freeze=2ms shot=139ms unfreeze=7ms saved=True
   [ComfyUI] [worker:ComfyUI-GeometryPack] [PreviewMeshMulti] Mode: fields, Meshes: 3
   [ComfyUI] [worker:ComfyUI-GeometryPack] [PreviewMeshMulti] Mesh 1: Mesh - 244811 vertices, 489718 faces
-  [capture-loop] iter=250 t=29.5s state={'complete': False, 'error': None, 'executedCount': 2, 'wsState': 1} eval_ms=3
-  [ComfyUI] [worker:ComfyUI-GeometryPack] [PreviewMeshMulti] Exported STL: /home/shadeform/workspaces/MeshSegmenter-0837/ComfyUI/output/preview_multi_1_2da9f0f9.stl
+  Frame 5 saved (frame_004.jpg, t=32.0s)
+  [capture-periodic] freeze=3ms shot=168ms unfreeze=8ms saved=True
+  [ComfyUI] [worker:ComfyUI-GeometryPack] [PreviewMeshMulti] Exported STL: /home/shadeform/workspaces/MeshSegmenter-1140/ComfyUI/output/preview_multi_1_afa6db70.stl
   [ComfyUI] [worker:ComfyUI-GeometryPack] [PreviewMeshMulti] Mesh 2: Mesh - 159994 vertices, 320080 faces
-  [ComfyUI] [worker:ComfyUI-GeometryPack] [PreviewMeshMulti] Exported STL: /home/shadeform/workspaces/MeshSegmenter-0837/ComfyUI/output/preview_multi_2_2da9f0f9.stl
+  [ComfyUI] [worker:ComfyUI-GeometryPack] [PreviewMeshMulti] Exported STL: /home/shadeform/workspaces/MeshSegmenter-1140/ComfyUI/output/preview_multi_2_afa6db70.stl
   [ComfyUI] [worker:ComfyUI-GeometryPack] [PreviewMeshMulti] Mesh 3: Mesh - 24437 vertices, 48970 faces
-  [ComfyUI] [worker:ComfyUI-GeometryPack] [PreviewMeshMulti] Exported STL: /home/shadeform/workspaces/MeshSegmenter-0837/ComfyUI/output/preview_multi_3_2da9f0f9.stl
+  [ComfyUI] [worker:ComfyUI-GeometryPack] [PreviewMeshMulti] Exported STL: /home/shadeform/workspaces/MeshSegmenter-1140/ComfyUI/output/preview_multi_3_afa6db70.stl
   [ComfyUI] [worker:ComfyUI-GeometryPack] [PreviewMeshMulti] Grid: 3x1, Preview ready
   [ComfyUI] [SubprocessWorker] got response: ok
   [ComfyUI] [SubprocessWorker] call_method: nodes.multiview_renderer.MultiViewRenderer.render_views
@@ -253,8 +234,8 @@ Capturing execution frames: recon.json
   [ComfyUI] [SubprocessWorker] sending request via socket...
   [Console-error] No input!
   [ComfyUI] [worker:ComfyUI-MeshSegmenter] MultiViewRenderer: Starting render...
-  [Console-error] No input!
   [ComfyUI] [worker:ComfyUI-MeshSegmenter]   Resolution: 1024
+  [Console-error] No input!
   [ComfyUI] [worker:ComfyUI-MeshSegmenter]   Camera method: icosahedron
   [ComfyUI] [worker:ComfyUI-MeshSegmenter]   Camera radius: 3.0
   [ComfyUI] [worker:ComfyUI-MeshSegmenter]   Compute SDF: False
@@ -272,29 +253,30 @@ Capturing execution frames: recon.json
   [Console-error] No input!
   Node executed (3 total), capturing...
   [ComfyUI] 
-  [ComfyUI] Rendering Multiviews...:   0%|                                                                                                                                     | 0/12 [00:00<?, ?it/s]
-  [ComfyUI] Rendering Multiviews...:   8%|██████████▍                                                                                                                  | 1/12 [00:01<00:12,  1.13s/it]
-  [ComfyUI] Rendering Multiviews...:  17%|████████████████████▊                                                                                                        | 2/12 [00:01<00:06,  1.59it/s]
-  [ComfyUI] Rendering Multiviews...:  25%|███████████████████████████████▎                                                                                             | 3/12 [00:01<00:04,  2.13it/s]
-  [ComfyUI] Rendering Multiviews...:  33%|█████████████████████████████████████████▋                                                                                   | 4/12 [00:01<00:03,  2.50it/s]
-  [ComfyUI] Rendering Multiviews...:  42%|████████████████████████████████████████████████████                                                                         | 5/12 [00:02<00:02,  2.80it/s]
-  Frame 6 saved (frame_005.jpg, t=30.5s)
-  [capture-node] freeze=128ms shot=2653ms unfreeze=3ms saved=True
-  [ComfyUI] Rendering Multiviews...:  50%|██████████████████████████████████████████████████████████████▌                                                              | 6/12 [00:02<00:01,  3.01it/s]
-  [ComfyUI] Rendering Multiviews...:  58%|████████████████████████████████████████████████████████████████████████▉                                                    | 7/12 [00:02<00:01,  3.27it/s]
-  [ComfyUI] Rendering Multiviews...:  67%|███████████████████████████████████████████████████████████████████████████████████▎                                         | 8/12 [00:03<00:01,  3.48it/s]
-  [ComfyUI] Rendering Multiviews...:  75%|█████████████████████████████████████████████████████████████████████████████████████████████▊                               | 9/12 [00:03<00:00,  3.70it/s]
-  [ComfyUI] Rendering Multiviews...:  83%|███████████████████████████████████████████████████████████████████████████████████████████████████████▎                    | 10/12 [00:03<00:00,  3.83it/s]
-  [ComfyUI] Rendering Multiviews...:  92%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████▋          | 11/12 [00:03<00:00,  3.84it/s]
-  [ComfyUI] Rendering Multiviews...: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 12/12 [00:04<00:00,  3.84it/s]
-  [ComfyUI] Rendering Multiviews...: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 12/12 [00:04<00:00,  2.97it/s]
+  [ComfyUI] Rendering Multiviews...:   0%|                                                                                                     | 0/12 [00:00<?, ?it/s]
+  [ComfyUI] Rendering Multiviews...:   8%|███████▊                                                                                     | 1/12 [00:00<00:06,  1.60it/s]
+  [ComfyUI] Rendering Multiviews...:  17%|███████████████▌                                                                             | 2/12 [00:00<00:04,  2.33it/s]
+  [ComfyUI] Rendering Multiviews...:  25%|███████████████████████▎                                                                     | 3/12 [00:01<00:03,  2.66it/s]
+  [ComfyUI] Rendering Multiviews...:  33%|███████████████████████████████                                                              | 4/12 [00:01<00:02,  2.83it/s]
+  [ComfyUI] Rendering Multiviews...:  42%|██████████████████████████████████████▊                                                      | 5/12 [00:01<00:02,  3.01it/s]
+  [ComfyUI] Rendering Multiviews...:  50%|██████████████████████████████████████████████▌                                              | 6/12 [00:02<00:01,  3.23it/s]
+  [ComfyUI] Rendering Multiviews...:  58%|██████████████████████████████████████████████████████▎                                      | 7/12 [00:02<00:01,  3.27it/s]
+  Frame 6 saved (frame_005.jpg, t=33.4s)
+  [capture-node] freeze=515ms shot=2582ms unfreeze=7ms saved=True
+  [ComfyUI] Rendering Multiviews...:  67%|██████████████████████████████████████████████████████████████                               | 8/12 [00:02<00:01,  3.13it/s]
+  [ComfyUI] Rendering Multiviews...:  75%|█████████████████████████████████████████████████████████████████████▊                       | 9/12 [00:03<00:00,  3.29it/s]
+  [ComfyUI] Rendering Multiviews...:  83%|████████████████████████████████████████████████████████████████████████████▋               | 10/12 [00:03<00:00,  3.34it/s]
+  [ComfyUI] Rendering Multiviews...:  92%|████████████████████████████████████████████████████████████████████████████████████▎       | 11/12 [00:03<00:00,  3.52it/s]
+  [ComfyUI] Rendering Multiviews...: 100%|████████████████████████████████████████████████████████████████████████████████████████████| 12/12 [00:03<00:00,  3.65it/s]
+  [ComfyUI] Rendering Multiviews...: 100%|████████████████████████████████████████████████████████████████████████████████████████████| 12/12 [00:03<00:00,  3.15it/s]
   [ComfyUI] [worker:ComfyUI-MeshSegmenter]   Generated 12 views
   [ComfyUI] [worker:ComfyUI-MeshSegmenter]   Output MULTIBAND_IMAGE shape: torch.Size([12, 9, 1024, 1024])
   [ComfyUI] [worker:ComfyUI-MeshSegmenter]   Channels: ['normal_x', 'normal_y', 'normal_z', 'matte', 'sdf', 'curvature', 'feature_edges', 'mask', 'face_id']
+  [capture-loop] iter=300 t=39.6s state={'complete': False, 'error': None, 'executedCount': 3, 'wsState': 1} eval_ms=3
   [ComfyUI] [SubprocessWorker] got response: ok
-  [capture-loop] iter=300 t=38.3s state={'complete': False, 'error': None, 'executedCount': 3, 'wsState': 1} eval_ms=3
-  Frame 7 saved (frame_006.jpg, t=39.8s)
-  [capture-periodic] freeze=3ms shot=157ms unfreeze=6ms saved=True
+  Frame 7 saved (frame_006.jpg, t=40.8s)
+  [capture-periodic] freeze=3ms shot=395ms unfreeze=7ms saved=True
+  [capture-loop] iter=350 t=45.7s state={'complete': False, 'error': None, 'executedCount': 3, 'wsState': 1} eval_ms=3
   [ComfyUI] [SubprocessWorker] call_method: nodes.sam_model_downloader.SamModelLoader.load_model
   [ComfyUI] [SubprocessWorker] acquired lock, ensuring started...
   [ComfyUI] [ComfyUI-MeshSegmenter] Health check: ping (timeout=5.0s)...
@@ -302,15 +284,14 @@ Capturing execution frames: recon.json
   [ComfyUI] [SubprocessWorker] worker started/confirmed
   [ComfyUI] [SubprocessWorker] serializing kwargs to shm...
   [ComfyUI] [SubprocessWorker] created 0 shm blocks
-  [ComfyUI] [SubprocessWorker] sending request via socket...
-  [capture-loop] iter=350 t=44.0s state={'complete': False, 'error': None, 'executedCount': 4, 'wsState': 1} eval_ms=23
   Node executed (4 total), capturing...
-  [ComfyUI] /home/shadeform/workspaces/MeshSegmenter-0837/ComfyUI/custom_nodes/ComfyUI-MeshSegmenter/nodes/_env_703529/lib/python3.1/site-packages/huggingface_hub/utils/_validators.py:186: UserWarning: The `resume_download` argument is deprecated and ignored in `hf_hub_download`. Downloads always resume whenever possible.
+  [ComfyUI] [SubprocessWorker] sending request via socket...
+  [ComfyUI] /home/shadeform/workspaces/MeshSegmenter-1140/ComfyUI/custom_nodes/ComfyUI-MeshSegmenter/nodes/_env_703529/lib/python3.1/site-packages/huggingface_hub/utils/_validators.py:186: UserWarning: The `resume_download` argument is deprecated and ignored in `hf_hub_download`. Downloads always resume whenever possible.
   [ComfyUI]   warnings.warn(
-  [ComfyUI] /home/shadeform/workspaces/MeshSegmenter-0837/ComfyUI/custom_nodes/ComfyUI-MeshSegmenter/nodes/_env_703529/lib/python3.1/site-packages/huggingface_hub/utils/_validators.py:202: UserWarning: The `local_dir_use_symlinks` argument is deprecated and ignored in `hf_hub_download`. Downloading to a local directory does not use symlinks anymore.
+  [ComfyUI] /home/shadeform/workspaces/MeshSegmenter-1140/ComfyUI/custom_nodes/ComfyUI-MeshSegmenter/nodes/_env_703529/lib/python3.1/site-packages/huggingface_hub/utils/_validators.py:202: UserWarning: The `local_dir_use_symlinks` argument is deprecated and ignored in `hf_hub_download`. Downloading to a local directory does not use symlinks anymore.
   [ComfyUI]   warnings.warn(
-  Frame 8 saved (frame_007.jpg, t=44.1s)
-  [capture-node] freeze=3ms shot=156ms unfreeze=5ms saved=True
+  Frame 8 saved (frame_007.jpg, t=46.5s)
+  [capture-node] freeze=3ms shot=160ms unfreeze=11ms saved=True
   [ComfyUI] [SubprocessWorker] got response: ok
   [ComfyUI] [SubprocessWorker] call_method: nodes.generate_masks.GenerateMasks.generate_masks
   [ComfyUI] [SubprocessWorker] acquired lock, ensuring started...
@@ -323,9 +304,9 @@ Capturing execution frames: recon.json
   [ComfyUI] [worker:ComfyUI-MeshSegmenter] [comfy-env] _from_shm got dict with keys: ['__type__', 'strategy', 'manager_path', 'storage_key', 'storage_size']
   [ComfyUI] [worker:ComfyUI-MeshSegmenter] [comfy-env] DESERIALIZE TensorRef: tensor_size=[12, 9, 1024, 1024]
   [ComfyUI] [worker:ComfyUI-MeshSegmenter] [comfy-env] DESERIALIZED tensor shape: torch.Size([12, 9, 1024, 1024])
-  [capture-loop] iter=400 t=50.2s state={'complete': False, 'error': None, 'executedCount': 4, 'wsState': 1} eval_ms=3
-  Frame 9 saved (frame_008.jpg, t=51.0s)
-  [capture-periodic] freeze=3ms shot=174ms unfreeze=4ms saved=True
+  Frame 9 saved (frame_008.jpg, t=51.2s)
+  [capture-periodic] freeze=3ms shot=159ms unfreeze=6ms saved=True
+  [capture-loop] iter=400 t=52.1s state={'complete': False, 'error': None, 'executedCount': 4, 'wsState': 1} eval_ms=3
   [ComfyUI] [worker:ComfyUI-MeshSegmenter] GenerateMasks: Received MULTIBAND_IMAGE with 9 channels: ['normal_x', 'normal_y', 'normal_z', 'matte', 'sdf', 'curvature', 'feature_edges', 'mask', 'face_id']
   [ComfyUI] [worker:ComfyUI-MeshSegmenter] GenerateMasks: Building 1 images from config
   [ComfyUI] [worker:ComfyUI-MeshSegmenter]   Image 'normal_x+normal_y+normal_z' from channels [0, 1, 2]
@@ -333,14 +314,14 @@ Capturing execution frames: recon.json
   [ComfyUI] [worker:ComfyUI-MeshSegmenter]   Points per side: 32
   [ComfyUI] [worker:ComfyUI-MeshSegmenter]   Min area: 1024
   [ComfyUI] [worker:ComfyUI-MeshSegmenter] WARNING: No comfy kitchen, using old apply_rope functions.
-  [capture-loop] iter=450 t=56.1s state={'complete': False, 'error': None, 'executedCount': 4, 'wsState': 1} eval_ms=3
+  [capture-loop] iter=450 t=57.8s state={'complete': False, 'error': None, 'executedCount': 4, 'wsState': 1} eval_ms=4
   [ComfyUI] [worker:ComfyUI-MeshSegmenter] GenerateMasks: Loaded sam2 model 'SAM2.1 Hiera Large' in ModelPatcher (load=cuda:0, offload=cpu, dtype=fp32)
-  [ComfyUI] [comfy-env] VRAM request: 0.90GB, free before eviction: 47.55GB
-  [ComfyUI] [comfy-env] VRAM after eviction: 47.55GB
+  [ComfyUI] [comfy-env] VRAM request: 0.90GB, free before eviction: 49.02GB
+  [ComfyUI] [comfy-env] VRAM after eviction: 49.02GB
   [ComfyUI] [worker:ComfyUI-MeshSegmenter]   Using provided face_mask for point sampling
   [ComfyUI] [worker:ComfyUI-MeshSegmenter]   Processing normal_x+normal_y+normal_z...
   [ComfyUI] [worker:ComfyUI-MeshSegmenter]     Batch encoding 12 views...
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [1-6/12] Encoded 6 images in 1.29s
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [1-6/12] Encoded 6 images in 1.26s
   [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] model_dtype=torch.float32
   [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] point_coords.dtype=torch.float32
   [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] concat_points[0].dtype=torch.float32
@@ -359,40 +340,14 @@ Capturing execution frames: recon.json
   [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] image_embed.dtype=torch.float32
   [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] high_res_feats[0].dtype=torch.float32
   [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] sparse_embeddings.dtype=torch.float32, dense_embeddings.dtype=torch.float32
-  [capture-loop] iter=500 t=61.7s state={'complete': False, 'error': None, 'executedCount': 4, 'wsState': 1} eval_ms=3
+  [capture-loop] iter=500 t=63.6s state={'complete': False, 'error': None, 'executedCount': 4, 'wsState': 1} eval_ms=4
   [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] model_dtype=torch.float32
   [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] point_coords.dtype=torch.float32
   [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] concat_points[0].dtype=torch.float32
   [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] image_embed.dtype=torch.float32
   [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] high_res_feats[0].dtype=torch.float32
   [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] sparse_embeddings.dtype=torch.float32, dense_embeddings.dtype=torch.float32
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       View 1/12: 31 masks in 3.26s
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] model_dtype=torch.float32
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] point_coords.dtype=torch.float32
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] concat_points[0].dtype=torch.float32
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] image_embed.dtype=torch.float32
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] high_res_feats[0].dtype=torch.float32
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] sparse_embeddings.dtype=torch.float32, dense_embeddings.dtype=torch.float32
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] model_dtype=torch.float32
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] point_coords.dtype=torch.float32
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] concat_points[0].dtype=torch.float32
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] image_embed.dtype=torch.float32
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] high_res_feats[0].dtype=torch.float32
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] sparse_embeddings.dtype=torch.float32, dense_embeddings.dtype=torch.float32
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] model_dtype=torch.float32
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] point_coords.dtype=torch.float32
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] concat_points[0].dtype=torch.float32
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] image_embed.dtype=torch.float32
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] high_res_feats[0].dtype=torch.float32
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] sparse_embeddings.dtype=torch.float32, dense_embeddings.dtype=torch.float32
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] model_dtype=torch.float32
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] point_coords.dtype=torch.float32
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] concat_points[0].dtype=torch.float32
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] image_embed.dtype=torch.float32
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] high_res_feats[0].dtype=torch.float32
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] sparse_embeddings.dtype=torch.float32, dense_embeddings.dtype=torch.float32
-  [capture-loop] iter=550 t=67.5s state={'complete': False, 'error': None, 'executedCount': 4, 'wsState': 1} eval_ms=2
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       View 2/12: 28 masks in 5.74s
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       View 1/12: 32 masks in 3.50s
   [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] model_dtype=torch.float32
   [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] point_coords.dtype=torch.float32
   [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] concat_points[0].dtype=torch.float32
@@ -417,20 +372,8 @@ Capturing execution frames: recon.json
   [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] image_embed.dtype=torch.float32
   [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] high_res_feats[0].dtype=torch.float32
   [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] sparse_embeddings.dtype=torch.float32, dense_embeddings.dtype=torch.float32
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       View 3/12: 32 masks in 3.56s
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] model_dtype=torch.float32
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] point_coords.dtype=torch.float32
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] concat_points[0].dtype=torch.float32
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] image_embed.dtype=torch.float32
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] high_res_feats[0].dtype=torch.float32
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] sparse_embeddings.dtype=torch.float32, dense_embeddings.dtype=torch.float32
-  [capture-loop] iter=600 t=73.0s state={'complete': False, 'error': None, 'executedCount': 4, 'wsState': 1} eval_ms=3
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] model_dtype=torch.float32
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] point_coords.dtype=torch.float32
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] concat_points[0].dtype=torch.float32
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] image_embed.dtype=torch.float32
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] high_res_feats[0].dtype=torch.float32
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] sparse_embeddings.dtype=torch.float32, dense_embeddings.dtype=torch.float32
+  [capture-loop] iter=550 t=69.6s state={'complete': False, 'error': None, 'executedCount': 4, 'wsState': 1} eval_ms=3
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       View 2/12: 27 masks in 4.59s
   [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] model_dtype=torch.float32
   [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] point_coords.dtype=torch.float32
   [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] concat_points[0].dtype=torch.float32
@@ -443,7 +386,45 @@ Capturing execution frames: recon.json
   [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] image_embed.dtype=torch.float32
   [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] high_res_feats[0].dtype=torch.float32
   [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] sparse_embeddings.dtype=torch.float32, dense_embeddings.dtype=torch.float32
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       View 4/12: 21 masks in 4.21s
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] model_dtype=torch.float32
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] point_coords.dtype=torch.float32
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] concat_points[0].dtype=torch.float32
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] image_embed.dtype=torch.float32
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] high_res_feats[0].dtype=torch.float32
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] sparse_embeddings.dtype=torch.float32, dense_embeddings.dtype=torch.float32
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] model_dtype=torch.float32
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] point_coords.dtype=torch.float32
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] concat_points[0].dtype=torch.float32
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] image_embed.dtype=torch.float32
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] high_res_feats[0].dtype=torch.float32
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] sparse_embeddings.dtype=torch.float32, dense_embeddings.dtype=torch.float32
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       View 3/12: 35 masks in 3.63s
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] model_dtype=torch.float32
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] point_coords.dtype=torch.float32
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] concat_points[0].dtype=torch.float32
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] image_embed.dtype=torch.float32
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] high_res_feats[0].dtype=torch.float32
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] sparse_embeddings.dtype=torch.float32, dense_embeddings.dtype=torch.float32
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] model_dtype=torch.float32
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] point_coords.dtype=torch.float32
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] concat_points[0].dtype=torch.float32
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] image_embed.dtype=torch.float32
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] high_res_feats[0].dtype=torch.float32
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] sparse_embeddings.dtype=torch.float32, dense_embeddings.dtype=torch.float32
+  [capture-loop] iter=600 t=75.2s state={'complete': False, 'error': None, 'executedCount': 4, 'wsState': 1} eval_ms=3
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] model_dtype=torch.float32
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] point_coords.dtype=torch.float32
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] concat_points[0].dtype=torch.float32
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] image_embed.dtype=torch.float32
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] high_res_feats[0].dtype=torch.float32
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] sparse_embeddings.dtype=torch.float32, dense_embeddings.dtype=torch.float32
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] model_dtype=torch.float32
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] point_coords.dtype=torch.float32
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] concat_points[0].dtype=torch.float32
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] image_embed.dtype=torch.float32
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] high_res_feats[0].dtype=torch.float32
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] sparse_embeddings.dtype=torch.float32, dense_embeddings.dtype=torch.float32
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       View 4/12: 24 masks in 4.34s
   [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] model_dtype=torch.float32
   [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] point_coords.dtype=torch.float32
   [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] concat_points[0].dtype=torch.float32
@@ -458,26 +439,26 @@ Capturing execution frames: recon.json
   [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] sparse_embeddings.dtype=torch.float32, dense_embeddings.dtype=torch.float32
   [ComfyUI] [worker:ComfyUI-MeshSegmenter]
   [ComfyUI] === WATCHDOG TICK 1 ===
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter] Thread 0x00007ee6c0ff9640 (most recent call first):
-  [ComfyUI]   File "/home/shadeform/workspaces/MeshSegmenter-0837/ComfyUI/custom_nodes/ComfyUI-MeshSegmenter/nodes/_env_703529/lib/python3.12/threading.py", line 359 in wait
-  [ComfyUI]   File "/home/shadeform/workspaces/MeshSegmenter-0837/ComfyUI/custom_nodes/ComfyUI-MeshSegmenter/nodes/_env_703529/lib/python3.12/threading.py", line 655 in wait
-  [ComfyUI]   File "/home/shadeform/workspaces/MeshSegmenter-0837/ComfyUI/custom_nodes/ComfyUI-MeshSegmenter/nodes/_env_703529/lib/python3.12/site-packages/tqdm/_monitor.py", line 60 in run
-  [ComfyUI]   File "/home/shadeform/workspaces/MeshSegmenter-0837/ComfyUI/custom_nodes/ComfyUI-MeshSegmenter/nodes/_env_703529/lib/python3.12/threading.py", line 1075 in _bootstrap_inner
-  [ComfyUI]   File "/home/shadeform/workspaces/MeshSegmenter-0837/ComfyUI/custom_nodes/ComfyUI-MeshSegmenter/nodes/_env_703529/lib/python3.12/threading.py", line 1032 in _bootstrap
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter] Thread 0x000074c060ff9640 (most recent call first):
+  [ComfyUI]   File "/home/shadeform/workspaces/MeshSegmenter-1140/ComfyUI/custom_nodes/ComfyUI-MeshSegmenter/nodes/_env_703529/lib/python3.12/threading.py", line 359 in wait
+  [ComfyUI]   File "/home/shadeform/workspaces/MeshSegmenter-1140/ComfyUI/custom_nodes/ComfyUI-MeshSegmenter/nodes/_env_703529/lib/python3.12/threading.py", line 655 in wait
+  [ComfyUI]   File "/home/shadeform/workspaces/MeshSegmenter-1140/ComfyUI/custom_nodes/ComfyUI-MeshSegmenter/nodes/_env_703529/lib/python3.12/site-packages/tqdm/_monitor.py", line 60 in run
+  [ComfyUI]   File "/home/shadeform/workspaces/MeshSegmenter-1140/ComfyUI/custom_nodes/ComfyUI-MeshSegmenter/nodes/_env_703529/lib/python3.12/threading.py", line 1075 in _bootstrap_inner
+  [ComfyUI]   File "/home/shadeform/workspaces/MeshSegmenter-1140/ComfyUI/custom_nodes/ComfyUI-MeshSegmenter/nodes/_env_703529/lib/python3.12/threading.py", line 1032 in _bootstrap
   [ComfyUI] 
-  [ComfyUI] Current thread 0x00007ee846665640 (most recent call first):
-  [ComfyUI]   File "/tmp/comfyui_pvenv_fwfg34_k/persistent_worker.py", line 42 in _watchdog
-  [ComfyUI]   File "/home/shadeform/workspaces/MeshSegmenter-0837/ComfyUI/custom_nodes/ComfyUI-MeshSegmenter/nodes/_env_703529/lib/python3.12/threading.py", line 1012 in run
-  [ComfyUI]   File "/home/shadeform/workspaces/MeshSegmenter-0837/ComfyUI/custom_nodes/ComfyUI-MeshSegmenter/nodes/_env_703529/lib/python3.12/threading.py", line 1075 in _bootstrap_inner
-  [ComfyUI]   File "/home/shadeform/workspaces/MeshSegmenter-0837/ComfyUI/custom_nodes/ComfyUI-MeshSegmenter/nodes/_env_703529/lib/python3.12/threading.py", line 1032 in _bootstrap
+  [ComfyUI] Current thread 0x000074c1ee934640 (most recent call first):
+  [ComfyUI]   File "/tmp/comfyui_pvenv_rq7y0odt/persistent_worker.py", line 42 in _watchdog
+  [ComfyUI]   File "/home/shadeform/workspaces/MeshSegmenter-1140/ComfyUI/custom_nodes/ComfyUI-MeshSegmenter/nodes/_env_703529/lib/python3.12/threading.py", line 1012 in run
+  [ComfyUI]   File "/home/shadeform/workspaces/MeshSegmenter-1140/ComfyUI/custom_nodes/ComfyUI-MeshSegmenter/nodes/_env_703529/lib/python3.12/threading.py", line 1075 in _bootstrap_inner
+  [ComfyUI]   File "/home/shadeform/workspaces/MeshSegmenter-1140/ComfyUI/custom_nodes/ComfyUI-MeshSegmenter/nodes/_env_703529/lib/python3.12/threading.py", line 1032 in _bootstrap
   [ComfyUI] 
-  [ComfyUI] Thread 0x00007ee8470eb740 (most recent call first):
-  [ComfyUI]   File "/home/shadeform/workspaces/MeshSegmenter-0837/ComfyUI/custom_nodes/ComfyUI-MeshSegmenter/nodes/sam2/utils/amg.py", line 51 in filter
-  [ComfyUI]   File "/home/shadeform/workspaces/MeshSegmenter-0837/ComfyUI/custom_nodes/ComfyUI-MeshSegmenter/nodes/samesh/models/sam.py", line 465 in _process_point_batch
-  [ComfyUI]   File "/home/shadeform/workspaces/MeshSegmenter-0837/ComfyUI/custom_nodes/ComfyUI-MeshSegmenter/nodes/samesh/models/sam.py", line 382 in process_images_batch
-  [ComfyUI]   File "/home/shadeform/workspaces/MeshSegmenter-0837/ComfyUI/custom_nodes/ComfyUI-MeshSegmenter/nodes/generate_masks.py", line 339 in generate_masks
-  [ComfyUI]   File "/tmp/comfyui_pvenv_fwfg34_k/persistent_worker.py", line 1143 in main
-  [ComfyUI]   File "/tmp/comfyui_pvenv_fwfg34_k/persistent_worker.py", line 1174 in <module>
+  [ComfyUI] Thread 0x000074c1ef3bc740 (most recent call first):
+  [ComfyUI]   File "/home/shadeform/workspaces/MeshSegmenter-1140/ComfyUI/custom_nodes/ComfyUI-MeshSegmenter/nodes/sam2/utils/amg.py", line 51 in filter
+  [ComfyUI]   File "/home/shadeform/workspaces/MeshSegmenter-1140/ComfyUI/custom_nodes/ComfyUI-MeshSegmenter/nodes/samesh/models/sam.py", line 473 in _process_point_batch
+  [ComfyUI]   File "/home/shadeform/workspaces/MeshSegmenter-1140/ComfyUI/custom_nodes/ComfyUI-MeshSegmenter/nodes/samesh/models/sam.py", line 382 in process_images_batch
+  [ComfyUI]   File "/home/shadeform/workspaces/MeshSegmenter-1140/ComfyUI/custom_nodes/ComfyUI-MeshSegmenter/nodes/generate_masks.py", line 339 in generate_masks
+  [ComfyUI]   File "/tmp/comfyui_pvenv_rq7y0odt/persistent_worker.py", line 1143 in main
+  [ComfyUI]   File "/tmp/comfyui_pvenv_rq7y0odt/persistent_worker.py", line 1174 in <module>
   [ComfyUI] 
   [ComfyUI] [worker:ComfyUI-MeshSegmenter] === END ===
   [ComfyUI] 
@@ -487,66 +468,14 @@ Capturing execution frames: recon.json
   [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] image_embed.dtype=torch.float32
   [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] high_res_feats[0].dtype=torch.float32
   [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] sparse_embeddings.dtype=torch.float32, dense_embeddings.dtype=torch.float32
-  [capture-loop] iter=650 t=78.9s state={'complete': False, 'error': None, 'executedCount': 4, 'wsState': 1} eval_ms=3
   [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] model_dtype=torch.float32
   [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] point_coords.dtype=torch.float32
   [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] concat_points[0].dtype=torch.float32
   [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] image_embed.dtype=torch.float32
   [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] high_res_feats[0].dtype=torch.float32
   [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] sparse_embeddings.dtype=torch.float32, dense_embeddings.dtype=torch.float32
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       View 5/12: 26 masks in 3.92s
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] model_dtype=torch.float32
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] point_coords.dtype=torch.float32
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] concat_points[0].dtype=torch.float32
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] image_embed.dtype=torch.float32
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] high_res_feats[0].dtype=torch.float32
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] sparse_embeddings.dtype=torch.float32, dense_embeddings.dtype=torch.float32
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] model_dtype=torch.float32
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] point_coords.dtype=torch.float32
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] concat_points[0].dtype=torch.float32
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] image_embed.dtype=torch.float32
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] high_res_feats[0].dtype=torch.float32
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] sparse_embeddings.dtype=torch.float32, dense_embeddings.dtype=torch.float32
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] model_dtype=torch.float32
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] point_coords.dtype=torch.float32
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] concat_points[0].dtype=torch.float32
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] image_embed.dtype=torch.float32
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] high_res_feats[0].dtype=torch.float32
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] sparse_embeddings.dtype=torch.float32, dense_embeddings.dtype=torch.float32
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] model_dtype=torch.float32
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] point_coords.dtype=torch.float32
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] concat_points[0].dtype=torch.float32
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] image_embed.dtype=torch.float32
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] high_res_feats[0].dtype=torch.float32
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] sparse_embeddings.dtype=torch.float32, dense_embeddings.dtype=torch.float32
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       View 6/12: 27 masks in 2.86s
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [7-12/12] Encoded 6 images in 0.16s
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] model_dtype=torch.float32
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] point_coords.dtype=torch.float32
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] concat_points[0].dtype=torch.float32
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] image_embed.dtype=torch.float32
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] high_res_feats[0].dtype=torch.float32
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] sparse_embeddings.dtype=torch.float32, dense_embeddings.dtype=torch.float32
-  [capture-loop] iter=700 t=84.5s state={'complete': False, 'error': None, 'executedCount': 4, 'wsState': 1} eval_ms=2
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] model_dtype=torch.float32
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] point_coords.dtype=torch.float32
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] concat_points[0].dtype=torch.float32
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] image_embed.dtype=torch.float32
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] high_res_feats[0].dtype=torch.float32
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] sparse_embeddings.dtype=torch.float32, dense_embeddings.dtype=torch.float32
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] model_dtype=torch.float32
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] point_coords.dtype=torch.float32
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] concat_points[0].dtype=torch.float32
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] image_embed.dtype=torch.float32
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] high_res_feats[0].dtype=torch.float32
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] sparse_embeddings.dtype=torch.float32, dense_embeddings.dtype=torch.float32
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] model_dtype=torch.float32
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] point_coords.dtype=torch.float32
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] concat_points[0].dtype=torch.float32
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] image_embed.dtype=torch.float32
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] high_res_feats[0].dtype=torch.float32
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] sparse_embeddings.dtype=torch.float32, dense_embeddings.dtype=torch.float32
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       View 7/12: 25 masks in 5.02s
+  [capture-loop] iter=650 t=81.1s state={'complete': False, 'error': None, 'executedCount': 4, 'wsState': 1} eval_ms=3
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       View 5/12: 28 masks in 3.94s
   [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] model_dtype=torch.float32
   [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] point_coords.dtype=torch.float32
   [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] concat_points[0].dtype=torch.float32
@@ -571,8 +500,34 @@ Capturing execution frames: recon.json
   [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] image_embed.dtype=torch.float32
   [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] high_res_feats[0].dtype=torch.float32
   [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] sparse_embeddings.dtype=torch.float32, dense_embeddings.dtype=torch.float32
-  [capture-loop] iter=750 t=90.4s state={'complete': False, 'error': None, 'executedCount': 4, 'wsState': 1} eval_ms=2
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       View 8/12: 24 masks in 2.86s
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       View 6/12: 28 masks in 2.84s
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [7-12/12] Encoded 6 images in 0.14s
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] model_dtype=torch.float32
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] point_coords.dtype=torch.float32
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] concat_points[0].dtype=torch.float32
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] image_embed.dtype=torch.float32
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] high_res_feats[0].dtype=torch.float32
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] sparse_embeddings.dtype=torch.float32, dense_embeddings.dtype=torch.float32
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] model_dtype=torch.float32
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] point_coords.dtype=torch.float32
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] concat_points[0].dtype=torch.float32
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] image_embed.dtype=torch.float32
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] high_res_feats[0].dtype=torch.float32
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] sparse_embeddings.dtype=torch.float32, dense_embeddings.dtype=torch.float32
+  [capture-loop] iter=700 t=86.9s state={'complete': False, 'error': None, 'executedCount': 4, 'wsState': 1} eval_ms=3
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] model_dtype=torch.float32
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] point_coords.dtype=torch.float32
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] concat_points[0].dtype=torch.float32
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] image_embed.dtype=torch.float32
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] high_res_feats[0].dtype=torch.float32
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] sparse_embeddings.dtype=torch.float32, dense_embeddings.dtype=torch.float32
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] model_dtype=torch.float32
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] point_coords.dtype=torch.float32
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] concat_points[0].dtype=torch.float32
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] image_embed.dtype=torch.float32
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] high_res_feats[0].dtype=torch.float32
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] sparse_embeddings.dtype=torch.float32, dense_embeddings.dtype=torch.float32
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       View 7/12: 22 masks in 5.12s
   [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] model_dtype=torch.float32
   [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] point_coords.dtype=torch.float32
   [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] concat_points[0].dtype=torch.float32
@@ -597,33 +552,8 @@ Capturing execution frames: recon.json
   [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] image_embed.dtype=torch.float32
   [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] high_res_feats[0].dtype=torch.float32
   [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] sparse_embeddings.dtype=torch.float32, dense_embeddings.dtype=torch.float32
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       View 9/12: 20 masks in 3.71s
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] model_dtype=torch.float32
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] point_coords.dtype=torch.float32
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] concat_points[0].dtype=torch.float32
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] image_embed.dtype=torch.float32
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] high_res_feats[0].dtype=torch.float32
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] sparse_embeddings.dtype=torch.float32, dense_embeddings.dtype=torch.float32
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] model_dtype=torch.float32
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] point_coords.dtype=torch.float32
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] concat_points[0].dtype=torch.float32
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] image_embed.dtype=torch.float32
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] high_res_feats[0].dtype=torch.float32
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] sparse_embeddings.dtype=torch.float32, dense_embeddings.dtype=torch.float32
-  [capture-loop] iter=800 t=96.2s state={'complete': False, 'error': None, 'executedCount': 4, 'wsState': 1} eval_ms=3
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] model_dtype=torch.float32
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] point_coords.dtype=torch.float32
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] concat_points[0].dtype=torch.float32
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] image_embed.dtype=torch.float32
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] high_res_feats[0].dtype=torch.float32
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] sparse_embeddings.dtype=torch.float32, dense_embeddings.dtype=torch.float32
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] model_dtype=torch.float32
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] point_coords.dtype=torch.float32
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] concat_points[0].dtype=torch.float32
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] image_embed.dtype=torch.float32
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] high_res_feats[0].dtype=torch.float32
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] sparse_embeddings.dtype=torch.float32, dense_embeddings.dtype=torch.float32
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       View 10/12: 15 masks in 4.14s
+  [capture-loop] iter=750 t=92.5s state={'complete': False, 'error': None, 'executedCount': 4, 'wsState': 1} eval_ms=3
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       View 8/12: 25 masks in 2.95s
   [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] model_dtype=torch.float32
   [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] point_coords.dtype=torch.float32
   [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] concat_points[0].dtype=torch.float32
@@ -648,8 +578,33 @@ Capturing execution frames: recon.json
   [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] image_embed.dtype=torch.float32
   [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] high_res_feats[0].dtype=torch.float32
   [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] sparse_embeddings.dtype=torch.float32, dense_embeddings.dtype=torch.float32
-  [capture-loop] iter=850 t=101.8s state={'complete': False, 'error': None, 'executedCount': 4, 'wsState': 1} eval_ms=3
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       View 11/12: 20 masks in 3.05s
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       View 9/12: 18 masks in 3.90s
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] model_dtype=torch.float32
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] point_coords.dtype=torch.float32
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] concat_points[0].dtype=torch.float32
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] image_embed.dtype=torch.float32
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] high_res_feats[0].dtype=torch.float32
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] sparse_embeddings.dtype=torch.float32, dense_embeddings.dtype=torch.float32
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] model_dtype=torch.float32
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] point_coords.dtype=torch.float32
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] concat_points[0].dtype=torch.float32
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] image_embed.dtype=torch.float32
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] high_res_feats[0].dtype=torch.float32
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] sparse_embeddings.dtype=torch.float32, dense_embeddings.dtype=torch.float32
+  [capture-loop] iter=800 t=98.3s state={'complete': False, 'error': None, 'executedCount': 4, 'wsState': 1} eval_ms=3
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] model_dtype=torch.float32
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] point_coords.dtype=torch.float32
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] concat_points[0].dtype=torch.float32
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] image_embed.dtype=torch.float32
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] high_res_feats[0].dtype=torch.float32
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] sparse_embeddings.dtype=torch.float32, dense_embeddings.dtype=torch.float32
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] model_dtype=torch.float32
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] point_coords.dtype=torch.float32
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] concat_points[0].dtype=torch.float32
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] image_embed.dtype=torch.float32
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] high_res_feats[0].dtype=torch.float32
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] sparse_embeddings.dtype=torch.float32, dense_embeddings.dtype=torch.float32
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       View 10/12: 11 masks in 3.81s
   [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] model_dtype=torch.float32
   [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] point_coords.dtype=torch.float32
   [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] concat_points[0].dtype=torch.float32
@@ -674,15 +629,41 @@ Capturing execution frames: recon.json
   [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] image_embed.dtype=torch.float32
   [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] high_res_feats[0].dtype=torch.float32
   [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] sparse_embeddings.dtype=torch.float32, dense_embeddings.dtype=torch.float32
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       View 12/12: 20 masks in 2.83s
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       Total batch: 12 views in 46.64s (3.89s/view)
-  [capture-loop] iter=900 t=107.6s state={'complete': False, 'error': None, 'executedCount': 4, 'wsState': 1} eval_ms=3
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter]   Generated 181 masks across 12 views from 1 input types
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       View 11/12: 21 masks in 3.20s
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] model_dtype=torch.float32
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] point_coords.dtype=torch.float32
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] concat_points[0].dtype=torch.float32
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] image_embed.dtype=torch.float32
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] high_res_feats[0].dtype=torch.float32
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] sparse_embeddings.dtype=torch.float32, dense_embeddings.dtype=torch.float32
+  [capture-loop] iter=850 t=104.0s state={'complete': False, 'error': None, 'executedCount': 4, 'wsState': 1} eval_ms=3
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] model_dtype=torch.float32
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] point_coords.dtype=torch.float32
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] concat_points[0].dtype=torch.float32
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] image_embed.dtype=torch.float32
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] high_res_feats[0].dtype=torch.float32
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] sparse_embeddings.dtype=torch.float32, dense_embeddings.dtype=torch.float32
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] model_dtype=torch.float32
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] point_coords.dtype=torch.float32
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] concat_points[0].dtype=torch.float32
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] image_embed.dtype=torch.float32
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] high_res_feats[0].dtype=torch.float32
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] sparse_embeddings.dtype=torch.float32, dense_embeddings.dtype=torch.float32
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] model_dtype=torch.float32
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] point_coords.dtype=torch.float32
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] concat_points[0].dtype=torch.float32
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] image_embed.dtype=torch.float32
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] high_res_feats[0].dtype=torch.float32
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       [DEBUG _predict] sparse_embeddings.dtype=torch.float32, dense_embeddings.dtype=torch.float32
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       View 12/12: 21 masks in 3.58s
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter]       Total batch: 12 views in 46.86s (3.91s/view)
+  [capture-loop] iter=900 t=109.8s state={'complete': False, 'error': None, 'executedCount': 4, 'wsState': 1} eval_ms=3
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter]   Generated 186 masks across 12 views from 1 input types
   [ComfyUI] [worker:ComfyUI-MeshSegmenter]   Output: 1 segmentation channels + foreground_mask
   [ComfyUI] [SubprocessWorker] got response: ok
   Node executed (5 total), capturing...
-  Frame 10 saved (frame_009.jpg, t=108.8s)
-  [capture-node] freeze=7ms shot=160ms unfreeze=6ms saved=True
+  Frame 10 saved (frame_009.jpg, t=111.7s)
+  [capture-node] freeze=3ms shot=159ms unfreeze=15ms saved=True
   [ComfyUI] [SubprocessWorker] call_method: nodes.combine_bmasks.CombineBMasks.combine
   [ComfyUI] [SubprocessWorker] acquired lock, ensuring started...
   [ComfyUI] [ComfyUI-MeshSegmenter] Health check: ping (timeout=5.0s)...
@@ -690,16 +671,16 @@ Capturing execution frames: recon.json
   [ComfyUI] [SubprocessWorker] worker started/confirmed
   [ComfyUI] [SubprocessWorker] serializing kwargs to shm...
   [ComfyUI] [SubprocessWorker] created 0 shm blocks
+  Node executed (6 total), capturing...
   [ComfyUI] [SubprocessWorker] sending request via socket...
   [ComfyUI] [worker:ComfyUI-MeshSegmenter] [comfy-env] _from_shm got dict with keys: ['__type__', 'strategy', 'manager_path', 'storage_key', 'storage_size']
   [ComfyUI] [worker:ComfyUI-MeshSegmenter] [comfy-env] DESERIALIZE TensorRef: tensor_size=[12, 2, 1024, 1024]
-  Node executed (6 total), capturing...
   [ComfyUI] [worker:ComfyUI-MeshSegmenter] [comfy-env] DESERIALIZED tensor shape: torch.Size([12, 2, 1024, 1024])
   [ComfyUI] [worker:ComfyUI-MeshSegmenter] CombineBMasks: Found 'foreground_mask' channel, using for background removal
   [ComfyUI] [worker:ComfyUI-MeshSegmenter] CombineBMasks: Combining 1 segmentation channels across 12 views
   [ComfyUI] [worker:ComfyUI-MeshSegmenter]   Sort by area: True
-  Frame 11 saved (frame_010.jpg, t=110.8s)
-  [capture-node] freeze=4ms shot=159ms unfreeze=15ms saved=True
+  Frame 11 saved (frame_010.jpg, t=113.2s)
+  [capture-node] freeze=3ms shot=149ms unfreeze=6ms saved=True
   [ComfyUI] [worker:ComfyUI-MeshSegmenter]   Combined into 16 unique labels
   [ComfyUI] [SubprocessWorker] got response: ok
   [ComfyUI] [SubprocessWorker] call_method: nodes.lift_labels.Lift2DTo3DLabels.lift_labels
@@ -725,19 +706,20 @@ Capturing execution frames: recon.json
   [ComfyUI] [worker:ComfyUI-MeshSegmenter]   Processing 12 views
   [ComfyUI] [worker:ComfyUI-MeshSegmenter]   Using segmentation channel: combined_mask
   [ComfyUI] [worker:ComfyUI-MeshSegmenter]     Computing face2label for each view (6 CPU cores)...
-  Frame 12 saved (frame_011.jpg, t=113.0s)
-  [capture-periodic] freeze=3ms shot=184ms unfreeze=5ms saved=True
-  [capture-loop] iter=950 t=114.0s state={'complete': False, 'error': None, 'executedCount': 6, 'wsState': 1} eval_ms=4
-  Frame 13 saved (frame_012.jpg, t=115.4s)
-  [capture-periodic] freeze=3ms shot=284ms unfreeze=7ms saved=True
+  Frame 12 saved (frame_011.jpg, t=115.4s)
+  [capture-periodic] freeze=4ms shot=209ms unfreeze=11ms saved=True
+  [capture-loop] iter=950 t=116.4s state={'complete': False, 'error': None, 'executedCount': 6, 'wsState': 1} eval_ms=7
+  Frame 13 saved (frame_012.jpg, t=117.8s)
+  [capture-periodic] freeze=6ms shot=256ms unfreeze=24ms saved=True
   [ComfyUI] [worker:ComfyUI-MeshSegmenter]     Building match graph (6 CPU cores)...
+  [capture-loop] iter=1000 t=122.5s state={'complete': False, 'error': None, 'executedCount': 6, 'wsState': 1} eval_ms=3
   [ComfyUI] [worker:ComfyUI-MeshSegmenter]     Counter lens threshold: 16
   [ComfyUI] [worker:ComfyUI-MeshSegmenter]     Connections ratio threshold: 0.09
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter]     Found 170 connections
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter]     Found 24 communities (segment groups)
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter]     Found 180 connections
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter]     Found 22 communities (segment groups)
   [ComfyUI] [worker:ComfyUI-MeshSegmenter]     Merging consistent labels...
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter]   Labeled 7167/48970 faces (14.6%)
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter]   Found 77 unique labels
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter]   Labeled 7138/48970 faces (14.6%)
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter]   Found 76 unique labels
   [ComfyUI] [SubprocessWorker] got response: ok
   [ComfyUI] [SubprocessWorker] call_method: nodes.smooth_labels.SmoothLabels.smooth_labels
   [ComfyUI] [SubprocessWorker] acquired lock, ensuring started...
@@ -754,32 +736,32 @@ Capturing execution frames: recon.json
   [ComfyUI] [worker:ComfyUI-MeshSegmenter]     Marked 48970 unlabeled faces
   [ComfyUI] [worker:ComfyUI-MeshSegmenter]   Step 2: Splitting disconnected components...
   [ComfyUI] [worker:ComfyUI-MeshSegmenter]     Split into 1 additional components
+  Frame 14 saved (frame_013.jpg, t=123.1s)
+  [capture-node] freeze=4ms shot=144ms unfreeze=8ms saved=True
   [ComfyUI] [worker:ComfyUI-MeshSegmenter] Smooth Labels
   [ComfyUI]   Total faces: 48,970
-  [ComfyUI]   Labeled: 56,137 (114.6%)
-  [ComfyUI]   Unlabeled: -7,167 (-14.6%)
-  [ComfyUI]   Segments: 78
+  [ComfyUI]   Labeled: 56,108 (114.6%)
+  [ComfyUI]   Unlabeled: -7,138 (-14.6%)
+  [ComfyUI]   Segments: 77
   [ComfyUI] 
   [ComfyUI] Parameters:
   [ComfyUI]   Iterations: 1
-  Frame 14 saved (frame_013.jpg, t=119.8s)
-  [capture-node] freeze=6ms shot=145ms unfreeze=7ms saved=True
   [ComfyUI]   Size threshold: 2.6%
   [ComfyUI]   Area threshold: 2.4%
   [ComfyUI]   Split disconnected: True
   [ComfyUI] 
   [ComfyUI] Segments (by face count):
-  [ComfyUI]   Label 135: 48,970 faces (100.0%)
-  [ComfyUI]   Label 16: 1,430 faces (2.9%)
-  [ComfyUI]   Label 84: 1,021 faces (2.1%)
-  [ComfyUI]   Label 2: 678 faces (1.4%)
-  [ComfyUI]   Label 28: 623 faces (1.3%)
-  [ComfyUI]   Label 3: 471 faces (1.0%)
-  [ComfyUI]   Label 5: 399 faces (0.8%)
-  [ComfyUI]   Label 54: 347 faces (0.7%)
-  [ComfyUI]   Label 75: 185 faces (0.4%)
-  [ComfyUI]   Label 128: 134 faces (0.3%)
-  [ComfyUI]   ... and 68 more
+  [ComfyUI]   Label 136: 48,970 faces (100.0%)
+  [ComfyUI]   Label 16: 1,415 faces (2.9%)
+  [ComfyUI]   Label 86: 1,010 faces (2.1%)
+  [ComfyUI]   Label 2: 671 faces (1.4%)
+  [ComfyUI]   Label 28: 625 faces (1.3%)
+  [ComfyUI]   Label 3: 479 faces (1.0%)
+  [ComfyUI]   Label 5: 400 faces (0.8%)
+  [ComfyUI]   Label 55: 349 faces (0.7%)
+  [ComfyUI]   Label 77: 182 faces (0.4%)
+  [ComfyUI]   Label 71: 134 faces (0.3%)
+  [ComfyUI]   ... and 67 more
   [ComfyUI] [SubprocessWorker] got response: ok
   [ComfyUI] [SubprocessWorker] call_method: nodes.apply_labels.ApplyLabelsToMesh.apply_labels
   [ComfyUI] [SubprocessWorker] acquired lock, ensuring started...
@@ -787,14 +769,13 @@ Capturing execution frames: recon.json
   [ComfyUI] [ComfyUI-MeshSegmenter] Health check: ok
   [ComfyUI] [SubprocessWorker] worker started/confirmed
   [ComfyUI] [SubprocessWorker] serializing kwargs to shm...
-  [capture-loop] iter=1000 t=120.3s state={'complete': False, 'error': None, 'executedCount': 8, 'wsState': 1} eval_ms=4
   Node executed (8 total), capturing...
   [ComfyUI] [SubprocessWorker] created 1 shm blocks
   [ComfyUI] [SubprocessWorker] sending request via socket...
   [ComfyUI] [worker:ComfyUI-MeshSegmenter] ApplyLabelsToMesh: Applying segment colors to mesh...
-  Frame 15 saved (frame_014.jpg, t=120.4s)
-  [capture-node] freeze=3ms shot=165ms unfreeze=3ms saved=True
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter]   Colored 48970 faces with 135 segments
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter]   Colored 48970 faces with 136 segments
+  Frame 15 saved (frame_014.jpg, t=123.8s)
+  [capture-node] freeze=4ms shot=204ms unfreeze=7ms saved=True
   [ComfyUI] [worker:ComfyUI-MeshSegmenter]   Preview shape: torch.Size([4, 512, 512, 3])
   [ComfyUI] [SubprocessWorker] got response: ok
   [ComfyUI] [SubprocessWorker] call_method: nodes.apply_labels.ApplyLabelsToMesh.apply_labels
@@ -805,16 +786,16 @@ Capturing execution frames: recon.json
   [ComfyUI] [SubprocessWorker] serializing kwargs to shm...
   [ComfyUI] [SubprocessWorker] created 1 shm blocks
   [ComfyUI] [SubprocessWorker] sending request via socket...
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter] ApplyLabelsToMesh: Applying segment colors to mesh...
   Node executed (9 total), capturing...
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter]   Colored 7167 faces with 134 segments
-  Frame 16 saved (frame_015.jpg, t=122.5s)
-  [capture-node] freeze=4ms shot=147ms unfreeze=3ms saved=True
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter] ApplyLabelsToMesh: Applying segment colors to mesh...
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter]   Colored 7138 faces with 135 segments
+  Frame 16 saved (frame_015.jpg, t=125.2s)
+  [capture-node] freeze=4ms shot=167ms unfreeze=4ms saved=True
   [ComfyUI] [worker:ComfyUI-MeshSegmenter]   Preview shape: torch.Size([4, 512, 512, 3])
   [ComfyUI] [SubprocessWorker] got response: ok
   Node executed (10 total), capturing...
-  Frame 17 saved (frame_016.jpg, t=123.5s)
-  [capture-node] freeze=4ms shot=166ms unfreeze=7ms saved=True
+  Frame 17 saved (frame_016.jpg, t=126.3s)
+  [capture-node] freeze=7ms shot=154ms unfreeze=6ms saved=True
   [ComfyUI] [SubprocessWorker] call_method: nodes.graph_cut.GraphCutRepartition.repartition
   [ComfyUI] [SubprocessWorker] acquired lock, ensuring started...
   [ComfyUI] [ComfyUI-MeshSegmenter] Health check: ping (timeout=5.0s)...
@@ -825,159 +806,157 @@ Capturing execution frames: recon.json
   [ComfyUI] [SubprocessWorker] sending request via socket...
   Node executed (11 total), capturing...
   [ComfyUI] [worker:ComfyUI-MeshSegmenter] GraphCutRepartition: Refining boundaries with alpha-expansion (backend=pymaxflow)...
-  Frame 18 saved (frame_017.jpg, t=124.4s)
-  [capture-node] freeze=4ms shot=153ms unfreeze=5ms saved=True
+  Frame 18 saved (frame_017.jpg, t=127.1s)
+  [capture-node] freeze=4ms shot=167ms unfreeze=17ms saved=True
   [ComfyUI] [worker:ComfyUI-MeshSegmenter]     Running graph cut repartition (lambda=2.0, iters=1, backend=pymaxflow)...
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter]     Initial partition cost: 104491.40
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter]     Initial partition cost: 104278.95
   [ComfyUI] 
-  [ComfyUI]     Repartition iter 1:   0%|                                                                                                                                      | 0/78 [00:00<?, ?it/s]
-  Frame 19 saved (frame_018.jpg, t=126.6s)
-  [capture-periodic] freeze=3ms shot=175ms unfreeze=3ms saved=True
-  [capture-loop] iter=1050 t=127.3s state={'complete': False, 'error': None, 'executedCount': 11, 'wsState': 1} eval_ms=4
-  [ComfyUI]     Repartition iter 1:   1%|█▌                                                                                                                            | 1/78 [00:00<00:57,  1.33it/s]
-  [ComfyUI]     Repartition iter 1:   3%|███▏                                                                                                                          | 2/78 [00:01<01:16,  1.00s/it]
-  [ComfyUI]     Repartition iter 1:   4%|████▊                                                                                                                         | 3/78 [00:02<01:09,  1.08it/s]
-  [ComfyUI]     Repartition iter 1:   5%|██████▍                                                                                                                       | 4/78 [00:03<01:07,  1.10it/s]
-  [ComfyUI]     Repartition iter 1:   6%|████████                                                                                                                      | 5/78 [00:04<01:05,  1.11it/s]
-  [ComfyUI]     Repartition iter 1:   8%|█████████▋                                                                                                                    | 6/78 [00:05<01:16,  1.06s/it]
-  [capture-loop] iter=1100 t=132.9s state={'complete': False, 'error': None, 'executedCount': 11, 'wsState': 1} eval_ms=2
-  [ComfyUI]     Repartition iter 1:   9%|███████████▎                                                                                                                  | 7/78 [00:06<01:10,  1.01it/s]
-  [ComfyUI]     Repartition iter 1:  10%|████████████▉                                                                                                                 | 8/78 [00:07<01:06,  1.06it/s]
-  [ComfyUI]     Repartition iter 1:  12%|██████████████▌                                                                                                               | 9/78 [00:08<01:13,  1.06s/it]
-  [ComfyUI]     Repartition iter 1:  13%|████████████████                                                                                                             | 10/78 [00:09<01:07,  1.01it/s]
-  [ComfyUI]     Repartition iter 1:  14%|█████████████████▋                                                                                                           | 11/78 [00:10<01:03,  1.06it/s]
-  [ComfyUI]     Repartition iter 1:  15%|███████████████████▏                                                                                                         | 12/78 [00:11<01:01,  1.06it/s][worker:ComfyUI-MeshSegmenter]
+  [ComfyUI]     Repartition iter 1:   0%|                                                                                                      | 0/77 [00:00<?, ?it/s]
+  Frame 19 saved (frame_018.jpg, t=129.3s)
+  [capture-periodic] freeze=3ms shot=403ms unfreeze=4ms saved=True
+  [capture-loop] iter=1050 t=130.7s state={'complete': False, 'error': None, 'executedCount': 11, 'wsState': 1} eval_ms=5
+  [ComfyUI]     Repartition iter 1:   1%|█▏                                                                                            | 1/77 [00:00<01:05,  1.17it/s]
+  [ComfyUI]     Repartition iter 1:   3%|██▍                                                                                           | 2/77 [00:02<01:44,  1.40s/it]
+  [ComfyUI]     Repartition iter 1:   4%|███▋                                                                                          | 3/77 [00:03<01:28,  1.20s/it]
+  [ComfyUI]     Repartition iter 1:   5%|████▉                                                                                         | 4/77 [00:04<01:21,  1.12s/it]
+  [ComfyUI]     Repartition iter 1:   6%|██████                                                                                        | 5/77 [00:05<01:16,  1.06s/it]
+  [capture-loop] iter=1100 t=136.5s state={'complete': False, 'error': None, 'executedCount': 11, 'wsState': 1} eval_ms=4
+  [ComfyUI]     Repartition iter 1:   8%|███████▎                                                                                      | 6/77 [00:07<01:34,  1.33s/it]
+  [ComfyUI]     Repartition iter 1:   9%|████████▌                                                                                     | 7/77 [00:08<01:25,  1.22s/it]
+  [ComfyUI]     Repartition iter 1:  10%|█████████▊                                                                                    | 8/77 [00:09<01:19,  1.15s/it]
+  [ComfyUI]     Repartition iter 1:  12%|██████████▉                                                                                   | 9/77 [00:10<01:14,  1.09s/it][worker:ComfyUI-MeshSegmenter]
   [ComfyUI] === WATCHDOG TICK 2 ===
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter] Thread 0x00007ee6c0ff9640 (most recent call first):
-  [ComfyUI]   File "/home/shadeform/workspaces/MeshSegmenter-0837/ComfyUI/custom_nodes/ComfyUI-MeshSegmenter/nodes/_env_703529/lib/python3.12/threading.py", line 359 in wait
-  [ComfyUI]   File "/home/shadeform/workspaces/MeshSegmenter-0837/ComfyUI/custom_nodes/ComfyUI-MeshSegmenter/nodes/_env_703529/lib/python3.12/threading.py", line 655 in wait
-  [ComfyUI]   File "/home/shadeform/workspaces/MeshSegmenter-0837/ComfyUI/custom_nodes/ComfyUI-MeshSegmenter/nodes/_env_703529/lib/python3.12/site-packages/tqdm/_monitor.py", line 60 in run
-  [ComfyUI]   File "/home/shadeform/workspaces/MeshSegmenter-0837/ComfyUI/custom_nodes/ComfyUI-MeshSegmenter/nodes/_env_703529/lib/python3.12/threading.py", line 1075 in _bootstrap_inner
-  [ComfyUI]   File "/home/shadeform/workspaces/MeshSegmenter-0837/ComfyUI/custom_nodes/ComfyUI-MeshSegmenter/nodes/_env_703529/lib/python3.12/threading.py", line 1032 in _bootstrap
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter] Thread 0x000074c060ff9640 (most recent call first):
+  [ComfyUI]   File "/home/shadeform/workspaces/MeshSegmenter-1140/ComfyUI/custom_nodes/ComfyUI-MeshSegmenter/nodes/_env_703529/lib/python3.12/threading.py", line 359 in wait
+  [ComfyUI]   File "/home/shadeform/workspaces/MeshSegmenter-1140/ComfyUI/custom_nodes/ComfyUI-MeshSegmenter/nodes/_env_703529/lib/python3.12/threading.py", line 655 in wait
+  [ComfyUI]   File "/home/shadeform/workspaces/MeshSegmenter-1140/ComfyUI/custom_nodes/ComfyUI-MeshSegmenter/nodes/_env_703529/lib/python3.12/site-packages/tqdm/_monitor.py", line 60 in run
+  [ComfyUI]   File "/home/shadeform/workspaces/MeshSegmenter-1140/ComfyUI/custom_nodes/ComfyUI-MeshSegmenter/nodes/_env_703529/lib/python3.12/threading.py", line 1075 in _bootstrap_inner
+  [ComfyUI]   File "/home/shadeform/workspaces/MeshSegmenter-1140/ComfyUI/custom_nodes/ComfyUI-MeshSegmenter/nodes/_env_703529/lib/python3.12/threading.py", line 1032 in _bootstrap
   [ComfyUI] 
-  [ComfyUI] Current thread 0x00007ee846665640 (most recent call first):
-  [ComfyUI]   File "/tmp/comfyui_pvenv_fwfg34_k/persistent_worker.py", line 42 in _watchdog
-  [ComfyUI]   File "/home/shadeform/workspaces/MeshSegmenter-0837/ComfyUI/custom_nodes/ComfyUI-MeshSegmenter/nodes/_env_703529/lib/python3.12/threading.py", line 1012 in run
-  [ComfyUI]   File "/home/shadeform/workspaces/MeshSegmenter-0837/ComfyUI/custom_nodes/ComfyUI-MeshSegmenter/nodes/_env_703529/lib/python3.12/threading.py", line 1075 in _bootstrap_inner
-  [ComfyUI]   File "/home/shadeform/workspaces/MeshSegmenter-0837/ComfyUI/custom_nodes/ComfyUI-MeshSegmenter/nodes/_env_703529/lib/python3.12/threading.py", line 1032 in _bootstrap
+  [ComfyUI] Current thread 0x000074c1ee934640 (most recent call first):
+  [ComfyUI]   File "/tmp/comfyui_pvenv_rq7y0odt/persistent_worker.py", line 42 in _watchdog
+  [ComfyUI]   File "/home/shadeform/workspaces/MeshSegmenter-1140/ComfyUI/custom_nodes/ComfyUI-MeshSegmenter/nodes/_env_703529/lib/python3.12/threading.py", line 1012 in run
+  [ComfyUI]   File "/home/shadeform/workspaces/MeshSegmenter-1140/ComfyUI/custom_nodes/ComfyUI-MeshSegmenter/nodes/_env_703529/lib/python3.12/threading.py", line 1075 in _bootstrap_inner
+  [ComfyUI]   File "/home/shadeform/workspaces/MeshSegmenter-1140/ComfyUI/custom_nodes/ComfyUI-MeshSegmenter/nodes/_env_703529/lib/python3.12/threading.py", line 1032 in _bootstrap
   [ComfyUI] 
-  [ComfyUI] Thread 0x00007ee8470eb740 (most recent call first):
-  [ComfyUI]   File "/home/shadeform/workspaces/MeshSegmenter-0837/ComfyUI/custom_nodes/ComfyUI-MeshSegmenter/nodes/_env_703529/lib/python3.1/site-packages/networkx/classes/graph.py", line 578 in add_node
-  [ComfyUI]   File "/home/shadeform/workspaces/MeshSegmenter-0837/ComfyUI/custom_nodes/ComfyUI-MeshSegmenter/nodes/samesh/models/smoothing.py", line 319 in construct_expansion_graph
-  [ComfyUI]   File "/home/shadeform/workspaces/MeshSegmenter-0837/ComfyUI/custom_nodes/ComfyUI-MeshSegmenter/nodes/samesh/models/smoothing.py", line 514 in repartition
-  [ComfyUI]   File "/home/shadeform/workspaces/MeshSegmenter-0837/ComfyUI/custom_nodes/ComfyUI-MeshSegmenter/nodes/samesh/models/smoothing.py", line 611 in graph_cut_repartition
-  [ComfyUI]   File "/home/shadeform/workspaces/MeshSegmenter-0837/ComfyUI/custom_nodes/ComfyUI-MeshSegmenter/nodes/graph_cut.py", line 117 in repartition
-  [ComfyUI]   File "/tmp/comfyui_pvenv_fwfg34_k/persistent_worker.py", line 1143 in main
-  [ComfyUI]   File "/tmp/comfyui_pvenv_fwfg34_k/persistent_worker.py", line 1174 in <module>
+  [ComfyUI] Thread 0x000074c1ef3bc740 (most recent call first):
+  [ComfyUI]   File "/home/shadeform/workspaces/MeshSegmenter-1140/ComfyUI/custom_nodes/ComfyUI-MeshSegmenter/nodes/samesh/models/smoothing.py", line 337 in construct_expansion_graph
+  [ComfyUI]   File "/home/shadeform/workspaces/MeshSegmenter-1140/ComfyUI/custom_nodes/ComfyUI-MeshSegmenter/nodes/samesh/models/smoothing.py", line 514 in repartition
+  [ComfyUI]   File "/home/shadeform/workspaces/MeshSegmenter-1140/ComfyUI/custom_nodes/ComfyUI-MeshSegmenter/nodes/samesh/models/smoothing.py", line 611 in graph_cut_repartition
+  [ComfyUI]   File "/home/shadeform/workspaces/MeshSegmenter-1140/ComfyUI/custom_nodes/ComfyUI-MeshSegmenter/nodes/graph_cut.py", line 117 in repartition
+  [ComfyUI]   File "/tmp/comfyui_pvenv_rq7y0odt/persistent_worker.py", line 1143 in main
+  [ComfyUI]   File "/tmp/comfyui_pvenv_rq7y0odt/persistent_worker.py", line 1174 in <module>
   [ComfyUI] 
   [ComfyUI] [worker:ComfyUI-MeshSegmenter] === END ===
   [ComfyUI] 
-  [capture-loop] iter=1150 t=138.7s state={'complete': False, 'error': None, 'executedCount': 11, 'wsState': 1} eval_ms=2
   [ComfyUI] 
-  [ComfyUI]     Repartition iter 1:  17%|████████████████████▊                                                                                                        | 13/78 [00:13<01:13,  1.13s/it]
-  [ComfyUI]     Repartition iter 1:  18%|██████████████████████▍                                                                                                      | 14/78 [00:13<01:07,  1.06s/it]
-  [ComfyUI]     Repartition iter 1:  19%|████████████████████████                                                                                                     | 15/78 [00:14<01:04,  1.03s/it]
-  [ComfyUI]     Repartition iter 1:  21%|█████████████████████████▋                                                                                                   | 16/78 [00:16<01:11,  1.16s/it]
-  [ComfyUI]     Repartition iter 1:  22%|███████████████████████████▏                                                                                                 | 17/78 [00:17<01:05,  1.08s/it]
-  [capture-loop] iter=1200 t=144.4s state={'complete': False, 'error': None, 'executedCount': 11, 'wsState': 1} eval_ms=3
-  [ComfyUI]     Repartition iter 1:  23%|████████████████████████████▊                                                                                                | 18/78 [00:18<01:01,  1.02s/it]
-  [ComfyUI]     Repartition iter 1:  24%|██████████████████████████████▍                                                                                              | 19/78 [00:19<00:58,  1.01it/s]
-  [ComfyUI]     Repartition iter 1:  26%|████████████████████████████████                                                                                             | 20/78 [00:20<01:05,  1.13s/it]
-  [ComfyUI]     Repartition iter 1:  27%|█████████████████████████████████▋                                                                                           | 21/78 [00:21<01:00,  1.06s/it]
-  [ComfyUI]     Repartition iter 1:  28%|███████████████████████████████████▎                                                                                         | 22/78 [00:22<00:56,  1.02s/it]
-  [capture-loop] iter=1250 t=150.3s state={'complete': False, 'error': None, 'executedCount': 11, 'wsState': 1} eval_ms=3
-  [ComfyUI]     Repartition iter 1:  29%|████████████████████████████████████▊                                                                                        | 23/78 [00:23<00:56,  1.03s/it]
-  [ComfyUI]     Repartition iter 1:  31%|██████████████████████████████████████▍                                                                                      | 24/78 [00:24<01:02,  1.15s/it]
-  [ComfyUI]     Repartition iter 1:  32%|████████████████████████████████████████                                                                                     | 25/78 [00:25<00:56,  1.07s/it]
-  [ComfyUI]     Repartition iter 1:  33%|█████████████████████████████████████████▋                                                                                   | 26/78 [00:26<00:53,  1.02s/it]
-  [ComfyUI]     Repartition iter 1:  35%|███████████████████████████████████████████▎                                                                                 | 27/78 [00:27<00:57,  1.12s/it]
-  [ComfyUI]     Repartition iter 1:  36%|████████████████████████████████████████████▊                                                                                | 28/78 [00:28<00:52,  1.04s/it]
-  [capture-loop] iter=1300 t=156.1s state={'complete': False, 'error': None, 'executedCount': 11, 'wsState': 1} eval_ms=3
-  [ComfyUI]     Repartition iter 1:  37%|██████████████████████████████████████████████▍                                                                              | 29/78 [00:29<00:48,  1.00it/s]
-  [ComfyUI]     Repartition iter 1:  38%|████████████████████████████████████████████████                                                                             | 30/78 [00:30<00:46,  1.03it/s]
-  [ComfyUI]     Repartition iter 1:  40%|█████████████████████████████████████████████████▋                                                                           | 31/78 [00:32<00:51,  1.09s/it]
-  [ComfyUI]     Repartition iter 1:  41%|███████████████████████████████████████████████████▎                                                                         | 32/78 [00:32<00:47,  1.03s/it]
-  [ComfyUI]     Repartition iter 1:  42%|████████████████████████████████████████████████████▉                                                                        | 33/78 [00:33<00:45,  1.02s/it]
-  [capture-loop] iter=1350 t=161.8s state={'complete': False, 'error': None, 'executedCount': 11, 'wsState': 1} eval_ms=4
-  [ComfyUI]     Repartition iter 1:  44%|██████████████████████████████████████████████████████▍                                                                      | 34/78 [00:35<00:48,  1.11s/it]
-  [ComfyUI]     Repartition iter 1:  45%|████████████████████████████████████████████████████████                                                                     | 35/78 [00:36<00:44,  1.03s/it]
-  [ComfyUI]     Repartition iter 1:  46%|█████████████████████████████████████████████████████████▋                                                                   | 36/78 [00:36<00:41,  1.01it/s]
-  [ComfyUI]     Repartition iter 1:  47%|███████████████████████████████████████████████████████████▎                                                                 | 37/78 [00:37<00:39,  1.03it/s]
-  [ComfyUI]     Repartition iter 1:  49%|████████████████████████████████████████████████████████████▉                                                                | 38/78 [00:39<00:45,  1.13s/it]
-  [ComfyUI]     Repartition iter 1:  50%|██████████████████████████████████████████████████████████████▌                                                              | 39/78 [00:40<00:40,  1.05s/it]
-  [capture-loop] iter=1400 t=167.7s state={'complete': False, 'error': None, 'executedCount': 11, 'wsState': 1} eval_ms=3
-  [ComfyUI]     Repartition iter 1:  51%|████████████████████████████████████████████████████████████████                                                             | 40/78 [00:41<00:38,  1.01s/it]
-  [ComfyUI]     Repartition iter 1:  53%|█████████████████████████████████████████████████████████████████▋                                                           | 41/78 [00:42<00:40,  1.10s/it]
-  [ComfyUI]     Repartition iter 1:  54%|███████████████████████████████████████████████████████████████████▎                                                         | 42/78 [00:43<00:37,  1.04s/it]
-  [ComfyUI]     Repartition iter 1:  55%|████████████████████████████████████████████████████████████████████▉                                                        | 43/78 [00:44<00:34,  1.01it/s]
-  [ComfyUI]     Repartition iter 1:  56%|██████████████████████████████████████████████████████████████████████▌                                                      | 44/78 [00:45<00:33,  1.03it/s]
-  [ComfyUI]     Repartition iter 1:  58%|████████████████████████████████████████████████████████████████████████                                                     | 45/78 [00:46<00:36,  1.11s/it]
-  [capture-loop] iter=1450 t=173.6s state={'complete': False, 'error': None, 'executedCount': 11, 'wsState': 1} eval_ms=3
-  [ComfyUI]     Repartition iter 1:  59%|█████████████████████████████████████████████████████████████████████████▋                                                   | 46/78 [00:47<00:32,  1.03s/it]
-  [ComfyUI]     Repartition iter 1:  60%|███████████████████████████████████████████████████████████████████████████▎                                                 | 47/78 [00:48<00:30,  1.01it/s]
-  [ComfyUI]     Repartition iter 1:  62%|████████████████████████████████████████████████████████████████████████████▉                                                | 48/78 [00:49<00:28,  1.04it/s]
-  [ComfyUI]     Repartition iter 1:  63%|██████████████████████████████████████████████████████████████████████████████▌                                              | 49/78 [00:50<00:31,  1.08s/it]
-  [ComfyUI]     Repartition iter 1:  64%|████████████████████████████████████████████████████████████████████████████████▏                                            | 50/78 [00:51<00:28,  1.03s/it]
-  [capture-loop] iter=1500 t=179.2s state={'complete': False, 'error': None, 'executedCount': 11, 'wsState': 1} eval_ms=3
-  [ComfyUI]     Repartition iter 1:  65%|█████████████████████████████████████████████████████████████████████████████████▋                                           | 51/78 [00:52<00:27,  1.01s/it]
-  [ComfyUI]     Repartition iter 1:  67%|███████████████████████████████████████████████████████████████████████████████████▎                                         | 52/78 [00:53<00:29,  1.13s/it]
-  [ComfyUI]     Repartition iter 1:  68%|████████████████████████████████████████████████████████████████████████████████████▉                                        | 53/78 [00:54<00:26,  1.06s/it]
-  [ComfyUI]     Repartition iter 1:  69%|██████████████████████████████████████████████████████████████████████████████████████▌                                      | 54/78 [00:55<00:24,  1.01s/it]
-  [ComfyUI]     Repartition iter 1:  71%|████████████████████████████████████████████████████████████████████████████████████████▏                                    | 55/78 [00:56<00:22,  1.03it/s]
-  [ComfyUI]     Repartition iter 1:  72%|█████████████████████████████████████████████████████████████████████████████████████████▋                                   | 56/78 [00:57<00:24,  1.09s/it]
-  [capture-loop] iter=1550 t=185.3s state={'complete': False, 'error': None, 'executedCount': 11, 'wsState': 1} eval_ms=3
-  [ComfyUI]     Repartition iter 1:  73%|███████████████████████████████████████████████████████████████████████████████████████████▎                                 | 57/78 [00:58<00:21,  1.02s/it]
-  [ComfyUI]     Repartition iter 1:  74%|████████████████████████████████████████████████████████████████████████████████████████████▉                                | 58/78 [00:59<00:19,  1.02it/s]
-  [ComfyUI]     Repartition iter 1:  76%|██████████████████████████████████████████████████████████████████████████████████████████████▌                              | 59/78 [01:01<00:20,  1.09s/it]
-  [ComfyUI]     Repartition iter 1:  77%|████████████████████████████████████████████████████████████████████████████████████████████████▏                            | 60/78 [01:01<00:18,  1.02s/it]
-  [ComfyUI]     Repartition iter 1:  78%|█████████████████████████████████████████████████████████████████████████████████████████████████▊                           | 61/78 [01:02<00:16,  1.02it/s]
-  [capture-loop] iter=1600 t=190.9s state={'complete': False, 'error': None, 'executedCount': 11, 'wsState': 1} eval_ms=3
-  [ComfyUI]     Repartition iter 1:  79%|███████████████████████████████████████████████████████████████████████████████████████████████████▎                         | 62/78 [01:03<00:15,  1.03it/s]
-  [ComfyUI]     Repartition iter 1:  81%|████████████████████████████████████████████████████████████████████████████████████████████████████▉                        | 63/78 [01:05<00:16,  1.11s/it]
-  [ComfyUI]     Repartition iter 1:  82%|██████████████████████████████████████████████████████████████████████████████████████████████████████▌                      | 64/78 [01:06<00:14,  1.04s/it]
-  [ComfyUI]     Repartition iter 1:  83%|████████████████████████████████████████████████████████████████████████████████████████████████████████▏                    | 65/78 [01:07<00:13,  1.03s/it]
-  [ComfyUI]     Repartition iter 1:  85%|█████████████████████████████████████████████████████████████████████████████████████████████████████████▊                   | 66/78 [01:08<00:14,  1.22s/it]
-  [ComfyUI]     Repartition iter 1:  86%|███████████████████████████████████████████████████████████████████████████████████████████████████████████▎                 | 67/78 [01:09<00:12,  1.13s/it]
-  [capture-loop] iter=1650 t=196.9s state={'complete': False, 'error': None, 'executedCount': 11, 'wsState': 1} eval_ms=3
-  [ComfyUI]     Repartition iter 1:  87%|████████████████████████████████████████████████████████████████████████████████████████████████████████████▉                | 68/78 [01:10<00:10,  1.07s/it]
-  [ComfyUI]     Repartition iter 1:  88%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████▌              | 69/78 [01:11<00:09,  1.03s/it][worker:ComfyUI-MeshSegmenter]
+  [ComfyUI]     Repartition iter 1:  13%|████████████                                                                                 | 10/77 [00:12<01:31,  1.37s/it]
+  [capture-loop] iter=1150 t=142.2s state={'complete': False, 'error': None, 'executedCount': 11, 'wsState': 1} eval_ms=3
+  [ComfyUI]     Repartition iter 1:  14%|█████████████▎                                                                               | 11/77 [00:13<01:21,  1.24s/it]
+  [ComfyUI]     Repartition iter 1:  16%|██████████████▍                                                                              | 12/77 [00:14<01:15,  1.15s/it]
+  [ComfyUI]     Repartition iter 1:  17%|███████████████▋                                                                             | 13/77 [00:15<01:21,  1.27s/it]
+  [ComfyUI]     Repartition iter 1:  18%|████████████████▉                                                                            | 14/77 [00:16<01:13,  1.16s/it]
+  [ComfyUI]     Repartition iter 1:  19%|██████████████████                                                                           | 15/77 [00:17<01:08,  1.10s/it]
+  [capture-loop] iter=1200 t=148.2s state={'complete': False, 'error': None, 'executedCount': 11, 'wsState': 1} eval_ms=8
+  [ComfyUI]     Repartition iter 1:  21%|███████████████████▎                                                                         | 16/77 [00:18<01:04,  1.05s/it]
+  [ComfyUI]     Repartition iter 1:  22%|████████████████████▌                                                                        | 17/77 [00:20<01:12,  1.21s/it]
+  [ComfyUI]     Repartition iter 1:  23%|█████████████████████▋                                                                       | 18/77 [00:21<01:06,  1.13s/it]
+  [ComfyUI]     Repartition iter 1:  25%|██████████████████████▉                                                                      | 19/77 [00:22<01:02,  1.08s/it]
+  [ComfyUI]     Repartition iter 1:  26%|████████████████████████▏                                                                    | 20/77 [00:23<01:08,  1.19s/it]
+  [ComfyUI]     Repartition iter 1:  27%|█████████████████████████▎                                                                   | 21/77 [00:24<01:02,  1.11s/it]
+  [capture-loop] iter=1250 t=154.1s state={'complete': False, 'error': None, 'executedCount': 11, 'wsState': 1} eval_ms=4
+  [ComfyUI]     Repartition iter 1:  29%|██████████████████████████▌                                                                  | 22/77 [00:25<00:58,  1.06s/it]
+  [ComfyUI]     Repartition iter 1:  30%|███████████████████████████▊                                                                 | 23/77 [00:26<00:55,  1.03s/it]
+  [ComfyUI]     Repartition iter 1:  31%|████████████████████████████▉                                                                | 24/77 [00:27<01:03,  1.19s/it]
+  [ComfyUI]     Repartition iter 1:  32%|██████████████████████████████▏                                                              | 25/77 [00:28<00:57,  1.10s/it]
+  [ComfyUI]     Repartition iter 1:  34%|███████████████████████████████▍                                                             | 26/77 [00:29<00:54,  1.06s/it]
+  [capture-loop] iter=1300 t=160.5s state={'complete': False, 'error': None, 'executedCount': 11, 'wsState': 1} eval_ms=3
+  [ComfyUI]     Repartition iter 1:  35%|████████████████████████████████▌                                                            | 27/77 [00:30<00:51,  1.03s/it]
+  [ComfyUI]     Repartition iter 1:  36%|█████████████████████████████████▊                                                           | 28/77 [00:32<00:58,  1.20s/it]
+  [ComfyUI]     Repartition iter 1:  38%|███████████████████████████████████                                                          | 29/77 [00:33<00:53,  1.11s/it]
+  [ComfyUI]     Repartition iter 1:  39%|████████████████████████████████████▏                                                        | 30/77 [00:34<00:50,  1.07s/it]
+  [ComfyUI]     Repartition iter 1:  40%|█████████████████████████████████████▍                                                       | 31/77 [00:35<00:54,  1.19s/it]
+  [ComfyUI]     Repartition iter 1:  42%|██████████████████████████████████████▋                                                      | 32/77 [00:36<00:49,  1.11s/it]
+  [capture-loop] iter=1350 t=166.8s state={'complete': False, 'error': None, 'executedCount': 11, 'wsState': 1} eval_ms=4
+  [ComfyUI]     Repartition iter 1:  43%|███████████████████████████████████████▊                                                     | 33/77 [00:37<00:46,  1.06s/it]
+  [ComfyUI]     Repartition iter 1:  44%|█████████████████████████████████████████                                                    | 34/77 [00:38<00:44,  1.02s/it]
+  [ComfyUI]     Repartition iter 1:  45%|██████████████████████████████████████████▎                                                  | 35/77 [00:39<00:49,  1.17s/it]
+  [ComfyUI]     Repartition iter 1:  47%|███████████████████████████████████████████▍                                                 | 36/77 [00:40<00:44,  1.09s/it]
+  [ComfyUI]     Repartition iter 1:  48%|████████████████████████████████████████████▋                                                | 37/77 [00:41<00:42,  1.05s/it]
+  [ComfyUI]     Repartition iter 1:  49%|█████████████████████████████████████████████▉                                               | 38/77 [00:43<00:44,  1.15s/it]
+  [capture-loop] iter=1400 t=172.8s state={'complete': False, 'error': None, 'executedCount': 11, 'wsState': 1} eval_ms=4
+  [ComfyUI]     Repartition iter 1:  51%|███████████████████████████████████████████████                                              | 39/77 [00:44<00:41,  1.08s/it]
+  [ComfyUI]     Repartition iter 1:  52%|████████████████████████████████████████████████▎                                            | 40/77 [00:45<00:38,  1.04s/it]
+  [ComfyUI]     Repartition iter 1:  53%|█████████████████████████████████████████████████▌                                           | 41/77 [00:46<00:36,  1.01s/it]
+  [ComfyUI]     Repartition iter 1:  55%|██████████████████████████████████████████████████▋                                          | 42/77 [00:47<00:41,  1.17s/it]
+  [ComfyUI]     Repartition iter 1:  56%|███████████████████████████████████████████████████▉                                         | 43/77 [00:48<00:37,  1.10s/it]
+  [capture-loop] iter=1450 t=179.3s state={'complete': False, 'error': None, 'executedCount': 11, 'wsState': 1} eval_ms=3
+  [ComfyUI]     Repartition iter 1:  57%|█████████████████████████████████████████████████████▏                                       | 44/77 [00:49<00:34,  1.06s/it]
+  [ComfyUI]     Repartition iter 1:  58%|██████████████████████████████████████████████████████▎                                      | 45/77 [00:50<00:37,  1.16s/it]
+  [ComfyUI]     Repartition iter 1:  60%|███████████████████████████████████████████████████████▌                                     | 46/77 [00:51<00:33,  1.09s/it]
+  [ComfyUI]     Repartition iter 1:  61%|████████████████████████████████████████████████████████▊                                    | 47/77 [00:52<00:31,  1.04s/it]
+  [ComfyUI]     Repartition iter 1:  62%|█████████████████████████████████████████████████████████▉                                   | 48/77 [00:53<00:29,  1.01s/it]
+  [ComfyUI]     Repartition iter 1:  64%|███████████████████████████████████████████████████████████▏                                 | 49/77 [00:55<00:31,  1.14s/it]
+  [ComfyUI]     Repartition iter 1:  65%|████████████████████████████████████████████████████████████▍                                | 50/77 [00:56<00:28,  1.07s/it]
+  [capture-loop] iter=1500 t=185.6s state={'complete': False, 'error': None, 'executedCount': 11, 'wsState': 1} eval_ms=3
+  [ComfyUI]     Repartition iter 1:  66%|█████████████████████████████████████████████████████████████▌                               | 51/77 [00:56<00:26,  1.03s/it]
+  [ComfyUI]     Repartition iter 1:  68%|██████████████████████████████████████████████████████████████▊                              | 52/77 [00:58<00:28,  1.14s/it]
+  [ComfyUI]     Repartition iter 1:  69%|████████████████████████████████████████████████████████████████                             | 53/77 [00:59<00:25,  1.07s/it]
+  [ComfyUI]     Repartition iter 1:  70%|█████████████████████████████████████████████████████████████████▏                           | 54/77 [01:00<00:23,  1.03s/it]
+  [ComfyUI]     Repartition iter 1:  71%|██████████████████████████████████████████████████████████████████▍                          | 55/77 [01:01<00:22,  1.00s/it]
+  [capture-loop] iter=1550 t=191.5s state={'complete': False, 'error': None, 'executedCount': 11, 'wsState': 1} eval_ms=3
+  [ComfyUI]     Repartition iter 1:  73%|███████████████████████████████████████████████████████████████████▋                         | 56/77 [01:02<00:25,  1.19s/it]
+  [ComfyUI]     Repartition iter 1:  74%|████████████████████████████████████████████████████████████████████▊                        | 57/77 [01:03<00:22,  1.10s/it]
+  [ComfyUI]     Repartition iter 1:  75%|██████████████████████████████████████████████████████████████████████                       | 58/77 [01:04<00:19,  1.05s/it]
+  [ComfyUI]     Repartition iter 1:  77%|███████████████████████████████████████████████████████████████████████▎                     | 59/77 [01:05<00:20,  1.15s/it]
+  [ComfyUI]     Repartition iter 1:  78%|████████████████████████████████████████████████████████████████████████▍                    | 60/77 [01:06<00:18,  1.08s/it]
+  [ComfyUI]     Repartition iter 1:  79%|█████████████████████████████████████████████████████████████████████████▋                   | 61/77 [01:07<00:16,  1.03s/it]
+  [capture-loop] iter=1600 t=197.8s state={'complete': False, 'error': None, 'executedCount': 11, 'wsState': 1} eval_ms=3
+  [ComfyUI]     Repartition iter 1:  81%|██████████████████████████████████████████████████████████████████████████▉                  | 62/77 [01:08<00:15,  1.00s/it]
+  [ComfyUI]     Repartition iter 1:  82%|████████████████████████████████████████████████████████████████████████████                 | 63/77 [01:10<00:15,  1.14s/it]
+  [ComfyUI]     Repartition iter 1:  83%|█████████████████████████████████████████████████████████████████████████████▎               | 64/77 [01:11<00:13,  1.06s/it][worker:ComfyUI-MeshSegmenter]
   [ComfyUI] === WATCHDOG TICK 3 ===
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter] Thread 0x00007ee6c0ff9640 (most recent call first):
-  [ComfyUI]   File "/home/shadeform/workspaces/MeshSegmenter-0837/ComfyUI/custom_nodes/ComfyUI-MeshSegmenter/nodes/_env_703529/lib/python3.12/threading.py", line 359 in wait
-  [ComfyUI]   File "/home/shadeform/workspaces/MeshSegmenter-0837/ComfyUI/custom_nodes/ComfyUI-MeshSegmenter/nodes/_env_703529/lib/python3.12/threading.py", line 655 in wait
-  [ComfyUI]   File "/home/shadeform/workspaces/MeshSegmenter-0837/ComfyUI/custom_nodes/ComfyUI-MeshSegmenter/nodes/_env_703529/lib/python3.12/site-packages/tqdm/_monitor.py", line 60 in run
-  [ComfyUI]   File "/home/shadeform/workspaces/MeshSegmenter-0837/ComfyUI/custom_nodes/ComfyUI-MeshSegmenter/nodes/_env_703529/lib/python3.12/threading.py", line 1075 in _bootstrap_inner
-  [ComfyUI]   File "/home/shadeform/workspaces/MeshSegmenter-0837/ComfyUI/custom_nodes/ComfyUI-MeshSegmenter/nodes/_env_703529/lib/python3.12/threading.py", line 1032 in _bootstrap
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter] Thread 0x000074c060ff9640 (most recent call first):
+  [ComfyUI]   File "/home/shadeform/workspaces/MeshSegmenter-1140/ComfyUI/custom_nodes/ComfyUI-MeshSegmenter/nodes/_env_703529/lib/python3.12/threading.py", line 359 in wait
+  [ComfyUI]   File "/home/shadeform/workspaces/MeshSegmenter-1140/ComfyUI/custom_nodes/ComfyUI-MeshSegmenter/nodes/_env_703529/lib/python3.12/threading.py", line 655 in wait
+  [ComfyUI]   File "/home/shadeform/workspaces/MeshSegmenter-1140/ComfyUI/custom_nodes/ComfyUI-MeshSegmenter/nodes/_env_703529/lib/python3.12/site-packages/tqdm/_monitor.py", line 60 in run
+  [ComfyUI]   File "/home/shadeform/workspaces/MeshSegmenter-1140/ComfyUI/custom_nodes/ComfyUI-MeshSegmenter/nodes/_env_703529/lib/python3.12/threading.py", line 1075 in _bootstrap_inner
+  [ComfyUI]   File "/home/shadeform/workspaces/MeshSegmenter-1140/ComfyUI/custom_nodes/ComfyUI-MeshSegmenter/nodes/_env_703529/lib/python3.12/threading.py", line 1032 in _bootstrap
   [ComfyUI] 
-  [ComfyUI] Current thread 0x00007ee846665640 (most recent call first):
-  [ComfyUI]   File "/tmp/comfyui_pvenv_fwfg34_k/persistent_worker.py", line 42 in _watchdog
-  [ComfyUI]   File "/home/shadeform/workspaces/MeshSegmenter-0837/ComfyUI/custom_nodes/ComfyUI-MeshSegmenter/nodes/_env_703529/lib/python3.12/threading.py", line 1012 in run
-  [ComfyUI]   File "/home/shadeform/workspaces/MeshSegmenter-0837/ComfyUI/custom_nodes/ComfyUI-MeshSegmenter/nodes/_env_703529/lib/python3.12/threading.py", line 1075 in _bootstrap_inner
-  [ComfyUI]   File "/home/shadeform/workspaces/MeshSegmenter-0837/ComfyUI/custom_nodes/ComfyUI-MeshSegmenter/nodes/_env_703529/lib/python3.12/threading.py", line 1032 in _bootstrap
+  [ComfyUI] Current thread 0x000074c1ee934640 (most recent call first):
+  [ComfyUI]   File "/tmp/comfyui_pvenv_rq7y0odt/persistent_worker.py", line 42 in _watchdog
+  [ComfyUI]   File "/home/shadeform/workspaces/MeshSegmenter-1140/ComfyUI/custom_nodes/ComfyUI-MeshSegmenter/nodes/_env_703529/lib/python3.12/threading.py", line 1012 in run
+  [ComfyUI]   File "/home/shadeform/workspaces/MeshSegmenter-1140/ComfyUI/custom_nodes/ComfyUI-MeshSegmenter/nodes/_env_703529/lib/python3.12/threading.py", line 1075 in _bootstrap_inner
+  [ComfyUI]   File "/home/shadeform/workspaces/MeshSegmenter-1140/ComfyUI/custom_nodes/ComfyUI-MeshSegmenter/nodes/_env_703529/lib/python3.12/threading.py", line 1032 in _bootstrap
   [ComfyUI] 
-  [ComfyUI] Thread 0x00007ee8470eb740 (most recent call first):
-  [ComfyUI]   File "/home/shadeform/workspaces/MeshSegmenter-0837/ComfyUI/custom_nodes/ComfyUI-MeshSegmenter/nodes/samesh/models/smoothing.py", line 336 in construct_expansion_graph
-  [ComfyUI]   File "/home/shadeform/workspaces/MeshSegmenter-0837/ComfyUI/custom_nodes/ComfyUI-MeshSegmenter/nodes/samesh/models/smoothing.py", line 514 in repartition
-  [ComfyUI]   File "/home/shadeform/workspaces/MeshSegmenter-0837/ComfyUI/custom_nodes/ComfyUI-MeshSegmenter/nodes/samesh/models/smoothing.py", line 611 in graph_cut_repartition
-  [ComfyUI]   File "/home/shadeform/workspaces/MeshSegmenter-0837/ComfyUI/custom_nodes/ComfyUI-MeshSegmenter/nodes/graph_cut.py", line 117 in repartition
-  [ComfyUI]   File "/tmp/comfyui_pvenv_fwfg34_k/persistent_worker.py", line 1143 in main
-  [ComfyUI]   File "/tmp/comfyui_pvenv_fwfg34_k/persistent_worker.py", line 1174 in <module>
+  [ComfyUI] Thread 0x000074c1ef3bc740 (most recent call first):
+  [ComfyUI]   File "/home/shadeform/workspaces/MeshSegmenter-1140/ComfyUI/custom_nodes/ComfyUI-MeshSegmenter/nodes/samesh/models/smoothing.py", line 401 in mincut_pymaxflow
+  [ComfyUI]   File "/home/shadeform/workspaces/MeshSegmenter-1140/ComfyUI/custom_nodes/ComfyUI-MeshSegmenter/nodes/samesh/models/smoothing.py", line 524 in repartition
+  [ComfyUI]   File "/home/shadeform/workspaces/MeshSegmenter-1140/ComfyUI/custom_nodes/ComfyUI-MeshSegmenter/nodes/samesh/models/smoothing.py", line 611 in graph_cut_repartition
+  [ComfyUI]   File "/home/shadeform/workspaces/MeshSegmenter-1140/ComfyUI/custom_nodes/ComfyUI-MeshSegmenter/nodes/graph_cut.py", line 117 in repartition
+  [ComfyUI]   File "/tmp/comfyui_pvenv_rq7y0odt/persistent_worker.py", line 1143 in main
+  [ComfyUI]   File "/tmp/comfyui_pvenv_rq7y0odt/persistent_worker.py", line 1174 in <module>
   [ComfyUI] 
   [ComfyUI] [worker:ComfyUI-MeshSegmenter] === END ===
   [ComfyUI] 
   [ComfyUI] 
-  [ComfyUI]     Repartition iter 1:  90%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████▏            | 70/78 [01:12<00:09,  1.16s/it]
-  [ComfyUI]     Repartition iter 1:  91%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████▊           | 71/78 [01:13<00:07,  1.08s/it]
-  [ComfyUI]     Repartition iter 1:  92%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████▍         | 72/78 [01:14<00:06,  1.04s/it]
-  [capture-loop] iter=1700 t=202.7s state={'complete': False, 'error': None, 'executedCount': 11, 'wsState': 1} eval_ms=3
-  [ComfyUI]     Repartition iter 1:  94%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▉        | 73/78 [01:15<00:05,  1.02s/it]
-  [ComfyUI]     Repartition iter 1:  95%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▌      | 74/78 [01:17<00:04,  1.15s/it]
-  [ComfyUI]     Repartition iter 1:  96%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▏    | 75/78 [01:18<00:03,  1.07s/it]
-  [ComfyUI]     Repartition iter 1:  97%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▊   | 76/78 [01:19<00:02,  1.02s/it]
-  [ComfyUI]     Repartition iter 1:  99%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▍ | 77/78 [01:20<00:01,  1.13s/it]
-  [ComfyUI]     Repartition iter 1: 100%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 78/78 [01:21<00:00,  1.06s/it]
+  [ComfyUI]     Repartition iter 1:  84%|██████████████████████████████████████████████████████████████████████████████▌              | 65/77 [01:12<00:12,  1.03s/it]
+  [ComfyUI]     Repartition iter 1:  86%|███████████████████████████████████████████████████████████████████████████████▋             | 66/77 [01:13<00:12,  1.15s/it]
+  [ComfyUI]     Repartition iter 1:  87%|████████████████████████████████████████████████████████████████████████████████▉            | 67/77 [01:14<00:10,  1.09s/it]
+  [capture-loop] iter=1650 t=204.1s state={'complete': False, 'error': None, 'executedCount': 11, 'wsState': 1} eval_ms=3
+  [ComfyUI]     Repartition iter 1:  88%|██████████████████████████████████████████████████████████████████████████████████▏          | 68/77 [01:15<00:09,  1.06s/it]
+  [ComfyUI]     Repartition iter 1:  90%|███████████████████████████████████████████████████████████████████████████████████▎         | 69/77 [01:16<00:08,  1.03s/it]
+  [ComfyUI]     Repartition iter 1:  91%|████████████████████████████████████████████████████████████████████████████████████▌        | 70/77 [01:17<00:08,  1.19s/it]
+  [ComfyUI]     Repartition iter 1:  92%|█████████████████████████████████████████████████████████████████████████████████████▊       | 71/77 [01:18<00:06,  1.10s/it]
+  [ComfyUI]     Repartition iter 1:  94%|██████████████████████████████████████████████████████████████████████████████████████▉      | 72/77 [01:19<00:05,  1.05s/it]
+  [capture-loop] iter=1700 t=210.0s state={'complete': False, 'error': None, 'executedCount': 11, 'wsState': 1} eval_ms=3
+  [ComfyUI]     Repartition iter 1:  95%|████████████████████████████████████████████████████████████████████████████████████████▏    | 73/77 [01:21<00:04,  1.15s/it]
+  [ComfyUI]     Repartition iter 1:  96%|█████████████████████████████████████████████████████████████████████████████████████████▍   | 74/77 [01:22<00:03,  1.07s/it]
+  [ComfyUI]     Repartition iter 1:  97%|██████████████████████████████████████████████████████████████████████████████████████████▌  | 75/77 [01:22<00:02,  1.03s/it]
+  [ComfyUI]     Repartition iter 1:  99%|███████████████████████████████████████████████████████████████████████████████████████████▊ | 76/77 [01:23<00:00,  1.00it/s]
+  [ComfyUI]     Repartition iter 1: 100%|█████████████████████████████████████████████████████████████████████████████████████████████| 77/77 [01:25<00:00,  1.13s/it]
   [ComfyUI] 
-  [ComfyUI] [worker:ComfyUI-MeshSegmenter]     Final partition cost: 7167.00 (reduced by 93.1%)
+  [ComfyUI] [worker:ComfyUI-MeshSegmenter]     Final partition cost: 7138.00 (reduced by 93.2%)
   [ComfyUI] [worker:ComfyUI-MeshSegmenter]   Refined to 1 segments
   [ComfyUI] [SubprocessWorker] got response: ok
   [ComfyUI] [SubprocessWorker] call_method: nodes.apply_labels.ApplyLabelsToMesh.apply_labels
@@ -990,7 +969,6 @@ Capturing execution frames: recon.json
   [ComfyUI] [SubprocessWorker] sending request via socket...
   [ComfyUI] [worker:ComfyUI-MeshSegmenter] ApplyLabelsToMesh: Applying segment colors to mesh...
   [ComfyUI] [worker:ComfyUI-MeshSegmenter]   Colored 0 faces with 0 segments
-  [capture-loop] iter=1750 t=208.5s state={'complete': False, 'error': None, 'executedCount': 11, 'wsState': 1} eval_ms=4
   [ComfyUI] [worker:ComfyUI-MeshSegmenter]   Preview shape: torch.Size([4, 512, 512, 3])
   [ComfyUI] [SubprocessWorker] got response: ok
   [ComfyUI] [SubprocessWorker] call_method: nodes.main.visualization.preview_mesh_multi.PreviewMeshMultiNode.preview_multi
@@ -998,20 +976,33 @@ Capturing execution frames: recon.json
   [ComfyUI] [ComfyUI-GeometryPack] Health check: ping (timeout=5.0s)...
   [ComfyUI] [ComfyUI-GeometryPack] Health check: failed
   [ComfyUI] [ComfyUI-GeometryPack] Socket unhealthy, restarting worker...
+  [ComfyUI] /home/shadeform/workspaces/MeshSegmenter-1140/ComfyUI/custom_nodes/ComfyUI-GeometryPack/nodes/main/_env_12709f/lib/python3.12/multiprocessing/resource_tracker.py:279: UserWarning: resource_tracker: There appear to be 6 leaked shared_memory objects to clean up at shutdown
+  [ComfyUI]   warnings.warn('resource_tracker: There appear to be %d '
+  [ComfyUI] /home/shadeform/workspaces/MeshSegmenter-1140/ComfyUI/custom_nodes/ComfyUI-GeometryPack/nodes/main/_env_12709f/lib/python3.12/multiprocessing/resource_tracker.py:292: UserWarning: resource_tracker: '/psm_bc15a3e0': [Errno 2] No such file or directory: '/psm_bc15a3e0'
   [ComfyUI] PreviewMultibandImage: Batch=12, Channels=9, Names=['normal_x', 'normal_y', 'normal_z', 'matte', 'sdf', 'curvature', 'feature_edges', 'mask', 'face_id']
+  [ComfyUI]   warnings.warn('resource_tracker: %r: %s' % (name, e))
   [ComfyUI] PreviewMultibandImage: Batch=12, Channels=2, Names=['seg_00', 'foreground_mask']
+  [ComfyUI] /home/shadeform/workspaces/MeshSegmenter-1140/ComfyUI/custom_nodes/ComfyUI-GeometryPack/nodes/main/_env_12709f/lib/python3.12/multiprocessing/resource_tracker.py:292: UserWarning: resource_tracker: '/psm_d69c4dc2': [Errno 2] No such file or directory: '/psm_d69c4dc2'
   [ComfyUI] PreviewMultibandImage: Batch=12, Channels=1, Names=['combined_mask']
-  [ComfyUI] [ComfyUI-GeometryPack] python: /home/shadeform/workspaces/MeshSegmenter-0837/ComfyUI/custom_nodes/ComfyUI-GeometryPack/nodes/main/_env_12709f/bin/python
-  [ComfyUI] [ComfyUI-GeometryPack] sys_path sent to worker: ['/home/shadeform/workspaces/MeshSegmenter-0837/ComfyUI', '/home/shadeform/workspaces/MeshSegmenter-0837/ComfyUI/custom_nodes/ComfyUI-GeometryPack', '/home/shadeform/workspaces/MeshSegmenter-0837/ComfyUI/custom_nodes/ComfyUI-GeometryPack/nodes/main/_env_12709f/lib/python3.1/site-packages', '/home/shadeform/workspaces/MeshSegmenter-0837/ComfyUI/custom_nodes/ComfyUI-GeometryPack']
-  [ComfyUI] [SubprocessWorker] is_pixi=False, python=/home/shadeform/workspaces/MeshSegmenter-0837/ComfyUI/custom_nodes/ComfyUI-GeometryPack/nodes/main/_env_12709f/bin/python
-  [ComfyUI] [SubprocessWorker] launching cmd=['/home/shadeform/workspaces/MeshSegmenter-0837/ComfyUI/custom_nodes/ComfyUI-GeometryPack/nodes/main/_env_12709f/bin/python', '/tmp/comfyui_pvenv_tvzhks8a/persistent_worker.py', 'unix:///dev/shm/comfy_worker_a8a21d272623.sock']...
+  [ComfyUI]   warnings.warn('resource_tracker: %r: %s' % (name, e))
+  [ComfyUI] [ComfyUI-GeometryPack] python: /home/shadeform/workspaces/MeshSegmenter-1140/ComfyUI/custom_nodes/ComfyUI-GeometryPack/nodes/main/_env_12709f/bin/python
+  [ComfyUI] /home/shadeform/workspaces/MeshSegmenter-1140/ComfyUI/custom_nodes/ComfyUI-GeometryPack/nodes/main/_env_12709f/lib/python3.12/multiprocessing/resource_tracker.py:292: UserWarning: resource_tracker: '/psm_5b526475': [Errno 2] No such file or directory: '/psm_5b526475'
+  [ComfyUI] [ComfyUI-GeometryPack] sys_path sent to worker: ['/home/shadeform/workspaces/MeshSegmenter-1140/ComfyUI', '/home/shadeform/workspaces/MeshSegmenter-1140/ComfyUI/custom_nodes/ComfyUI-GeometryPack', '/home/shadeform/workspaces/MeshSegmenter-1140/ComfyUI/custom_nodes/ComfyUI-GeometryPack/nodes/main/_env_12709f/lib/python3.1/site-packages', '/home/shadeform/workspaces/MeshSegmenter-1140/ComfyUI/custom_nodes/ComfyUI-GeometryPack']
+  [ComfyUI] [SubprocessWorker] is_pixi=False, python=/home/shadeform/workspaces/MeshSegmenter-1140/ComfyUI/custom_nodes/ComfyUI-GeometryPack/nodes/main/_env_12709f/bin/python
+  [ComfyUI]   warnings.warn('resource_tracker: %r: %s' % (name, e))
+  [ComfyUI] [SubprocessWorker] launching cmd=['/home/shadeform/workspaces/MeshSegmenter-1140/ComfyUI/custom_nodes/ComfyUI-GeometryPack/nodes/main/_env_12709f/bin/python', '/tmp/comfyui_pvenv_gkt4w93j/persistent_worker.py', 'unix:///dev/shm/comfy_worker_42a11ce82867.sock']...
+  [ComfyUI] /home/shadeform/workspaces/MeshSegmenter-1140/ComfyUI/custom_nodes/ComfyUI-GeometryPack/nodes/main/_env_12709f/lib/python3.12/multiprocessing/resource_tracker.py:292: UserWarning: resource_tracker: '/psm_e86d0b23': [Errno 2] No such file or directory: '/psm_e86d0b23'
   [ComfyUI] [SubprocessWorker] PATH has 8 entries:
+  [ComfyUI]   warnings.warn('resource_tracker: %r: %s' % (name, e))
   [ComfyUI] [SubprocessWorker]   [0] /home/shadeform/.local/bin
+  [ComfyUI] /home/shadeform/workspaces/MeshSegmenter-1140/ComfyUI/custom_nodes/ComfyUI-GeometryPack/nodes/main/_env_12709f/lib/python3.12/multiprocessing/resource_tracker.py:292: UserWarning: resource_tracker: '/psm_cfee4871': [Errno 2] No such file or directory: '/psm_cfee4871'
   [ComfyUI] [SubprocessWorker]   [1] /home/shadeform/.local/bin
+  [ComfyUI]   warnings.warn('resource_tracker: %r: %s' % (name, e))
   [ComfyUI] [SubprocessWorker]   [2] /home/shadeform/.local/bin
+  [ComfyUI] /home/shadeform/workspaces/MeshSegmenter-1140/ComfyUI/custom_nodes/ComfyUI-GeometryPack/nodes/main/_env_12709f/lib/python3.12/multiprocessing/resource_tracker.py:292: UserWarning: resource_tracker: '/psm_6b72620a': [Errno 2] No such file or directory: '/psm_6b72620a'
   [ComfyUI] [SubprocessWorker]   [3] /home/shadeform/.venv/bin
+  [ComfyUI]   warnings.warn('resource_tracker: %r: %s' % (name, e))
   [ComfyUI] [SubprocessWorker]   [4] /usr/local/bin
-  Node executed (12 total), capturing...
   [ComfyUI] [SubprocessWorker]   [5] /usr/bin
   [ComfyUI] [SubprocessWorker]   [6] /bin
   [ComfyUI] [SubprocessWorker]   [7] /snap/bin
@@ -1024,31 +1015,34 @@ Capturing execution frames: recon.json
   [ComfyUI] [worker]   [5] /usr/bin
   [ComfyUI] [worker]   [6] /bin
   [ComfyUI] [worker]   [7] /snap/bin
+  Frame 20 saved (frame_019.jpg, t=215.2s)
+  [capture-periodic] freeze=3ms shot=436ms unfreeze=13ms saved=True
   [ComfyUI] [SubprocessWorker] worker started/confirmed
   [ComfyUI] [SubprocessWorker] serializing kwargs to shm...
   [ComfyUI] [SubprocessWorker] created 3 shm blocks
   [ComfyUI] [SubprocessWorker] sending request via socket...
-  Frame 20 saved (frame_019.jpg, t=208.9s)
-  [capture-node] freeze=3ms shot=164ms unfreeze=5ms saved=True
+  Node executed (12 total), capturing...
+  [capture-node] freeze=3ms shot=150ms unfreeze=5ms saved=False
+  [capture-loop] iter=1750 t=216.7s state={'complete': False, 'error': None, 'executedCount': 12, 'wsState': 1} eval_ms=5
   [ComfyUI] [worker:ComfyUI-GeometryPack] [PreviewMeshMulti] Mode: fields, Meshes: 3
   [ComfyUI] [worker:ComfyUI-GeometryPack] [PreviewMeshMulti] Mesh 1: Mesh - 146910 vertices, 48970 faces
-  [ComfyUI] [worker:ComfyUI-GeometryPack] [_export_mesh_with_scalars_vtp] Exporting mesh to VTP: /home/shadeform/workspaces/MeshSegmenter-0837/ComfyUI/output/preview_multi_1_6b68160e.vtp
+  [ComfyUI] [worker:ComfyUI-GeometryPack] [_export_mesh_with_scalars_vtp] Exporting mesh to VTP: /home/shadeform/workspaces/MeshSegmenter-1140/ComfyUI/output/preview_multi_1_ca3485f2.vtp
   [ComfyUI] [worker:ComfyUI-GeometryPack] [_export_mesh_with_scalars_vtp]   Adding face field: seg
   [ComfyUI] [worker:ComfyUI-GeometryPack] [_export_mesh_with_scalars_vtp] Export complete: 146910 vertices, 48970 faces
-  [ComfyUI] [worker:ComfyUI-GeometryPack] [PreviewMeshMulti] Exported VTP: /home/shadeform/workspaces/MeshSegmenter-0837/ComfyUI/output/preview_multi_1_6b68160e.vtp
+  [ComfyUI] [worker:ComfyUI-GeometryPack] [PreviewMeshMulti] Exported VTP: /home/shadeform/workspaces/MeshSegmenter-1140/ComfyUI/output/preview_multi_1_ca3485f2.vtp
   [ComfyUI] [worker:ComfyUI-GeometryPack] [PreviewMeshMulti] Mesh 2: Mesh - 146910 vertices, 48970 faces
-  [ComfyUI] [worker:ComfyUI-GeometryPack] [_export_mesh_with_scalars_vtp] Exporting mesh to VTP: /home/shadeform/workspaces/MeshSegmenter-0837/ComfyUI/output/preview_multi_2_6b68160e.vtp
+  [ComfyUI] [worker:ComfyUI-GeometryPack] [_export_mesh_with_scalars_vtp] Exporting mesh to VTP: /home/shadeform/workspaces/MeshSegmenter-1140/ComfyUI/output/preview_multi_2_ca3485f2.vtp
   [ComfyUI] [worker:ComfyUI-GeometryPack] [_export_mesh_with_scalars_vtp]   Adding face field: seg
   [ComfyUI] [worker:ComfyUI-GeometryPack] [_export_mesh_with_scalars_vtp] Export complete: 146910 vertices, 48970 faces
-  [ComfyUI] [worker:ComfyUI-GeometryPack] [PreviewMeshMulti] Exported VTP: /home/shadeform/workspaces/MeshSegmenter-0837/ComfyUI/output/preview_multi_2_6b68160e.vtp
+  [ComfyUI] [worker:ComfyUI-GeometryPack] [PreviewMeshMulti] Exported VTP: /home/shadeform/workspaces/MeshSegmenter-1140/ComfyUI/output/preview_multi_2_ca3485f2.vtp
   [ComfyUI] [worker:ComfyUI-GeometryPack] [PreviewMeshMulti] Mesh 3: Mesh - 146910 vertices, 48970 faces
-  [ComfyUI] [worker:ComfyUI-GeometryPack] [_export_mesh_with_scalars_vtp] Exporting mesh to VTP: /home/shadeform/workspaces/MeshSegmenter-0837/ComfyUI/output/preview_multi_3_6b68160e.vtp
+  [ComfyUI] [worker:ComfyUI-GeometryPack] [_export_mesh_with_scalars_vtp] Exporting mesh to VTP: /home/shadeform/workspaces/MeshSegmenter-1140/ComfyUI/output/preview_multi_3_ca3485f2.vtp
   [ComfyUI] [worker:ComfyUI-GeometryPack] [_export_mesh_with_scalars_vtp]   Adding face field: seg
   [ComfyUI] [worker:ComfyUI-GeometryPack] [_export_mesh_with_scalars_vtp] Export complete: 146910 vertices, 48970 faces
-  [ComfyUI] [worker:ComfyUI-GeometryPack] [PreviewMeshMulti] Exported VTP: /home/shadeform/workspaces/MeshSegmenter-0837/ComfyUI/output/preview_multi_3_6b68160e.vtp
+  [ComfyUI] [worker:ComfyUI-GeometryPack] [PreviewMeshMulti] Exported VTP: /home/shadeform/workspaces/MeshSegmenter-1140/ComfyUI/output/preview_multi_3_ca3485f2.vtp
   [ComfyUI] [worker:ComfyUI-GeometryPack] [PreviewMeshMulti] Grid: 3x1, Preview ready
   [ComfyUI] [SubprocessWorker] got response: ok
-  [ComfyUI] Prompt executed in 212.72 seconds
+  [ComfyUI] Prompt executed in 219.49 seconds
   [Console-error] No input!
   [Console-error] No input!
   [Console-error] No input!
@@ -1062,9 +1056,9 @@ Capturing execution frames: recon.json
   [Console-error] No input!
   [Console-error] No input!
   Node executed (13 total), capturing...
-  Frame 21 saved (frame_020.jpg, t=213.7s)
-  [capture-node] freeze=1009ms shot=1130ms unfreeze=0ms saved=True
-  Execution complete (t=213.7s)
+  Frame 21 saved (frame_020.jpg, t=220.6s)
+  [capture-node] freeze=1017ms shot=1481ms unfreeze=0ms saved=True
+  Execution complete (t=220.6s)
   [3d-wait] Phase 1: Waiting for 'Loading 3D Model' text to disappear...
   [3d-wait] Phase 1 done in 0.0s
   [3d-wait] Phase 2: iframes=2
@@ -1075,10 +1069,10 @@ Capturing execution frames: recon.json
 waiting for event "console"
 ============================================================
   [3d-wait] Total 3D wait: 60.1s
-  Captured 21 unique frames over 275.95s
+  Captured 21 unique frames over 283.24s
   [debug] iframes: 2
-  [debug]   iframe[0]: src=http://127.0.0.1:41891/extensions/ComfyUI-GeometryPack/viewer_multi.html?v=17720, canvas=882x1154, rafFrozen=True
-  [debug]   iframe[1]: src=http://127.0.0.1:41891/extensions/ComfyUI-GeometryPack/viewer_multi.html?v=17720, canvas=592x1116, rafFrozen=True
+  [debug]   iframe[0]: src=http://127.0.0.1:41892/extensions/ComfyUI-GeometryPack/viewer_multi.html?v=17720, canvas=882x1154, rafFrozen=True
+  [debug]   iframe[1]: src=http://127.0.0.1:41892/extensions/ComfyUI-GeometryPack/viewer_multi.html?v=17720, canvas=592x1116, rafFrozen=True
   [timing] trigger_3d_previews: 0.0s
   Saved high-quality screenshot: recon_executed.png
   [timing] final_screenshot: 1.3s
