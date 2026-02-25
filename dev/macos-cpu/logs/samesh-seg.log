@@ -1,0 +1,33 @@
+Capturing execution frames: samesh-seg.json
+  [Console-error] Failed to load resource: the server responded with a status of 404 (Not Found)
+  [Console-error] Failed to load resource: the server responded with a status of 404 (Not Found)
+  [Console-error] Failed to load resource: the server responded with a status of 404 (Not Found)
+  [Console-error] Failed to load resource: the server responded with a status of 404 (Not Found)
+  [Console-error] Failed to load resource: the server responded with a status of 404 (Not Found)
+  [Console-error] Failed to load resource: the server responded with a status of 404 (Not Found)
+  [Console-warning] WARNING: Multiple instances of Three.js being imported.
+  [Console-error] [vite:preloadError] Error: Extension named 'Comfy.DynamicWidgets' already registered.
+    at Proxy.registerExtension (http://127.0.0.1:8188/assets/systemStatsStore-D9aNY5gT.js:1:5552)
+    at Proxy.wrappedAction (http://127.0.0.1:8188/assets/vendor-vue-core-X6q-rGJs.js:2:90540)
+    at Object.registerExtension (http://127.0.0.1:8188/assets/dialogService-Cqui0UMO.js:3:162873)
+    at ComfyApp.registerExtension (http://127.0.0.1:8188/assets/dialogService-Cqui0UMO.js:177:20566)
+    at http://127.0.0.1:8188/extensions/ComfyUI-MeshSegmenter/js/dynamic_widgets.js:125:5
+  [Console-warning] [ComfyUI Deprecated] Importing from "scripts/ui.js" is deprecated and will be removed in v1.34.
+  [Console-error] [vite:preloadError] Error: Extension named 'geompack.text_report' already registered.
+    at Proxy.registerExtension (http://127.0.0.1:8188/assets/systemStatsStore-D9aNY5gT.js:1:5552)
+    at Proxy.wrappedAction (http://127.0.0.1:8188/assets/vendor-vue-core-X6q-rGJs.js:2:90540)
+    at Object.registerExtension (http://127.0.0.1:8188/assets/dialogService-Cqui0UMO.js:3:162873)
+    at ComfyApp.registerExtension (http://127.0.0.1:8188/assets/dialogService-Cqui0UMO.js:177:20566)
+    at http://127.0.0.1:8188/extensions/ComfyUI-GeometryPack/js/text_report.js:81:5
+  [Console-error] Failed to load resource: the server responded with a status of 404 (Not Found)
+  [Console-warning] [MaskEditor] ComfyApp.open_maskeditor is deprecated. Plugins should migrate to using the command system or direct node context menu integration.
+  [Console-warning] [ComfyUI Deprecated] Importing from "scripts/ui/components/buttonGroup.js" is deprecated and will be removed in v1.34.
+  [Console-warning] [ComfyUI Deprecated] Importing from "scripts/ui/components/button.js" is deprecated and will be removed in v1.34.
+  [Console-warning] Canvas2D: Multiple readback operations using getImageData are faster with the willReadFrequently attribute set to true. See: https://html.spec.whatwg.org/multipage/canvas.html#concept-canvas-will-read-frequently
+  [Console-error] No input!
+  Frame 1 saved (frame_000.jpg, t=0.0s)
+  Validating workflow...
+  Validation failed: graphToPrompt produced nodes without class_type: graphToPrompt: 11 nodes, missing class_type: [43,47,52,54,55,56], sample: {"inputs":{"file_path":"3d/flower_in_pot.stl"},"class_type":"GeomPackLoadMesh","_meta":{"title":"Load Mesh"}}
+    Status: FAILED
+    Error: Workflow validation failed
+    Details: graphToPrompt produced nodes without class_type: graphToPrompt: 11 nodes, missing class_type: [43,47,52,54,55,56], sample: {"inputs":{"file_path":"3d/flower_in_pot.stl"},"class_type":"GeomPackLoadMesh","_meta":{"title":"Load Mesh"}}

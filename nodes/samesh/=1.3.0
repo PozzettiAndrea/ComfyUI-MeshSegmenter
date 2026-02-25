@@ -1,0 +1,6 @@
+Looking in indexes: https://mcache-dsm.massedcompute.com/simple, https://pypi.org/simple
+Requirement already satisfied: hydra-core in /home/shadeform/miniconda3/envs/meshseg/lib/python3.10/site-packages (1.3.2)
+Requirement already satisfied: omegaconf<2.4,>=2.2 in /home/shadeform/miniconda3/envs/meshseg/lib/python3.10/site-packages (from hydra-core) (2.3.0)
+Requirement already satisfied: antlr4-python3-runtime==4.9.* in /home/shadeform/miniconda3/envs/meshseg/lib/python3.10/site-packages (from hydra-core) (4.9.3)
+Requirement already satisfied: packaging in /home/shadeform/miniconda3/envs/meshseg/lib/python3.10/site-packages (from hydra-core) (25.0)
+Requirement already satisfied: PyYAML>=5.1.0 in /home/shadeform/miniconda3/envs/meshseg/lib/python3.10/site-packages (from omegaconf<2.4,>=2.2->hydra-core) (6.0.3)

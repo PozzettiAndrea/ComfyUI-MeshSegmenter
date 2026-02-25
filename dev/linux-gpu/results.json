@@ -1,0 +1,87 @@
+{
+  "timestamp": "2026-02-24T23:09:41.584850+00:00",
+  "platform": "linux",
+  "hardware": {
+    "os": "Linux-6.8.0-90-generic-x86_64-with-glibc2.35",
+    "cpu": "Intel(R) Xeon(R) Gold 6238R CPU @ 2.20GHz",
+    "gpu": "NVIDIA RTX A6000"
+  },
+  "commit_hash": "9a303c56222ffea6048502c119290cce5d19924a",
+  "success": true,
+  "summary": {
+    "total": 3,
+    "passed": 3,
+    "failed": 0
+  },
+  "workflows": [
+    {
+      "name": "partfield-seg",
+      "status": "pass",
+      "duration_seconds": 39.57,
+      "error": null,
+      "hardware": {
+        "os": "Linux-6.8.0-90-generic-x86_64-with-glibc2.35",
+        "cpu": "Intel(R) Xeon(R) Gold 6238R CPU @ 2.20GHz",
+        "gpu": "NVIDIA RTX A6000"
+      },
+      "resources": {
+        "ram": {
+          "peak": 4.15,
+          "avg": 2.81
+        },
+        "total_ram_gb": 62.9,
+        "samples": 39,
+        "vram": {
+          "peak": 2.46,
+          "avg": 1.7
+        }
+      }
+    },
+    {
+      "name": "recon",
+      "status": "pass",
+      "duration_seconds": 234.77,
+      "error": null,
+      "hardware": {
+        "os": "Linux-6.8.0-90-generic-x86_64-with-glibc2.35",
+        "cpu": "Intel(R) Xeon(R) Gold 6238R CPU @ 2.20GHz",
+        "gpu": "NVIDIA RTX A6000"
+      },
+      "resources": {
+        "ram": {
+          "peak": 36.09,
+          "avg": 6.43
+        },
+        "total_ram_gb": 62.9,
+        "samples": 227,
+        "vram": {
+          "peak": 13.38,
+          "avg": 11.06
+        }
+      }
+    },
+    {
+      "name": "samesh-seg",
+      "status": "pass",
+      "duration_seconds": 106.83,
+      "error": null,
+      "hardware": {
+        "os": "Linux-6.8.0-90-generic-x86_64-with-glibc2.35",
+        "cpu": "Intel(R) Xeon(R) Gold 6238R CPU @ 2.20GHz",
+        "gpu": "NVIDIA RTX A6000"
+      },
+      "resources": {
+        "ram": {
+          "peak": 38.05,
+          "avg": 6.11
+        },
+        "total_ram_gb": 62.9,
+        "samples": 104,
+        "vram": {
+          "peak": 13.38,
+          "avg": 3.86
+        }
+      }
+    }
+  ]
+}
