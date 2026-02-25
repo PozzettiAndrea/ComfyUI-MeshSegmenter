@@ -158,7 +158,9 @@ class ApplyLabelsToMesh:
     def _render_preview(self, mesh: trimesh.Trimesh, resolution: int = 512) -> list:
         """Render 4 preview views of the colored mesh."""
         import os
-        os.environ["PYOPENGL_PLATFORM"] = "egl"
+        import sys
+        if sys.platform != "win32":
+            os.environ["PYOPENGL_PLATFORM"] = "egl"
 
         from omegaconf import OmegaConf
         from .samesh.renderer.renderer import Renderer
