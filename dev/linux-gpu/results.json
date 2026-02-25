@@ -1,12 +1,12 @@
 {
-  "timestamp": "2026-02-24T23:09:41.584850+00:00",
+  "timestamp": "2026-02-25T08:46:09.836045+00:00",
   "platform": "linux",
   "hardware": {
     "os": "Linux-6.8.0-90-generic-x86_64-with-glibc2.35",
-    "cpu": "Intel(R) Xeon(R) Gold 6238R CPU @ 2.20GHz",
+    "cpu": "Intel(R) Xeon(R) CPU E5-2683 v4 @ 2.10GHz",
     "gpu": "NVIDIA RTX A6000"
   },
-  "commit_hash": "9a303c56222ffea6048502c119290cce5d19924a",
+  "commit_hash": "51290a27b1006fac34a0ff041abae2e8810bb2b9",
   "success": true,
   "summary": {
     "total": 3,
@@ -17,69 +17,69 @@
     {
       "name": "partfield-seg",
       "status": "pass",
-      "duration_seconds": 39.57,
+      "duration_seconds": 49.5,
       "error": null,
       "hardware": {
         "os": "Linux-6.8.0-90-generic-x86_64-with-glibc2.35",
-        "cpu": "Intel(R) Xeon(R) Gold 6238R CPU @ 2.20GHz",
+        "cpu": "Intel(R) Xeon(R) CPU E5-2683 v4 @ 2.10GHz",
         "gpu": "NVIDIA RTX A6000"
       },
       "resources": {
         "ram": {
-          "peak": 4.15,
-          "avg": 2.81
+          "peak": 4.32,
+          "avg": 2.73
         },
-        "total_ram_gb": 62.9,
-        "samples": 39,
+        "total_ram_gb": 23.5,
+        "samples": 48,
         "vram": {
-          "peak": 2.46,
-          "avg": 1.7
+          "peak": 3.88,
+          "avg": 3.08
         }
       }
     },
     {
       "name": "recon",
       "status": "pass",
-      "duration_seconds": 234.77,
+      "duration_seconds": 287.12,
       "error": null,
       "hardware": {
         "os": "Linux-6.8.0-90-generic-x86_64-with-glibc2.35",
-        "cpu": "Intel(R) Xeon(R) Gold 6238R CPU @ 2.20GHz",
+        "cpu": "Intel(R) Xeon(R) CPU E5-2683 v4 @ 2.10GHz",
         "gpu": "NVIDIA RTX A6000"
       },
       "resources": {
         "ram": {
-          "peak": 36.09,
-          "avg": 6.43
+          "peak": 22.8,
+          "avg": 6.03
         },
-        "total_ram_gb": 62.9,
-        "samples": 227,
+        "total_ram_gb": 23.5,
+        "samples": 276,
         "vram": {
-          "peak": 13.38,
-          "avg": 11.06
+          "peak": 14.8,
+          "avg": 11.93
         }
       }
     },
     {
       "name": "samesh-seg",
       "status": "pass",
-      "duration_seconds": 106.83,
+      "duration_seconds": 117.03,
       "error": null,
       "hardware": {
         "os": "Linux-6.8.0-90-generic-x86_64-with-glibc2.35",
-        "cpu": "Intel(R) Xeon(R) Gold 6238R CPU @ 2.20GHz",
+        "cpu": "Intel(R) Xeon(R) CPU E5-2683 v4 @ 2.10GHz",
         "gpu": "NVIDIA RTX A6000"
       },
       "resources": {
         "ram": {
-          "peak": 38.05,
-          "avg": 6.11
+          "peak": 21.83,
+          "avg": 5.6
         },
-        "total_ram_gb": 62.9,
-        "samples": 104,
+        "total_ram_gb": 23.5,
+        "samples": 113,
         "vram": {
-          "peak": 13.38,
-          "avg": 3.86
+          "peak": 14.77,
+          "avg": 5.08
         }
       }
     }

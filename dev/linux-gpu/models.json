@@ -1,5 +1,5 @@
 {
-  "models_dir": "/home/shadeform/workspaces/MeshSegmenter-2302/ComfyUI/models",
+  "models_dir": "/home/shadeform/workspaces/MeshSegmenter-0837/ComfyUI/models",
   "summary": {
     "total_files": 6,
     "total_size_bytes": 2141715623,
@@ -7,7 +7,7 @@
   },
   "folders": {
     "partfield": {
-      "total_size_bytes": 1243631886,
+      "total_size_bytes": 1243631887,
       "total_size_human": "1.2 GB",
       "source": {
         "type": "unknown"
@@ -20,8 +20,8 @@
         },
         {
           "path": ".cache/huggingface/download/model_objaverse.ckpt.metadata",
-          "size_bytes": 124,
-          "size_human": "124.0 B"
+          "size_bytes": 125,
+          "size_human": "125.0 B"
         },
         {
           "path": ".cache/huggingface/.gitignore",
@@ -31,7 +31,7 @@
       ]
     },
     "sam": {
-      "total_size_bytes": 898083737,
+      "total_size_bytes": 898083736,
       "total_size_human": "856.5 MB",
       "source": {
         "type": "unknown"
@@ -44,8 +44,8 @@
         },
         {
           "path": ".cache/huggingface/download/sam2.1_hiera_large.pt.metadata",
-          "size_bytes": 125,
-          "size_human": "125.0 B"
+          "size_bytes": 124,
+          "size_human": "124.0 B"
         },
         {
           "path": ".cache/huggingface/.gitignore",
