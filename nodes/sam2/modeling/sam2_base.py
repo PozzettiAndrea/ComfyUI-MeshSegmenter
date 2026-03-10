@@ -14,7 +14,7 @@ from .sam.mask_decoder import MaskDecoder
 from .sam.prompt_encoder import PromptEncoder
 from .sam.transformer import TwoWayTransformer
 import comfy.ops
-ops = comfy.ops.disable_weight_init
+ops = comfy.ops.manual_cast
 
 from .sam2_utils import get_1d_sine_pe, MLP, select_closest_cond_frames
 

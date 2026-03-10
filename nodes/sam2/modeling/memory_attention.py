@@ -12,7 +12,7 @@ from torch import nn, Tensor
 from .sam.transformer import RoPEAttention
 
 import comfy.ops
-ops = comfy.ops.disable_weight_init
+ops = comfy.ops.manual_cast
 
 from .sam2_utils import get_activation_fn, get_clones
 

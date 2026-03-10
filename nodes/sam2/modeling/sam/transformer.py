@@ -15,7 +15,7 @@ from torch import nn, Tensor
 from ..position_encoding import apply_rotary_enc, compute_axial_cis
 import comfy.ops
 import comfy.model_management
-ops = comfy.ops.disable_weight_init
+ops = comfy.ops.manual_cast
 
 from ..sam2_utils import MLP
 
