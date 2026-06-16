@@ -14,7 +14,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 import comfy.ops
-ops = comfy.ops.disable_weight_init
+ops = comfy.ops.manual_cast
 
 from ..utils.misc import mask_to_box
 

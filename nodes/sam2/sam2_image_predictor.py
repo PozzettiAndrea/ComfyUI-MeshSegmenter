@@ -110,8 +110,6 @@ class SAM2ImagePredictor:
         input_image = self._transforms(image)
         model_dtype = next(self.model.parameters()).dtype
         input_image = input_image[None, ...].to(device=self.device, dtype=model_dtype)
-        print(f"      [DEBUG set_image] input_image.dtype={input_image.dtype}, model_dtype={model_dtype}")
-
         assert (
             len(input_image.shape) == 4 and input_image.shape[1] == 3
         ), f"input_image must be of size 1x3xHxW, got {input_image.shape}"
@@ -387,14 +385,6 @@ class SAM2ImagePredictor:
                 "An image must be set with .set_image(...) before mask prediction."
             )
 
-        # DEBUG: trace dtypes entering _predict
-        model_dtype = next(self.model.parameters()).dtype
-        print(f"      [DEBUG _predict] model_dtype={model_dtype}")
-        if point_coords is not None:
-            print(f"      [DEBUG _predict] point_coords.dtype={point_coords.dtype}")
-        if mask_input is not None:
-            print(f"      [DEBUG _predict] mask_input.dtype={mask_input.dtype}")
-
         if point_coords is not None:
             concat_points = (point_coords, point_labels)
         else:
@@ -414,19 +404,11 @@ class SAM2ImagePredictor:
             else:
                 concat_points = (box_coords, box_labels)
 
-        # DEBUG: check what goes into prompt encoder
-        if concat_points is not None:
-            print(f"      [DEBUG _predict] concat_points[0].dtype={concat_points[0].dtype}")
-        print(f"      [DEBUG _predict] image_embed.dtype={self._features['image_embed'][img_idx].dtype}")
-        print(f"      [DEBUG _predict] high_res_feats[0].dtype={self._features['high_res_feats'][0][img_idx].dtype}")
-
         sparse_embeddings, dense_embeddings = self.model.sam_prompt_encoder(
             points=concat_points,
             boxes=None,
             masks=mask_input,
         )
-
-        print(f"      [DEBUG _predict] sparse_embeddings.dtype={sparse_embeddings.dtype}, dense_embeddings.dtype={dense_embeddings.dtype}")
 
         # Predict masks
         batched_mode = (

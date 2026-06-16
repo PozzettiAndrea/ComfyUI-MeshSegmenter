@@ -10,7 +10,7 @@ import torch
 from torch import nn
 
 import comfy.ops
-ops = comfy.ops.disable_weight_init
+ops = comfy.ops.manual_cast
 
 from ..sam2_utils import LayerNorm2d, MLP
 

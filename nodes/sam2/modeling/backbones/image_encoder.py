@@ -11,7 +11,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 import comfy.ops
-ops = comfy.ops.disable_weight_init
+ops = comfy.ops.manual_cast
 
 
 class ImageEncoder(nn.Module):
@@ -125,7 +125,7 @@ class FpnNeck(nn.Module):
                     ),
                     antialias=False,
                 )
-                prev_features = lateral_features + top_down_features
+                prev_features = lateral_features + top_down_features.to(lateral_features.dtype)
                 if self.fuse_type == "avg":
                     prev_features /= 2
             else:

@@ -20,7 +20,7 @@ from ..backbones.utils import (
 )
 
 import comfy.ops
-ops = comfy.ops.disable_weight_init
+ops = comfy.ops.manual_cast
 
 from ..sam2_utils import DropPath, MLP
 

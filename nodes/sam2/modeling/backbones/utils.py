@@ -13,7 +13,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 import comfy.ops
-ops = comfy.ops.disable_weight_init
+ops = comfy.ops.manual_cast
 
 
 def window_partition(x, window_size):
