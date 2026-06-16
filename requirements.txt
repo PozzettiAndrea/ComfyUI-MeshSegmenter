@@ -1,4 +1,2 @@
-comfy-env==0.2.18
-comfy-3d-viewers==0.2.36
-comfy-aimdo
-msvc-runtime; sys_platform == "win32"
+comfy-env==0.3.89
+comfy-3d-viewers==0.2.44
