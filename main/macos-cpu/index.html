@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ComfyUI-MeshSegmenter - Test Results</title>
+    <title>PozzettiAndrea/ComfyUI-MeshSegmenter - Test Results</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -66,6 +66,17 @@
             border-radius: 2rem;
             font-size: 0.75rem;
             color: #8ba3c1;
+        }
+
+        a.meta-chip {
+            text-decoration: none;
+            transition: background 0.15s, border-color 0.15s, color 0.15s;
+        }
+
+        a.meta-chip:hover {
+            background: #25395a;
+            border-color: #3a5587;
+            color: #cfe1f7;
         }
 
         .meta-chip svg {
@@ -445,6 +456,43 @@
             border-radius: 8px;
             border: 1px solid #243656;
             align-self: center;
+            cursor: zoom-in;
+        }
+
+        .img-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 1002;
+            background: rgba(1, 4, 9, 0.95);
+            overflow: auto;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .img-overlay.active {
+            display: flex;
+        }
+
+        .img-overlay.zoomed {
+            align-items: flex-start;
+            justify-content: flex-start;
+        }
+
+        .img-overlay img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            cursor: zoom-in;
+        }
+
+        .img-overlay.zoomed img {
+            max-width: none;
+            max-height: none;
+            cursor: zoom-out;
         }
 
         .lightbox-close {
@@ -463,6 +511,35 @@
         .lightbox-close:hover {
             opacity: 1;
         }
+
+        .lightbox-nav {
+            position: fixed;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(22, 32, 51, 0.8);
+            border: 1px solid #243656;
+            color: #e6edf3;
+            font-size: 2.5rem;
+            width: 48px;
+            height: 64px;
+            border-radius: 8px;
+            cursor: pointer;
+            opacity: 0.6;
+            z-index: 1001;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.15s;
+            padding: 0;
+            line-height: 1;
+        }
+
+        .lightbox-nav:hover {
+            opacity: 1;
+        }
+
+        .lightbox-nav-left { left: 1rem; }
+        .lightbox-nav-right { right: 1rem; }
 
         .lightbox-info {
             display: flex;
@@ -856,7 +933,7 @@
 </head>
 <body>
     <header>
-        <h1><a href="https://github.com/PozzettiAndrea/ComfyUI-MeshSegmenter">ComfyUI-MeshSegmenter</a> Test Results</h1>
+        <h1><a href="https://github.com/PozzettiAndrea/PozzettiAndrea/ComfyUI-MeshSegmenter">PozzettiAndrea/ComfyUI-MeshSegmenter</a> Test Results</h1>
         <div class="meta-chips">
             <span class="meta-chip"><svg viewBox="0 0 16 16"><path d="M8 0a8 8 0 110 16A8 8 0 018 0zm.5 4.5a.5.5 0 00-1 0v3.793L5.854 9.854a.5.5 0 10.708.708l1.853-1.854a.5.5 0 00.085-.094V4.5z"/></svg> 2026-02-24 20:39 UTC</span> <span class="meta-chip"><svg viewBox="0 0 16 16"><path d="M2.5 4a.5.5 0 100 1 .5.5 0 000-1zM4 4.5a.5.5 0 01.5-.5h7a.5.5 0 010 1h-7a.5.5 0 01-.5-.5zM2.5 7a.5.5 0 100 1 .5.5 0 000-1zM4 7.5a.5.5 0 01.5-.5h7a.5.5 0 010 1h-7A.5.5 0 014 7.5zM2.5 10a.5.5 0 100 1 .5.5 0 000-1zM4 10.5a.5.5 0 01.5-.5h7a.5.5 0 010 1h-7a.5.5 0 01-.5-.5z"/></svg> macOS-15.7.4-arm64-arm-64bit-Mach-O</span> <span class="meta-chip"><svg viewBox="0 0 16 16"><path d="M5 0a.5.5 0 01.5.5V2h1V.5a.5.5 0 011 0V2h1V.5a.5.5 0 011 0V2h.5A2.5 2.5 0 0112.5 4.5H14v1h-1.5v1H14v1h-1.5v1H14v1h-1.5A2.5 2.5 0 0110 12h-.5v1.5a.5.5 0 01-1 0V12h-1v1.5a.5.5 0 01-1 0V12H6v1.5a.5.5 0 01-1 0V12h-.5A2.5 2.5 0 012 9.5H.5v-1H2v-1H.5v-1H2v-1H.5v-1H2A2.5 2.5 0 014.5 2V.5A.5.5 0 015 0zm-.5 4A1.5 1.5 0 003 5.5v4A1.5 1.5 0 004.5 11h6a1.5 1.5 0 001.5-1.5v-4A1.5 1.5 0 0010.5 4h-6z"/></svg> arm</span>
         </div>
@@ -974,8 +1051,11 @@ graphToPrompt produced nodes without class_type: graphToPrompt: 11 nodes, missin
 
     <div class="lightbox" id="lightbox">
         <button class="lightbox-close" onclick="closeLightbox()">&times;</button>
+        <button class="lightbox-nav lightbox-nav-left" onclick="navigateLightbox(-1)">&#8249;</button>
+        <button class="lightbox-nav lightbox-nav-right" onclick="navigateLightbox(1)">&#8250;</button>
         <div class="lightbox-content">
             <img id="lightbox-img" src="" alt="">
+            <video id="lightbox-video" controls preload="metadata" style="display:none; max-width:90vw; max-height:80vh; background:#000;"></video>
             <div class="video-player" id="video-player">
                 <div class="video-slider-container">
                     <div id="video-slider"></div>
@@ -1006,6 +1086,10 @@ graphToPrompt produced nodes without class_type: graphToPrompt: 11 nodes, missin
         </div>
     </div>
 
+    <div class="img-overlay" id="img-overlay">
+        <img id="img-overlay-content" src="" alt="">
+    </div>
+
     <footer>
         Generated by <a href="https://github.com/PozzettiAndrea/comfy-test">comfy-test</a>
     </footer>
@@ -1020,8 +1104,10 @@ graphToPrompt produced nodes without class_type: graphToPrompt: 11 nodes, missin
         }
 
         const workflowData = {"partfield-seg": {"src": "", "title": "partfield-seg", "status": "fail", "duration": "8.22", "log": "Capturing execution frames: partfield-seg.json\n  [Console-error] Failed to load resource: the server responded with a status of 404 (Not Found)\n  [Console-error] Failed to load resource: the server responded with a status of 404 (Not Found)\n  [Console-error] Failed to load resource: the server responded with a status of 404 (Not Found)\n  [Console-error] Failed to load resource: the server responded with a status of 404 (Not Found)\n  [Console-error] Failed to load resource: the server responded with a status of 404 (Not Found)\n  [Console-error] Failed to load resource: the server responded with a status of 404 (Not Found)\n  [Console-warning] [ComfyUI Deprecated] Importing from \"scripts/ui.js\" is deprecated and will be removed in v1.34.\n  [Console-warning] WARNING: Multiple instances of Three.js being imported.\n  [Console-error] [vite:preloadError] Error: Extension named 'Comfy.DynamicWidgets' already registered.\n    at Proxy.registerExtension (http://127.0.0.1:8188/assets/systemStatsStore-D9aNY5gT.js:1:5552)\n    at Proxy.wrappedAction (http://127.0.0.1:8188/assets/vendor-vue-core-X6q-rGJs.js:2:90540)\n    at Object.registerExtension (http://127.0.0.1:8188/assets/dialogService-Cqui0UMO.js:3:162873)\n    at ComfyApp.registerExtension (http://127.0.0.1:8188/assets/dialogService-Cqui0UMO.js:177:20566)\n    at http://127.0.0.1:8188/extensions/ComfyUI-GeometryPack/js/dynamic_widgets.js:125:5\n  [Console-error] [vite:preloadError] Error: Extension named 'geompack.text_report' already registered.\n    at Proxy.registerExtension (http://127.0.0.1:8188/assets/systemStatsStore-D9aNY5gT.js:1:5552)\n    at Proxy.wrappedAction (http://127.0.0.1:8188/assets/vendor-vue-core-X6q-rGJs.js:2:90540)\n    at Object.registerExtension (http://127.0.0.1:8188/assets/dialogService-Cqui0UMO.js:3:162873)\n    at ComfyApp.registerExtension (http://127.0.0.1:8188/assets/dialogService-Cqui0UMO.js:177:20566)\n    at http://127.0.0.1:8188/extensions/ComfyUI-GeometryPack/js/text_report.js:81:5\n  [Console-error] Failed to load resource: the server responded with a status of 404 (Not Found)\n  [Console-warning] [MaskEditor] ComfyApp.open_maskeditor is deprecated. Plugins should migrate to using the command system or direct node context menu integration.\n  [Console-warning] [ComfyUI Deprecated] Importing from \"scripts/ui/components/buttonGroup.js\" is deprecated and will be removed in v1.34.\n  [Console-warning] [ComfyUI Deprecated] Importing from \"scripts/ui/components/button.js\" is deprecated and will be removed in v1.34.\n  [Console-warning] Canvas2D: Multiple readback operations using getImageData are faster with the willReadFrequently attribute set to true. See: https://html.spec.whatwg.org/multipage/canvas.html#concept-canvas-will-read-frequently\n  [Console-error] No input!\n  [Console-warning] [.WebGL-0x114000f8e00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels\n  [Console-warning] [.WebGL-0x114000f8e00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels\n  Frame 1 saved (frame_000.jpg, t=0.0s)\n  Validating workflow...\n  Validation failed: graphToPrompt produced nodes without class_type: graphToPrompt: 5 nodes, missing class_type: [1,5,6], sample: {\"inputs\":{\"UNKNOWN\":\"auto\"},\"_meta\":{}}\n    Status: FAILED\n    Error: Workflow validation failed\n    Details: graphToPrompt produced nodes without class_type: graphToPrompt: 5 nodes, missing class_type: [1,5,6], sample: {\"inputs\":{\"UNKNOWN\":\"auto\"},\"_meta\":{}}", "hardware": {"os": "macOS-15.7.4-arm64-arm-64bit-Mach-O", "cpu": "arm"}}, "recon": {"src": "", "title": "recon", "status": "fail", "duration": "8.82", "log": "Capturing execution frames: recon.json\n  [Console-error] Failed to load resource: the server responded with a status of 404 (Not Found)\n  [Console-error] Failed to load resource: the server responded with a status of 404 (Not Found)\n  [Console-error] Failed to load resource: the server responded with a status of 404 (Not Found)\n  [Console-error] Failed to load resource: the server responded with a status of 404 (Not Found)\n  [Console-error] Failed to load resource: the server responded with a status of 404 (Not Found)\n  [Console-error] Failed to load resource: the server responded with a status of 404 (Not Found)\n  [Console-warning] WARNING: Multiple instances of Three.js being imported.\n  [Console-error] [vite:preloadError] Error: Extension named 'geompack.text_report' already registered.\n    at Proxy.registerExtension (http://127.0.0.1:8188/assets/systemStatsStore-D9aNY5gT.js:1:5552)\n    at Proxy.wrappedAction (http://127.0.0.1:8188/assets/vendor-vue-core-X6q-rGJs.js:2:90540)\n    at Object.registerExtension (http://127.0.0.1:8188/assets/dialogService-Cqui0UMO.js:3:162873)\n    at ComfyApp.registerExtension (http://127.0.0.1:8188/assets/dialogService-Cqui0UMO.js:177:20566)\n    at http://127.0.0.1:8188/extensions/ComfyUI-GeometryPack/js/text_report.js:81:5\n  [Console-error] [vite:preloadError] Error: Extension named 'Comfy.DynamicWidgets' already registered.\n    at Proxy.registerExtension (http://127.0.0.1:8188/assets/systemStatsStore-D9aNY5gT.js:1:5552)\n    at Proxy.wrappedAction (http://127.0.0.1:8188/assets/vendor-vue-core-X6q-rGJs.js:2:90540)\n    at Object.registerExtension (http://127.0.0.1:8188/assets/dialogService-Cqui0UMO.js:3:162873)\n    at ComfyApp.registerExtension (http://127.0.0.1:8188/assets/dialogService-Cqui0UMO.js:177:20566)\n    at http://127.0.0.1:8188/extensions/ComfyUI-MeshSegmenter/js/dynamic_widgets.js:125:5\n  [Console-warning] [ComfyUI Deprecated] Importing from \"scripts/ui.js\" is deprecated and will be removed in v1.34.\n  [Console-error] Failed to load resource: the server responded with a status of 404 (Not Found)\n  [Console-warning] [MaskEditor] ComfyApp.open_maskeditor is deprecated. Plugins should migrate to using the command system or direct node context menu integration.\n  [Console-warning] [ComfyUI Deprecated] Importing from \"scripts/ui/components/buttonGroup.js\" is deprecated and will be removed in v1.34.\n  [Console-warning] [ComfyUI Deprecated] Importing from \"scripts/ui/components/button.js\" is deprecated and will be removed in v1.34.\n  [Console-warning] Canvas2D: Multiple readback operations using getImageData are faster with the willReadFrequently attribute set to true. See: https://html.spec.whatwg.org/multipage/canvas.html#concept-canvas-will-read-frequently\n  [Console-error] No input!\n  [Console-warning] [.WebGL-0x114000eda00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)\n  Frame 1 saved (frame_000.jpg, t=0.0s)\n  Validating workflow...\n  Validation failed: graphToPrompt produced nodes without class_type: graphToPrompt: 19 nodes, missing class_type: [39,43,44,45,47,48,61,65,66,75,76], sample: {\"inputs\":{\"file_path\":\"3d/final_mesh.stl\"},\"class_type\":\"GeomPackLoadMesh\",\"_meta\":{\"title\":\"Load Mesh\"}}\n    Status: FAILED\n    Error: Workflow validation failed\n    Details: graphToPrompt produced nodes without class_type: graphToPrompt: 19 nodes, missing class_type: [39,43,44,45,47,48,61,65,66,75,76], sample: {\"inputs\":{\"file_path\":\"3d/final_mesh.stl\"},\"class_type\":\"GeomPackLoadMesh\",\"_meta\":{\"title\":\"Load Mesh\"}}", "hardware": {"os": "macOS-15.7.4-arm64-arm-64bit-Mach-O", "cpu": "arm"}}, "samesh-seg": {"src": "", "title": "samesh-seg", "status": "fail", "duration": "8.16", "log": "Capturing execution frames: samesh-seg.json\n  [Console-error] Failed to load resource: the server responded with a status of 404 (Not Found)\n  [Console-error] Failed to load resource: the server responded with a status of 404 (Not Found)\n  [Console-error] Failed to load resource: the server responded with a status of 404 (Not Found)\n  [Console-error] Failed to load resource: the server responded with a status of 404 (Not Found)\n  [Console-error] Failed to load resource: the server responded with a status of 404 (Not Found)\n  [Console-error] Failed to load resource: the server responded with a status of 404 (Not Found)\n  [Console-warning] WARNING: Multiple instances of Three.js being imported.\n  [Console-error] [vite:preloadError] Error: Extension named 'Comfy.DynamicWidgets' already registered.\n    at Proxy.registerExtension (http://127.0.0.1:8188/assets/systemStatsStore-D9aNY5gT.js:1:5552)\n    at Proxy.wrappedAction (http://127.0.0.1:8188/assets/vendor-vue-core-X6q-rGJs.js:2:90540)\n    at Object.registerExtension (http://127.0.0.1:8188/assets/dialogService-Cqui0UMO.js:3:162873)\n    at ComfyApp.registerExtension (http://127.0.0.1:8188/assets/dialogService-Cqui0UMO.js:177:20566)\n    at http://127.0.0.1:8188/extensions/ComfyUI-MeshSegmenter/js/dynamic_widgets.js:125:5\n  [Console-warning] [ComfyUI Deprecated] Importing from \"scripts/ui.js\" is deprecated and will be removed in v1.34.\n  [Console-error] [vite:preloadError] Error: Extension named 'geompack.text_report' already registered.\n    at Proxy.registerExtension (http://127.0.0.1:8188/assets/systemStatsStore-D9aNY5gT.js:1:5552)\n    at Proxy.wrappedAction (http://127.0.0.1:8188/assets/vendor-vue-core-X6q-rGJs.js:2:90540)\n    at Object.registerExtension (http://127.0.0.1:8188/assets/dialogService-Cqui0UMO.js:3:162873)\n    at ComfyApp.registerExtension (http://127.0.0.1:8188/assets/dialogService-Cqui0UMO.js:177:20566)\n    at http://127.0.0.1:8188/extensions/ComfyUI-GeometryPack/js/text_report.js:81:5\n  [Console-error] Failed to load resource: the server responded with a status of 404 (Not Found)\n  [Console-warning] [MaskEditor] ComfyApp.open_maskeditor is deprecated. Plugins should migrate to using the command system or direct node context menu integration.\n  [Console-warning] [ComfyUI Deprecated] Importing from \"scripts/ui/components/buttonGroup.js\" is deprecated and will be removed in v1.34.\n  [Console-warning] [ComfyUI Deprecated] Importing from \"scripts/ui/components/button.js\" is deprecated and will be removed in v1.34.\n  [Console-warning] Canvas2D: Multiple readback operations using getImageData are faster with the willReadFrequently attribute set to true. See: https://html.spec.whatwg.org/multipage/canvas.html#concept-canvas-will-read-frequently\n  [Console-error] No input!\n  Frame 1 saved (frame_000.jpg, t=0.0s)\n  Validating workflow...\n  Validation failed: graphToPrompt produced nodes without class_type: graphToPrompt: 11 nodes, missing class_type: [43,47,52,54,55,56], sample: {\"inputs\":{\"file_path\":\"3d/flower_in_pot.stl\"},\"class_type\":\"GeomPackLoadMesh\",\"_meta\":{\"title\":\"Load Mesh\"}}\n    Status: FAILED\n    Error: Workflow validation failed\n    Details: graphToPrompt produced nodes without class_type: graphToPrompt: 11 nodes, missing class_type: [43,47,52,54,55,56], sample: {\"inputs\":{\"file_path\":\"3d/flower_in_pot.stl\"},\"class_type\":\"GeomPackLoadMesh\",\"_meta\":{\"title\":\"Load Mesh\"}}", "hardware": {"os": "macOS-15.7.4-arm64-arm-64bit-Mach-O", "cpu": "arm"}}};
+        const workflowNames = Object.keys(workflowData);
         const videoData = {};
 
+        const inIframe = window !== window.top;
         let currentWorkflow = null;
         let playInterval = null;
         let originalLogContent = '';
@@ -1060,21 +1146,41 @@ graphToPrompt produced nodes without class_type: graphToPrompt: 11 nodes, missin
 
             const data = videoData[title];
             const videoPlayer = document.getElementById('video-player');
+            const lightboxImg = document.getElementById('lightbox-img');
+            const lightboxVideo = document.getElementById('lightbox-video');
 
-            if (data && data.frames && data.frames.length > 1) {
+            // Reset both modes; the branch below activates one.
+            videoPlayer.classList.remove('active');
+            lightboxVideo.style.display = 'none';
+            lightboxVideo.removeAttribute('src');
+            lightboxImg.style.display = '';
+
+            if (data && data.mp4) {
+                // Playable mp4 (desktop runs). Show <video>, hide the
+                // frame-slideshow img + slider.
+                lightboxVideo.src = 'videos/' + encodeURIComponent(title) + '/' + data.mp4;
+                lightboxVideo.style.display = '';
+                lightboxImg.style.display = 'none';
+            } else if (data && data.frames && data.frames.length > 1) {
                 currentFrames = data.frames;
                 currentTotalTime = data.total_time || data.frames[data.frames.length - 1].time;
                 setupVideoSlider(data.frames, currentTotalTime);
                 updateVideoFrameByIndex(title, data.frames.length - 1);
                 videoPlayer.classList.add('active');
-            } else {
-                videoPlayer.classList.remove('active');
             }
 
             loadResourceGraph(title);
 
+            // Close image overlay if open
+            closeImgOverlay();
+
             document.getElementById('lightbox').classList.add('active');
             history.replaceState(null, '', '#' + encodeURIComponent(title));
+
+            // Notify parent frames for deep linking
+            if (inIframe) {
+                window.parent.postMessage({ type: 'comfytest-open', name: title }, '*');
+            }
         }
 
         function buildSliderRange(frames, totalTime) {
@@ -1370,24 +1476,94 @@ graphToPrompt produced nodes without class_type: graphToPrompt: 11 nodes, missin
             drawResourceGraph();
         });
 
+        function closeImgOverlay() {
+            const overlay = document.getElementById('img-overlay');
+            overlay.classList.remove('active', 'zoomed');
+        }
+
         function closeLightbox() {
             if (playInterval) {
                 clearInterval(playInterval);
                 playInterval = null;
                 document.getElementById('video-play-btn').innerHTML = '&#9654; Play';
             }
+            closeImgOverlay();
             document.getElementById('resource-graph').classList.remove('active');
             document.getElementById('lightbox').classList.remove('active');
             history.replaceState(null, '', window.location.pathname);
+
+            if (inIframe) {
+                window.parent.postMessage({ type: 'comfytest-close' }, '*');
+            }
         }
 
         document.getElementById('lightbox').onclick = (e) => {
             if (e.target.id === 'lightbox') closeLightbox();
         };
 
+        function navigateLightbox(delta) {
+            if (workflowNames.length === 0) return;
+            const idx = workflowNames.indexOf(currentWorkflow);
+            if (idx === -1) return;
+            const newIdx = (idx + delta + workflowNames.length) % workflowNames.length;
+            openLightboxByName(workflowNames[newIdx]);
+        }
+
+        function handleKey(key) {
+            const overlay = document.getElementById('img-overlay');
+            if (key === 'Escape') {
+                if (overlay.classList.contains('active')) {
+                    closeImgOverlay();
+                } else {
+                    closeLightbox();
+                }
+                return;
+            }
+            if (document.getElementById('lightbox').classList.contains('active') && !overlay.classList.contains('active')) {
+                if (key === 'ArrowLeft') { navigateLightbox(-1); }
+                if (key === 'ArrowRight') { navigateLightbox(1); }
+                if ((key === 'ArrowUp' || key === 'ArrowDown') && inIframe) {
+                    window.parent.postMessage({
+                        type: 'comfytest-platform-shift',
+                        delta: key === 'ArrowUp' ? -1 : 1,
+                        workflow: currentWorkflow,
+                    }, '*');
+                }
+            }
+        }
+
         document.onkeydown = (e) => {
-            if (e.key === 'Escape') closeLightbox();
+            if (['Escape', 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'].includes(e.key)) {
+                e.preventDefault();
+                handleKey(e.key);
+            }
         };
+
+        // Click lightbox image -> open in fullscreen overlay (fit mode)
+        document.getElementById('lightbox-img').addEventListener('click', function(e) {
+            e.stopPropagation();
+            const overlay = document.getElementById('img-overlay');
+            const overlayImg = document.getElementById('img-overlay-content');
+            overlayImg.src = this.src;
+            overlay.classList.add('active');
+            overlay.classList.remove('zoomed');
+        });
+
+        // Click overlay image: fit -> zoomed -> close
+        document.getElementById('img-overlay-content').addEventListener('click', function(e) {
+            e.stopPropagation();
+            const overlay = document.getElementById('img-overlay');
+            if (overlay.classList.contains('zoomed')) {
+                closeImgOverlay();
+            } else {
+                overlay.classList.add('zoomed');
+            }
+        });
+
+        // Click overlay background -> close overlay
+        document.getElementById('img-overlay').addEventListener('click', function(e) {
+            if (e.target === this) closeImgOverlay();
+        });
 
         function openFromHash() {
             const hash = decodeURIComponent(window.location.hash.slice(1));
@@ -1400,8 +1576,19 @@ graphToPrompt produced nodes without class_type: graphToPrompt: 11 nodes, missin
         window.addEventListener('hashchange', openFromHash);
         window.addEventListener('load', openFromHash);
 
+        // Listen for messages from parent frames
+        window.addEventListener('message', function(e) {
+            if (!e.data || !e.data.type) return;
+            if (e.data.type === 'comfytest-open' && e.data.name) {
+                openLightboxByName(e.data.name);
+            }
+            if (e.data.type === 'comfytest-key') {
+                handleKey(e.data.key);
+            }
+        });
+
         // Detect iframe: hide header and move meta chips into summary
-        if (window !== window.top) {
+        if (inIframe) {
             document.body.classList.add('in-iframe');
             const chips = document.querySelector('.meta-chips');
             const summary = document.querySelector('.summary');
