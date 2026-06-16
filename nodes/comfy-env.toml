@@ -1,5 +1,5 @@
 [cuda]
-packages = ["torch", "torchvision", "torch-scatter"]
+packages = ["torch-scatter"]
 
 
 [pypi-dependencies]
