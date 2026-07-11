@@ -51,6 +51,24 @@ from .segment_by_features import NODE_DISPLAY_NAME_MAPPINGS as _sbf_d
 from .decimate import NODE_CLASS_MAPPINGS as _dec
 from .decimate import NODE_DISPLAY_NAME_MAPPINGS as _dec_d
 
+# Classical geometry segmentation / CAD-decomposition nodes (moved from GeometryPack)
+from .detect_tangent_edges import NODE_CLASS_MAPPINGS as _dte
+from .detect_tangent_edges import NODE_DISPLAY_NAME_MAPPINGS as _dte_d
+from .region_growing import NODE_CLASS_MAPPINGS as _rg
+from .region_growing import NODE_DISPLAY_NAME_MAPPINGS as _rg_d
+from .segment_by_curvature import NODE_CLASS_MAPPINGS as _sbc
+from .segment_by_curvature import NODE_DISPLAY_NAME_MAPPINGS as _sbc_d
+from .find_fillets import NODE_CLASS_MAPPINGS as _ff
+from .find_fillets import NODE_DISPLAY_NAME_MAPPINGS as _ff_d
+from .fit_primitives import NODE_CLASS_MAPPINGS as _fp
+from .fit_primitives import NODE_DISPLAY_NAME_MAPPINGS as _fp_d
+from .segment_patches import NODE_CLASS_MAPPINGS as _sp
+from .segment_patches import NODE_DISPLAY_NAME_MAPPINGS as _sp_d
+from .vsa_segment import NODE_CLASS_MAPPINGS as _vs
+from .vsa_segment import NODE_DISPLAY_NAME_MAPPINGS as _vs_d
+from .compute_fillet_field import NODE_CLASS_MAPPINGS as _cff
+from .compute_fillet_field import NODE_DISPLAY_NAME_MAPPINGS as _cff_d
+
 # Combine all mappings
 NODE_CLASS_MAPPINGS = {
     **_sam_model, **_loader, **_mvr, **_genmasks,
@@ -59,6 +77,7 @@ NODE_CLASS_MAPPINGS = {
     **_pvl, **_alq, **_expq,
     **_pf_model, **_seg, **_fe, **_fv, **_sbf,
     **_dec,
+    **_dte, **_rg, **_sbc, **_ff, **_fp, **_sp, **_vs, **_cff,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
@@ -68,6 +87,7 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     **_pvl_d, **_alq_d, **_expq_d,
     **_pf_model_d, **_seg_d, **_fe_d, **_fv_d, **_sbf_d,
     **_dec_d,
+    **_dte_d, **_rg_d, **_sbc_d, **_ff_d, **_fp_d, **_sp_d, **_vs_d, **_cff_d,
 }
 
 __all__ = ["NODE_CLASS_MAPPINGS", "NODE_DISPLAY_NAME_MAPPINGS"]

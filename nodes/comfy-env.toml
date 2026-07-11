@@ -14,6 +14,8 @@ scipy = ">=1.7.0"
 libigl = ">=2.4.0"
 comfy-aimdo = "*"
 pyvista = "*"
+# Required by comfy_api.latest (V3 node API) used by the geometry-segmentation nodes
+av = "*"
 
 # Image processing
 pillow = ">=9.0.0"
