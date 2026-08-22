@@ -10,4 +10,5 @@ Repository = "https://github.com/PozzettiAndrea/ComfyUI-MeshSegmenter"
 [tool.comfy]
 PublisherId = "pznodes"
 DisplayName = "MeshSegmenter"
+web = "javascript"
 Icon = ""
