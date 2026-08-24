@@ -2,6 +2,5 @@
 packages = ["libegl1", "libegl-dev", "libgl1-mesa-glx", "libosmesa6-dev", "libgl1", "libopengl0", "libglu1-mesa"]
 
 [node_packs]
-ComfyUI-Env-Manager = "PozzettiAndrea/ComfyUI-Env-Manager"
 ComfyUI-GeometryPack = "PozzettiAndrea/ComfyUI-GeometryPack"
 ComfyUI-Multiband = "PozzettiAndrea/ComfyUI-Multiband"
